@@ -1,0 +1,592 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>clahe_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="clahe_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">%%%...................Contrast Limited Adaptve Histogram Equialization..........</span>
+<span class="comment">%%%The main aim of the function is to do adaptive histogram equilization</span>
+<span class="comment">%%%using control the contrast.The algorithm has been developed using</span>
+<span class="comment">%%%sliding window method.The results of the output image depends on the</span>
+<span class="comment">%%%contrast limit and the block size.the DCT symmetry has been applied to</span>
+<span class="comment">%%%border edges to get rid of the undesirable pixels.</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% -------</span>
+<span class="comment">% outImage = clahe_cvip( inImage,block size, band, clipping limit,'n')</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%</span>
+<span class="comment">% 'inImage'       Input image of MxN or MxNxB size. The input image can</span>
+<span class="comment">%                 be of uint8 or double class.</span>
+<span class="comment">% 'block size'    Specify a block size.It should be an odd number.</span>
+<span class="comment">%</span>
+<span class="comment">% 'band'          Specify a band</span>
+<span class="comment">%                 [band=1=&gt; Red band,band=2 =&gt; Green band,band=2 =&gt; Blue band</span>
+<span class="comment">%</span>
+<span class="comment">% 'clipping limit' Specify a clipping limit form 0 to 1 to limit the contrast</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%  'byte'          If user wants the output as byte (0-255)  'y', otherwise 'n'</span>
+<span class="comment">%</span>
+
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">% 'outImage'      Output  subimage</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Examples :</span>
+<span class="comment">% --------</span>
+<span class="comment">%        I = imread('cam.bmp');      %original image</span>
+<span class="comment">%        Output=Clahe_cvip(I,33,1,0.2,'y')</span>
+<span class="comment">%        figure; imshow(Output);</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications</span>
+<span class="comment">% with MATLAB and CVIPtools, 3rd Edition.</span>
+<span class="comment">%Reference</span>
+<span class="comment">% 2. Pizer, Stephen M. "Contrast-limited adaptive histogram equalization: Speed and effectiveness stephen m. pizer, r. eugene johnston, james p. ericksen, bonnie c. yankaskas, keith e. muller medical image display research group." Proceedings of the First Conference on Visualization in Biomedical Computing, Atlanta, Georgia. Vol. 337. 1990.</span>
+
+<span class="comment">% 3. Reza, Ali M. "Realization of the contrast limited adaptive histogram equalization (CLAHE) for real-time image enhancement." Journal of VLSI signal processing systems for signal, image and video technology 38.1 (2004): 35-44.</span>
+
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">%%.....</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Hridoy Biswas</span>
+<span class="comment">%           Initial coding date:    9/15/2020</span>
+<span class="comment">%           Latest update date:     10/22/2020</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2019-2020 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">function</span> output=clahe_cvip(A,Block,band,limit,byte)
+
+tic
+[m,n,o] = size(A);
+A=double(A);
+
+W = Block;
+
+
+<span class="keyword">if</span> rem(Block, 2) == 0
+    opts = struct(<span class="string">'WindowStyle'</span>,<span class="string">'modal'</span>,<span class="keyword">...</span>
+              <span class="string">'Interpreter'</span>,<span class="string">'tex'</span>);
+warndlg(<span class="string">'Please select an odd number for the block size '</span>,<span class="string">'Warning'</span>,opts);
+     <span class="comment">%errordlg(['Selected block size is not an odd number! Select an odd number' ...</span>
+       <span class="comment">% ' and try again.'], 'CLAHE Error', 'modal');</span>
+
+<span class="keyword">else</span>
+</pre><pre class="codeinput">   f = waitbar(0,<span class="string">'CLAHE'</span>,<span class="string">'Name'</span>,<span class="string">'CLAHE is running...'</span>,<span class="keyword">...</span>
+    <span class="string">'CreateCancelBtn'</span>,<span class="string">'setappdata(gcbf,''canceling'',1)'</span>);
+
+setappdata(f,<span class="string">'canceling'</span>,0);
+c = (W+1)/2;    <span class="comment">% coordinate of the center pixel of the window</span>
+output = double(A);
+m1=m+(c*2-2);
+n1=n+(c*2-2);
+A1=zeros(m1,n1);
+<span class="comment">% A2=zeros(m,n);</span>
+</pre><pre class="codeinput"><span class="comment">%%Mirror the edge</span>
+<span class="comment">% ro=(m-(c-1))-(c-2);%row</span>
+<span class="comment">% co=(n-(c-1))-(c-2);</span>
+
+A1(1:c-1,c:n1-(c-1),band)=flipud( A(1:c-1,1:n,band));<span class="comment">%top row</span>
+A1(c:m1-(c-1),1:c-1,band)=fliplr( A(1:m,c:c+(c-2),band));<span class="comment">%left corner</span>
+A1(m1-(c-2):end,c:n1-(c-1),band)=flipud( A(m-(c-2):end,1:n,band));<span class="comment">%bottom row</span>
+A1(c:m1-(c-1),(n1-(c-2)):end,band)=fliplr( A(1:m,n-(c-2):n));<span class="comment">%top right</span>
+</pre><pre class="codeinput"><span class="comment">%%Corner Mirror</span>
+<span class="comment">%top left</span>
+A1(1:c-1,1:c-1,band)=fliplr(A(1:c-1,c:c+c-2,band));
+A1(1:c-1,1:c-1,band)=flipud( A1(1:c-1,1:c-1,band));
+<span class="comment">%top right</span>
+A1(1:c-1,n1-(c-2):end,band)=fliplr(A(1:c-1,n-(c-2):n,band));
+A1(1:c-1,n1-(c-2):end,band)=flipud(A1(1:c-1,n1-(c-2):end,band));
+<span class="comment">%bottom left</span>
+A1(m1-(c-2):end,1:c-1,band)=fliplr(A(m-(c-2):end,c:c+(c-2),band));
+A1(m1-(c-2):end,1:c-1,band)=flipud(A1(m1-(c-2):end,1:c-1,band));
+<span class="comment">%bottom right</span>
+A1(m1-(c-2):end,n1-(c-2):end,band)=fliplr(A(m-(c-2):end,n-(c-2):n,band));
+A1(m1-(c-2):end,n1-(c-2):end,band)=flipud(A1(m1-(c-2):end,n1-(c-2):end,band));
+
+
+<span class="comment">%Getting the middle image</span>
+<span class="keyword">for</span> i= c: (m1+1-c)
+    <span class="keyword">for</span> j=c:(n1+1-c)
+
+        A1(i,j,band) = double(A(i-(c-1),j-(c-1),band)) ; <span class="comment">% W-block of the image. Only one band.</span>
+
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">%%Sliding window</span>
+
+<span class="keyword">for</span> i= c: (m1+1-c)
+    <span class="keyword">for</span> j=c:(n1+1-c)
+
+        block = double( A1( i - (c-1): i+ (c-1) , j - (c-1): j+ (c-1), band ) ) ; <span class="comment">% W-block of the image. Only one band.</span>
+        block=histeq_contrast(block,W,limit);
+        B=block(ceil(numel(block)/2));
+
+<span class="comment">%         B=mean(block(:));</span>
+       output(i-(c-1),j-(c-1),band) =B ;
+        <span class="keyword">if</span> getappdata(f,<span class="string">'canceling'</span>)
+            <span class="keyword">break</span>
+        <span class="keyword">end</span>
+      last=n1+1-c;
+    <span class="comment">% Update waitbar and message</span>
+      waitbar(i/last,f,sprintf(<span class="string">'Sliding window is running row %d of %d'</span>,i,last))
+<span class="comment">%     output(i,j,band) =B ;</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+delete(f)
+<span class="comment">% for i= c: (m1+1-c)</span>
+<span class="comment">%     for j=c:(n1+1-c)</span>
+<span class="comment">%</span>
+<span class="comment">%         output(i-(c-1),j-(c-1),band) = double(A1(i,j,band)) ; % W-block of the image. Only one band.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%     end</span>
+<span class="comment">% end</span>
+
+
+<span class="keyword">if</span> o&gt;1
+    <span class="comment">%avoid divide-by-zero by replacing 0 with nan</span>
+    tempImage = A(:,:,band);
+    tempImage(tempImage == 0) = nan;
+
+
+      <span class="keyword">for</span> b=1:o
+          <span class="keyword">if</span> b ~= band
+              output(:,:, b) = ( output(:,:,band)./tempImage).*A(:,:,b);
+               <span class="keyword">if</span> output(:,:, b)==0
+                  output(:,:, b)=0.5;
+               <span class="keyword">end</span><span class="comment">%keeping the ratio same</span>
+          <span class="keyword">end</span>
+
+      <span class="keyword">end</span>
+
+    <span class="comment">%now replace all nan values with 0</span>
+     output(isnan( output)) = 0;
+
+<span class="keyword">end</span>
+<span class="keyword">if</span> strcmp(byte,<span class="string">'y'</span>)
+     output=uint8(output);
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">end</span>
+<span class="keyword">function</span> eq=histeq_contrast(A,block,limit)
+<span class="comment">% A=imread("Cameraman.tif");</span>
+limit=round((limit*block^2));
+
+x=unique(A);
+<span class="comment">% limit=(1-limit)*100;</span>
+<span class="comment">% limit=round((limit*(block^2)/length(x)));</span>
+<span class="comment">% s=sort(A);</span>
+out = (histc(A(:),x));
+sum=0;
+[r,c,b]=size(A);
+<span class="comment">% B=A(:);</span>
+no_bins=256;
+freq=zeros(256,1);
+
+ <span class="keyword">for</span> i=1:size(A,1)
+        <span class="keyword">for</span> j=1:size(A,2)
+            value = A(i,j);
+            freq(value+1) = freq(value+1)+1 ;
+<span class="comment">%             if freq(value+1)&gt;limit</span>
+<span class="comment">%                 sum1=(freq(value+1)-limit)+sum1;</span>
+<span class="comment">%                 freq(value+1)=limit;</span>
+<span class="comment">%             end% Frequency</span>
+        <span class="keyword">end</span>
+ <span class="keyword">end</span>
+<span class="comment">% %clippping histogram</span>
+<span class="keyword">for</span> i= 1:max(A(:))
+    <span class="keyword">if</span> freq(i+1)&gt;limit
+        f=freq(i+1)-limit;
+        freq(i+1)=limit;
+        sum=sum+f;
+    <span class="keyword">else</span>
+        freq(i+1)=freq(i+1);
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+average=sum/length(x);
+new_freq=zeros(256,1);
+<span class="comment">%add the average between all frequency</span>
+<span class="keyword">for</span> i= 1:max(A(:))
+    <span class="keyword">if</span> freq(i+1)&lt;limit &amp;&amp; freq(i)&gt;0
+     new_freq(i+1)=freq(i+1)+average;
+     <span class="keyword">if</span> new_freq(i+1)&gt;limit
+         new_freq(i+1)=limit;
+
+     <span class="keyword">else</span>
+       new_freq(i+1)= new_freq(i+1);
+     <span class="keyword">end</span>
+    <span class="keyword">else</span>
+    new_freq(i+1)=freq(i+1);
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+cum=zeros(256,1);
+probc=zeros(256,1);
+output = zeros(256,1);
+sum=0;
+eq=zeros(r*c,1);
+numOfPixels=r*c;
+maxGray=256;
+<span class="comment">% maxGray=max(A(:));</span>
+ <span class="keyword">for</span> i = 1:max(A(:))
+        sum=sum+new_freq(i+1);
+        cum(i)=sum; <span class="comment">% cumulative frequency</span>
+        probc(i)=cum(i)/numOfPixels; <span class="comment">% Normalized Frequency</span>
+        output(i) = round(probc(i)*maxGray); <span class="comment">%Hist Equalized pixel value</span>
+ <span class="keyword">end</span>
+    t=1:no_bins;
+<span class="comment">% t=0:max(A(:));</span>
+<span class="comment">%----Mapping the original pixels to hist equalized pixel value</span>
+    <span class="keyword">for</span> i=1:max(A(:))
+                eq(A==t(i))=output(i);
+    <span class="keyword">end</span>
+        eq = uint8(reshape(eq,size(A)));
+
+<span class="comment">%         imshow(eq,[]);</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in clahe_cvip (line 67)
+[m,n,o] = size(A);
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%%...................Contrast Limited Adaptve Histogram Equialization..........
+%%%The main aim of the function is to do adaptive histogram equilization
+%%%using control the contrast.The algorithm has been developed using   
+%%%sliding window method.The results of the output image depends on the
+%%%contrast limit and the block size.the DCT symmetry has been applied to
+%%%border edges to get rid of the undesirable pixels.
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% outImage = clahe_cvip( inImage,block size, band, clipping limit,'n')
+%   
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+% 'inImage'       Input image of MxN or MxNxB size. The input image can
+%                 be of uint8 or double class. 
+% 'block size'    Specify a block size.It should be an odd number.
+%                      
+% 'band'          Specify a band 
+%                 [band=1=> Red band,band=2 => Green band,band=2 => Blue band
+%                                                             
+% 'clipping limit' Specify a clipping limit form 0 to 1 to limit the contrast 
+%                       
+%                                                             
+%  'byte'          If user wants the output as byte (0-255)  'y', otherwise 'n'
+%                  
+
+% 
+%
+% Output Parameter include :  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% 'outImage'      Output  subimage
+%                                         
+%
+% Examples :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%        I = imread('cam.bmp');      %original image
+%        Output=Clahe_cvip(I,33,1,0.2,'y')
+%        figure; imshow(Output);
+%                                                                      
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications
+% with MATLAB and CVIPtools, 3rd Edition.
+%Reference
+% 2. Pizer, Stephen M. "Contrast-limited adaptive histogram equalization: Speed and effectiveness stephen m. pizer, r. eugene johnston, james p. ericksen, bonnie c. yankaskas, keith e. muller medical image display research group." Proceedings of the First Conference on Visualization in Biomedical Computing, Atlanta, Georgia. Vol. 337. 1990. 
+
+% 3. Reza, Ali M. "Realization of the contrast limited adaptive histogram equalization (CLAHE) for real-time image enhancement." Journal of VLSI signal processing systems for signal, image and video technology 38.1 (2004): 35-44. 
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%%.....
+
+%==========================================================================
+%
+%           Author:                 Hridoy Biswas
+%           Initial coding date:    9/15/2020
+%           Latest update date:     10/22/2020
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2019-2020 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function output=clahe_cvip(A,Block,band,limit,byte)
+
+tic
+[m,n,o] = size(A);
+A=double(A);
+
+W = Block;
+
+    
+if rem(Block, 2) == 0
+    opts = struct('WindowStyle','modal',... 
+              'Interpreter','tex');
+warndlg('Please select an odd number for the block size ','Warning',opts);
+     %errordlg(['Selected block size is not an odd number! Select an odd number' ...
+       % ' and try again.'], 'CLAHE Error', 'modal');
+
+else
+   f = waitbar(0,'CLAHE','Name','CLAHE is running...',...
+    'CreateCancelBtn','setappdata(gcbf,''canceling'',1)');
+
+setappdata(f,'canceling',0);
+c = (W+1)/2;    % coordinate of the center pixel of the window
+output = double(A);
+m1=m+(c*2-2);
+n1=n+(c*2-2);
+A1=zeros(m1,n1);
+% A2=zeros(m,n);
+%%
+%%Mirror the edge
+% ro=(m-(c-1))-(c-2);%row
+% co=(n-(c-1))-(c-2);
+
+A1(1:c-1,c:n1-(c-1),band)=flipud( A(1:c-1,1:n,band));%top row
+A1(c:m1-(c-1),1:c-1,band)=fliplr( A(1:m,c:c+(c-2),band));%left corner
+A1(m1-(c-2):end,c:n1-(c-1),band)=flipud( A(m-(c-2):end,1:n,band));%bottom row
+A1(c:m1-(c-1),(n1-(c-2)):end,band)=fliplr( A(1:m,n-(c-2):n));%top right
+%%
+%%Corner Mirror
+%top left
+A1(1:c-1,1:c-1,band)=fliplr(A(1:c-1,c:c+c-2,band));
+A1(1:c-1,1:c-1,band)=flipud( A1(1:c-1,1:c-1,band));
+%top right
+A1(1:c-1,n1-(c-2):end,band)=fliplr(A(1:c-1,n-(c-2):n,band));
+A1(1:c-1,n1-(c-2):end,band)=flipud(A1(1:c-1,n1-(c-2):end,band));
+%bottom left
+A1(m1-(c-2):end,1:c-1,band)=fliplr(A(m-(c-2):end,c:c+(c-2),band));
+A1(m1-(c-2):end,1:c-1,band)=flipud(A1(m1-(c-2):end,1:c-1,band));
+%bottom right
+A1(m1-(c-2):end,n1-(c-2):end,band)=fliplr(A(m-(c-2):end,n-(c-2):n,band));
+A1(m1-(c-2):end,n1-(c-2):end,band)=flipud(A1(m1-(c-2):end,n1-(c-2):end,band));
+
+                  
+%Getting the middle image
+for i= c: (m1+1-c)
+    for j=c:(n1+1-c) 
+    
+        A1(i,j,band) = double(A(i-(c-1),j-(c-1),band)) ; % W-block of the image. Only one band.
+        
+    
+    end
+end
+
+%%Sliding window
+
+for i= c: (m1+1-c)
+    for j=c:(n1+1-c) 
+        
+        block = double( A1( i - (c-1): i+ (c-1) , j - (c-1): j+ (c-1), band ) ) ; % W-block of the image. Only one band.
+        block=histeq_contrast(block,W,limit);
+        B=block(ceil(numel(block)/2));
+        
+%         B=mean(block(:));
+       output(i-(c-1),j-(c-1),band) =B ;
+        if getappdata(f,'canceling')
+            break
+        end
+      last=n1+1-c;
+    % Update waitbar and message
+      waitbar(i/last,f,sprintf('Sliding window is running row %d of %d',i,last))   
+%     output(i,j,band) =B ;
+    end
+end
+delete(f)
+% for i= c: (m1+1-c)
+%     for j=c:(n1+1-c) 
+%     
+%         output(i-(c-1),j-(c-1),band) = double(A1(i,j,band)) ; % W-block of the image. Only one band.
+%         
+%        
+%     end
+% end
+
+
+if o>1
+    %avoid divide-by-zero by replacing 0 with nan
+    tempImage = A(:,:,band);
+    tempImage(tempImage == 0) = nan;
+
+
+      for b=1:o
+          if b ~= band
+              output(:,:, b) = ( output(:,:,band)./tempImage).*A(:,:,b);
+               if output(:,:, b)==0
+                  output(:,:, b)=0.5;
+               end%keeping the ratio same
+          end
+          
+      end
+
+    %now replace all nan values with 0
+     output(isnan( output)) = 0;
+     
+end
+if strcmp(byte,'y')
+     output=uint8(output);
+end
+end
+
+end
+function eq=histeq_contrast(A,block,limit)
+% A=imread("Cameraman.tif");
+limit=round((limit*block^2));
+
+x=unique(A);
+% limit=(1-limit)*100;
+% limit=round((limit*(block^2)/length(x)));
+% s=sort(A);
+out = (histc(A(:),x));
+sum=0;
+[r,c,b]=size(A);
+% B=A(:);
+no_bins=256;
+freq=zeros(256,1);
+
+ for i=1:size(A,1)
+        for j=1:size(A,2)
+            value = A(i,j);
+            freq(value+1) = freq(value+1)+1 ;
+%             if freq(value+1)>limit
+%                 sum1=(freq(value+1)-limit)+sum1;
+%                 freq(value+1)=limit;
+%             end% Frequency
+        end
+ end
+% %clippping histogram
+for i= 1:max(A(:))
+    if freq(i+1)>limit
+        f=freq(i+1)-limit;
+        freq(i+1)=limit;
+        sum=sum+f;
+    else
+        freq(i+1)=freq(i+1);
+    end
+
+end
+average=sum/length(x);
+new_freq=zeros(256,1);
+%add the average between all frequency
+for i= 1:max(A(:))
+    if freq(i+1)<limit && freq(i)>0
+     new_freq(i+1)=freq(i+1)+average;
+     if new_freq(i+1)>limit
+         new_freq(i+1)=limit;
+     
+     else
+       new_freq(i+1)= new_freq(i+1);
+     end
+    else
+    new_freq(i+1)=freq(i+1);
+     
+    end
+end
+cum=zeros(256,1);
+probc=zeros(256,1);
+output = zeros(256,1);
+sum=0;
+eq=zeros(r*c,1);
+numOfPixels=r*c;
+maxGray=256;
+% maxGray=max(A(:));
+ for i = 1:max(A(:))
+        sum=sum+new_freq(i+1);  
+        cum(i)=sum; % cumulative frequency
+        probc(i)=cum(i)/numOfPixels; % Normalized Frequency
+        output(i) = round(probc(i)*maxGray); %Hist Equalized pixel value
+ end
+    t=1:no_bins;
+% t=0:max(A(:));
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHMapping the original pixels to hist equalized pixel value
+    for i=1:max(A(:))
+                eq(A==t(i))=output(i);
+    end
+        eq = uint8(reshape(eq,size(A)));
+        
+%         imshow(eq,[]);
+end
+##### SOURCE END #####
+--></body></html>

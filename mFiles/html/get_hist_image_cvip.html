@@ -1,0 +1,357 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>get_hist_image_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="get_hist_image_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> get_hist_image_cvip(image)
+<span class="comment">% GET_HIST_IMAGE_CVIP - Displays the histogram of an input image.</span>
+<span class="comment">% Z = GET_HIST_IMAGE_CVIP(X) displays the histogram of the input image</span>
+<span class="comment">% X.It displays the single histogram if the input image is gray scale</span>
+<span class="comment">% image and displays separate histogram for each band if the input image</span>
+<span class="comment">% is color image.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax:</span>
+<span class="comment">% -------</span>
+<span class="comment">% Z = GET_HIST_IMAGE_CVIP(X)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%  'X'      Input Image.</span>
+<span class="comment">%</span>
+<span class="comment">%   The histogram of the image are adaptive in nature i.e. it automatically</span>
+<span class="comment">%   changes x-axis and y-axis range depending upon the values in the input</span>
+<span class="comment">%   image. It supports uint8, uint32 and double type image and indexed</span>
+<span class="comment">%   image.</span>
+<span class="comment">%</span>
+<span class="comment">% Example 1 :</span>
+<span class="comment">% ---------</span>
+<span class="comment">%   Displays the histogram of an input grayscale image:</span>
+<span class="comment">%</span>
+<span class="comment">%                   X = imread('Cam.bmp'); % Grayscale Image</span>
+<span class="comment">%                   figure;get_hist_image_cvip(X);</span>
+<span class="comment">%</span>
+<span class="comment">% Example 2 :</span>
+<span class="comment">% ---------</span>
+<span class="comment">%   Displays histogram of an input color image:</span>
+<span class="comment">%</span>
+<span class="comment">%                   X = imread('Car.bmp');</span>
+<span class="comment">%                   figure;get_hist_image_cvip(X); % RGB Image</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%   See also, histeq_cvip, gray_linear_cvip, hist_create_cvip,</span>
+<span class="comment">%   hist_spec_cvip, hist_shrink_cvip, hist_slide_cvip, hist_stretch_cvip,</span>
+<span class="comment">%   local_hist_eq_cvip, unsharp_cvip.</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications</span>
+<span class="comment">% with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Deependra Mishra</span>
+<span class="comment">%           Initial coding date:    03/17/2017</span>
+<span class="comment">%           Updated by:             Joey Olden</span>
+<span class="comment">%           Latest update date:     10/15/2019</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2018 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">% Revision History</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.4  10/10/2019  17:13:55  jolden</span>
+ <span class="comment">% removing the remapping/hist-stretch of the input image</span>
+ <span class="comment">% changing the xlimits to be based on range of data</span>
+ <span class="comment">% always implementing 256 total bins</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.3  05/32/2019  09:59:33  jucuell</span>
+ <span class="comment">% modifying y limits of each histogram to the 20% more of the maximum.</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.2  05/12/2019  15:14:56  jucuell</span>
+ <span class="comment">% changing green color and keeping all image axes between 0 and 255,</span>
+ <span class="comment">% displaying xticks each 32 gray levels until 255</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.1  03/17/2017  15:21:14  demish</span>
+ <span class="comment">% function creating and initial testing.</span>
+<span class="comment">%</span>
+
+<span class="comment">% Determining the bin width based on the data type fo the image</span>
+    <span class="keyword">if</span> isa(image,<span class="string">'uint8'</span>)
+        minimum = 0;
+        maximum = 255;
+        binwidth = 1;
+    <span class="keyword">elseif</span> sum(sum(mod(image,1))) == 0
+        minimum = min(image(:));
+        maximum = max(image(:));
+        binwidth = 1;
+    <span class="keyword">else</span>
+        minimum = min(image(:));
+        maximum = max(image(:));
+        range = abs(maximum-minimum);
+        binwidth = range/255;
+    <span class="keyword">end</span>
+
+<span class="comment">%---Creates the histogram of an input image-----------------</span>
+    <span class="keyword">if</span> size(image,3)==3
+        r=image(:,:,1);
+        g=image(:,:,2);
+        b=image(:,:,3);
+
+        <span class="comment">%Red Band</span>
+        subplot(3,1,1);
+        set(subplot(3,1,1),<span class="string">'Color'</span>,<span class="string">'black'</span>);
+        hold <span class="string">on</span>;
+        histogram(r,<span class="string">'BinWidth'</span>,binwidth,<span class="string">'FaceColor'</span>,<span class="string">'r'</span>,<span class="string">'EdgeColor'</span>, <span class="string">'r'</span>);
+        title(<span class="string">'\fontsize{12}{\color{red}Red Band}'</span>);
+        xlim([minimum maximum]);
+        <span class="comment">% limits the y-axis value depending upon the no. of pixels associated with</span>
+        <span class="comment">% particular pixel value</span>
+
+        <span class="comment">%Green Band</span>
+        subplot(3,1,2);
+        set(subplot(3,1,2),<span class="string">'Color'</span>,<span class="string">'k'</span>);
+        hold <span class="string">on</span>;
+        histogram(g,<span class="string">'BinWidth'</span>,binwidth,<span class="string">'FaceColor'</span>,[0.0157,0.5098,0.0157],<span class="keyword">...</span>
+                  <span class="string">'EdgeColor'</span>, [0.0157,0.5098,0.0157]);
+        title(<span class="string">'\fontsize{12}{\color[rgb]{0.0157 0.5098 0.0157}Green Band}'</span>);
+        xlim([minimum maximum]);
+        <span class="comment">% limits the y-axis value depending upon the no. of pixels associated with</span>
+        <span class="comment">% particular pixel value</span>
+        ylabel(<span class="string">'Total No. of Pixels'</span>);
+
+        <span class="comment">%Blue Band</span>
+        subplot(3,1,3);
+        set(subplot(3,1,3),<span class="string">'Color'</span>,<span class="string">'k'</span>);
+        hold <span class="string">on</span>;
+        histogram(b,<span class="string">'BinWidth'</span>,binwidth,<span class="string">'FaceColor'</span>,<span class="string">'b'</span>,<span class="string">'EdgeColor'</span>, <span class="string">'b'</span>);
+        title(<span class="string">'\fontsize{12}{\color{blue}Blue Band}'</span>);
+        xlim([minimum maximum]);
+        <span class="comment">% limits the y-axis value depending upon the no. of pixels associated with</span>
+        <span class="comment">% particular pixel value</span>
+        xlabel(<span class="string">'No. of Gray levels'</span>);
+    <span class="keyword">elseif</span> size(image,3)==1
+        set(gca,<span class="string">'Color'</span>,<span class="string">'k'</span>);
+        hold <span class="string">on</span>;
+        histogram(image,<span class="string">'BinWidth'</span>,binwidth,<span class="string">'FaceColor'</span>,<span class="string">'white'</span>,<span class="string">'EdgeColor'</span>, <span class="string">'white'</span>);
+        <span class="comment">% limits the x-axis value depending upon the maximum pixel value of the image</span>
+        xlim([minimum maximum]);
+        xlabel(<span class="string">'No. of Gray levels'</span>);
+        ylabel(<span class="string">'Total No. of Pixels'</span>);
+    <span class="keyword">else</span>
+        error(<span class="string">'Input Image error: Enter single band or 3 band image'</span>);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in get_hist_image_cvip (line 76)
+    if isa(image,'uint8')
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function get_hist_image_cvip(image)
+% GET_HIST_IMAGE_CVIP - Displays the histogram of an input image.
+% Z = GET_HIST_IMAGE_CVIP(X) displays the histogram of the input image
+% X.It displays the single histogram if the input image is gray scale
+% image and displays separate histogram for each band if the input image
+% is color image. 
+%
+% Syntax:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% Z = GET_HIST_IMAGE_CVIP(X)
+%
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%  'X'      Input Image. 
+%    
+%   The histogram of the image are adaptive in nature i.e. it automatically
+%   changes x-axis and y-axis range depending upon the values in the input
+%   image. It supports uint8, uint32 and double type image and indexed
+%   image.
+%
+% Example 1 :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%   Displays the histogram of an input grayscale image:
+%
+%                   X = imread('Cam.bmp'); % Grayscale Image
+%                   figure;get_hist_image_cvip(X);
+%
+% Example 2 :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%   Displays histogram of an input color image:
+%
+%                   X = imread('Car.bmp');
+%                   figure;get_hist_image_cvip(X); % RGB Image
+%
+%
+%   See also, histeq_cvip, gray_linear_cvip, hist_create_cvip,
+%   hist_spec_cvip, hist_shrink_cvip, hist_slide_cvip, hist_stretch_cvip,
+%   local_hist_eq_cvip, unsharp_cvip.
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications
+% with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Deependra Mishra
+%           Initial coding date:    03/17/2017
+%           Updated by:             Joey Olden
+%           Latest update date:     10/15/2019
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2018 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+% Revision History
+%
+ % Revision 1.4  10/10/2019  17:13:55  jolden
+ % removing the remapping/hist-stretch of the input image
+ % changing the xlimits to be based on range of data
+ % always implementing 256 total bins
+%
+ % Revision 1.3  05/32/2019  09:59:33  jucuell
+ % modifying y limits of each histogram to the 20% more of the maximum.
+%
+ % Revision 1.2  05/12/2019  15:14:56  jucuell
+ % changing green color and keeping all image axes between 0 and 255,
+ % displaying xticks each 32 gray levels until 255
+%
+ % Revision 1.1  03/17/2017  15:21:14  demish
+ % function creating and initial testing.
+%
+
+% Determining the bin width based on the data type fo the image
+    if isa(image,'uint8')
+        minimum = 0;
+        maximum = 255;
+        binwidth = 1;
+    elseif sum(sum(mod(image,1))) == 0
+        minimum = min(image(:));
+        maximum = max(image(:));
+        binwidth = 1;
+    else
+        minimum = min(image(:));
+        maximum = max(image(:));
+        range = abs(maximum-minimum);
+        binwidth = range/255;
+    end
+ 
+%REPLACE_WITH_DASH_DASH-Creates the histogram of an input imageREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-    
+    if size(image,3)==3
+        r=image(:,:,1);
+        g=image(:,:,2);
+        b=image(:,:,3);
+        
+        %Red Band
+        subplot(3,1,1);
+        set(subplot(3,1,1),'Color','black');
+        hold on;
+        histogram(r,'BinWidth',binwidth,'FaceColor','r','EdgeColor', 'r');
+        title('\fontsize{12}{\color{red}Red Band}');
+        xlim([minimum maximum]);
+        % limits the y-axis value depending upon the no. of pixels associated with
+        % particular pixel value   
+        
+        %Green Band
+        subplot(3,1,2);
+        set(subplot(3,1,2),'Color','k');
+        hold on;
+        histogram(g,'BinWidth',binwidth,'FaceColor',[0.0157,0.5098,0.0157],...
+                  'EdgeColor', [0.0157,0.5098,0.0157]);
+        title('\fontsize{12}{\color[rgb]{0.0157 0.5098 0.0157}Green Band}');
+        xlim([minimum maximum]);
+        % limits the y-axis value depending upon the no. of pixels associated with
+        % particular pixel value   
+        ylabel('Total No. of Pixels');
+        
+        %Blue Band
+        subplot(3,1,3);
+        set(subplot(3,1,3),'Color','k');
+        hold on;
+        histogram(b,'BinWidth',binwidth,'FaceColor','b','EdgeColor', 'b');
+        title('\fontsize{12}{\color{blue}Blue Band}');
+        xlim([minimum maximum]);
+        % limits the y-axis value depending upon the no. of pixels associated with
+        % particular pixel value   
+        xlabel('No. of Gray levels');   
+    elseif size(image,3)==1
+        set(gca,'Color','k');
+        hold on;
+        histogram(image,'BinWidth',binwidth,'FaceColor','white','EdgeColor', 'white');
+        % limits the x-axis value depending upon the maximum pixel value of the image        
+        xlim([minimum maximum]);
+        xlabel('No. of Gray levels');
+        ylabel('Total No. of Pixels');
+    else
+        error('Input Image error: Enter single band or 3 band image');
+    end
+end
+
+##### SOURCE END #####
+--></body></html>

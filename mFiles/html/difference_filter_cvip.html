@@ -1,0 +1,241 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>difference_filter_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="difference_filter_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> difference = difference_filter_cvip(input_image , mask_type)
+<span class="comment">% DIFFERENCE_FILTER_CVIP - Performs a difference/emboss filtering operation.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% ------</span>
+<span class="comment">% difference = difference_filter_cvip(input_image , mask_type)</span>
+<span class="comment">%</span>
+<span class="comment">% Input parameters include:</span>
+<span class="comment">% --------------------------</span>
+<span class="comment">%  'input_image'   image of M*N size.</span>
+<span class="comment">%</span>
+<span class="comment">%  'Mask_type'     can choose any mask from 1 to 8.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output parameter include:</span>
+<span class="comment">% --------------------------</span>
+<span class="comment">% 'difference'    output image enhanced in particular direction depending on</span>
+<span class="comment">%                 the type of mask.</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%     input_image = imread('cam.bmp');</span>
+<span class="comment">%     mask_type = 3;</span>
+<span class="comment">%     difference = difference_filter_cvip(input_image,3);</span>
+<span class="comment">%     figure;imshow(difference,[]);</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Lakshmi Gorantla</span>
+<span class="comment">%           Initial coding date:    06/27/2017</span>
+<span class="comment">%           Latest update date:     06/27/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2017 Scott Umbaugh and SIUE</span>
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="keyword">if</span> (~isscalar(mask_type))
+    error(<span class="string">'mask_type should be a scalar. Possible values are 1,2,3,4,5,6,7 or 8'</span>);
+<span class="keyword">end</span>
+[m,n,o] = size(input_image);
+Mask1 = [0 1 0; 0 1 0; 0 -1 0];
+Mask2 = [0 0 0; 1 1 -1; 0 0 0];
+Mask3 = [1 0 0; 0 1 0; 0 0 -1];
+Mask4 = [0 0 1; 0 1 0; -1 0 0];
+Mask5 = [0 -1 0; 0 1 0; 0 1 0];
+Mask6 = [0 0 0; -1 1 1; 0 0 0];
+Mask7 = [-1 0 0; 0 1 0; 0 0 1];
+Mask8 = [0 0 -1; 0 1 0; 1 0 0];
+
+
+<span class="keyword">switch</span> mask_type
+    <span class="keyword">case</span> 1
+        mask = Mask1;
+    <span class="keyword">case</span> 2
+        mask = Mask2;
+    <span class="keyword">case</span> 3
+        mask = Mask3;
+    <span class="keyword">case</span> 4
+        mask = Mask4;
+    <span class="keyword">case</span> 5
+        mask = Mask5;
+    <span class="keyword">case</span> 6
+        mask = Mask6;
+    <span class="keyword">case</span> 7
+        mask = Mask7;
+    <span class="keyword">case</span> 8
+        mask = Mask8;
+    <span class="keyword">otherwise</span>
+        error(<span class="string">'mask_type should be 1,2,3,4,5,6,7, or 8'</span>);
+<span class="keyword">end</span>
+input_image = double(input_image);
+difference = zeros(m,n,o);
+
+<span class="keyword">for</span> i=1:o
+    difference(:,:,i) = conv2(input_image(:,:,i), mask,<span class="string">'same'</span>);
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in difference_filter_cvip (line 41)
+if (~isscalar(mask_type))
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function difference = difference_filter_cvip(input_image , mask_type)
+% DIFFERENCE_FILTER_CVIP - Performs a difference/emboss filtering operation.
+%  
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% difference = difference_filter_cvip(input_image , mask_type)
+%
+% Input parameters include:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%  'input_image'   image of M*N size.
+%
+%  'Mask_type'     can choose any mask from 1 to 8.
+%   
+%   
+% Output parameter include:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% 'difference'    output image enhanced in particular direction depending on
+%                 the type of mask.
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%     input_image = imread('cam.bmp');
+%     mask_type = 3;
+%     difference = difference_filter_cvip(input_image,3);
+%     figure;imshow(difference,[]);
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+% 
+%           Author:                 Lakshmi Gorantla
+%           Initial coding date:    06/27/2017
+%           Latest update date:     06/27/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2017 Scott Umbaugh and SIUE
+%==========================================================================
+%
+if (~isscalar(mask_type))
+    error('mask_type should be a scalar. Possible values are 1,2,3,4,5,6,7 or 8');
+end
+[m,n,o] = size(input_image);
+Mask1 = [0 1 0; 0 1 0; 0 -1 0];
+Mask2 = [0 0 0; 1 1 -1; 0 0 0];
+Mask3 = [1 0 0; 0 1 0; 0 0 -1];
+Mask4 = [0 0 1; 0 1 0; -1 0 0];
+Mask5 = [0 -1 0; 0 1 0; 0 1 0];
+Mask6 = [0 0 0; -1 1 1; 0 0 0];
+Mask7 = [-1 0 0; 0 1 0; 0 0 1];
+Mask8 = [0 0 -1; 0 1 0; 1 0 0];
+
+
+switch mask_type
+    case 1
+        mask = Mask1;
+    case 2
+        mask = Mask2;
+    case 3
+        mask = Mask3;
+    case 4 
+        mask = Mask4;
+    case 5
+        mask = Mask5;
+    case 6
+        mask = Mask6;
+    case 7 
+        mask = Mask7;
+    case 8
+        mask = Mask8;
+    otherwise
+        error('mask_type should be 1,2,3,4,5,6,7, or 8');
+end
+input_image = double(input_image);
+difference = zeros(m,n,o);
+
+for i=1:o
+    difference(:,:,i) = conv2(input_image(:,:,i), mask,'same');
+end
+
+end
+
+##### SOURCE END #####
+--></body></html>

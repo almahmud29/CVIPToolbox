@@ -1,0 +1,508 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>halftone_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="halftone_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [ out_img ] = halftone_cvip( input_img, method , varargin)
+<span class="comment">% HALFTONE_CVIP - convert image to binary with halftone technique.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax:</span>
+<span class="comment">% -------</span>
+<span class="comment">% [ out_img ] = halftone_cvip( input_img, method , varargin)</span>
+<span class="comment">%</span>
+<span class="comment">%  Description :</span>
+<span class="comment">%  -------------</span>
+<span class="comment">%</span>
+<span class="comment">%  This function converts the image to binary using one of the following</span>
+<span class="comment">%  halftoning techniques:</span>
+<span class="comment">%</span>
+<span class="comment">%  # Floyd&#8211;steinberg dithering</span>
+<span class="comment">%  # Bayer's ordered dither</span>
+<span class="comment">%  # Clustered-dot-ordered</span>
+<span class="comment">%  # Simple threshold</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%  method 4 (simple threshold) needs an extra argument, a number between</span>
+<span class="comment">%  0 and 1, which determines the threshold level. Based on the data type</span>
+<span class="comment">%  of the input image, this number is multiplied to the full range of the</span>
+<span class="comment">%  image to find the threshold level.</span>
+<span class="comment">%</span>
+<span class="comment">%  Regardless of the method used, the full range of the image is reported in</span>
+<span class="comment">%  the commmand window as the value of the variable _max_val_</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%  'input_img'      The input image. Can be multi band.</span>
+<span class="comment">%</span>
+<span class="comment">%   'method'        an integer between 1,2,3,4 corresponsing</span>
+<span class="comment">%                   to FS, Bayer, Cluster, and simple threshold</span>
+<span class="comment">%                   methods.</span>
+<span class="comment">%  'varargin'       An extra input which is used only when method is</span>
+<span class="comment">%                   simple threshold (4). This value is the threshold</span>
+<span class="comment">%                   level and is a rational number between [0,1];</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%   'Output'        Output Image.</span>
+<span class="comment">%</span>
+<span class="comment">%  Example :</span>
+<span class="comment">%  -------</span>
+<span class="comment">%             img = imread('Stripey.jpg');</span>
+<span class="comment">%             method = 4;</span>
+<span class="comment">%             varargin = 0.3;</span>
+<span class="comment">%             [ out_img ] = halftone_cvip( img ,method,varargin);</span>
+<span class="comment">%             figure; imshow(out_img);</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">%  1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    7/11/2017</span>
+<span class="comment">%           Latest update date:     7/14/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+set_max_val(class(input_img));
+d = size(input_img,3);
+out_img = zeros(size(input_img));
+<span class="keyword">for</span> band=1:d
+    <span class="keyword">switch</span> method
+        <span class="keyword">case</span> 1
+            out_img(:,:,band) = FS_alg(input_img(:,:,band));
+        <span class="keyword">case</span> 2
+            out_img(:,:,band) = Bayer(input_img(:,:,band));
+        <span class="keyword">case</span> 3
+            out_img(:,:,band) = Cluster(input_img(:,:,band));
+        <span class="keyword">case</span> 4
+            <span class="keyword">if</span> nargin ~= 3
+                error(<span class="string">'threshold value should also be given as input.'</span>);
+            <span class="keyword">end</span>
+            val = varargin{1};
+            out_img(:,:,band) = thresh(input_img(:,:,band), val);
+     <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> out_I = thresh(I, val)
+<span class="keyword">global</span> max_val
+    I = double(I)/max_val;
+    out_I = I &gt;= val;
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> out_I = Bayer(I)
+<span class="keyword">global</span> max_val
+
+	U = ones(3);
+	D = [8 4 5;
+		  3 0 1;
+		  7 2 6];
+
+	S = [4*D 4*D+2*U;
+		  4*D+3*U 4*D+U];
+      <span class="comment">% Size of image and S</span>
+si = size(I);
+ss = size(S);
+
+<span class="comment">% Create an image with the same size as I,</span>
+<span class="comment">% which has the matrix S replicated. Replicate it using the ceiling</span>
+<span class="comment">% of their size ratio and then discard the last extra elements (if any).</span>
+ts = ceil(si ./ ss);
+SImg = repmat(S, ts);
+SImg = SImg(1:si(1), 1:si(2));
+
+<span class="comment">% Shift the values by 0.5 so that we can compare without floor.</span>
+SImg = SImg + 0.5;
+
+<span class="comment">% Number of levels N</span>
+N = max(S(:)) - min(S(:)) + 2;
+<span class="comment">% Quantization step and quantized image (with values in 0,1,2,...,N-1)</span>
+D = max_val ./ (N-1);
+Q = double(I) ./ D;
+
+<span class="comment">% Threshold image</span>
+<span class="comment">% Pixels with value greater than that of S (at the same position) become 1,</span>
+<span class="comment">% the rest 0</span>
+out_I = Q &gt; SImg;
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> out_I = Cluster(I)
+<span class="keyword">global</span> max_val
+S = [34 29 17 21 30 35;
+		 28 14 9 16 20 31;
+		 13 8 4 5 15 19;
+		 12 3 0 1 10 18;
+		 27 7 2 6 23 24;
+		 33 26 11 22 25 32];
+
+<span class="comment">% Size of image and S</span>
+si = size(I);
+ss = size(S);
+
+<span class="comment">% Create an image with the same size as I,</span>
+<span class="comment">% which has the matrix S replicated. Replicate it using the ceiling</span>
+<span class="comment">% of their size ratio and then discard the last extra elements (if any).</span>
+ts = ceil(si ./ ss);
+SImg = repmat(S, ts);
+SImg = SImg(1:si(1), 1:si(2));
+
+<span class="comment">% Shift the values by 0.5 so that we can compare without floor.</span>
+SImg = SImg + 0.5;
+
+<span class="comment">% Number of levels N</span>
+N = max(S(:)) - min(S(:)) + 2;
+<span class="comment">% Quantization step and quantized image (with values in 0,1,2,...,N-1)</span>
+D = max_val ./ (N-1);
+Q = double(I) ./ D;
+
+<span class="comment">% Threshold image</span>
+<span class="comment">% Pixels with value greater than that of S (at the same position) become 1,</span>
+<span class="comment">% the rest 0</span>
+out_I = Q &gt; SImg;
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> out_I = FS_alg(I)
+<span class="keyword">global</span> max_val
+    [m,n] = size(I);
+    out_I = double(I)/max_val;
+    <span class="keyword">for</span> i=1:m
+        <span class="keyword">for</span> j=1:n
+            old_val = out_I(i,j);
+<span class="comment">%             new_val  = round(double(old_val));</span>
+            new_val = double(old_val &gt; .1);
+            out_I(i,j) = new_val;
+            err = old_val - new_val;
+            <span class="keyword">if</span> i == m <span class="comment">%% last line - forget about diffusion</span>
+                <span class="keyword">continue</span>;
+            <span class="keyword">end</span>
+
+            out_I(i+1,j) = out_I(i+1,j) + ( (5/16)*err ); <span class="comment">%% bottom</span>
+
+            <span class="keyword">if</span> j &lt; n    <span class="comment">%% if next col exist -&gt; take care of right and bottom right pixel</span>
+                out_I(i,j+1) = out_I(i,j+1) + ( (7/16)*err );   <span class="comment">%% right</span>
+                out_I(i+1,j+1) = out_I(i+1,j+1) + ( (1/16)*err );   <span class="comment">%% bottom right</span>
+            <span class="keyword">end</span>
+
+            <span class="keyword">if</span> j &gt; 1    <span class="comment">%% if not at the left edge -&gt; set the bottom left</span>
+                out_I(i+1,j-1) = out_I(i+1,j-1) + ( (3/16)*err );
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> set_max_val(data_type)
+<span class="keyword">global</span> max_val
+
+<span class="keyword">switch</span>(data_type)
+    <span class="keyword">case</span> <span class="string">'uint8'</span>
+        max_val = 255;
+    <span class="keyword">case</span> <span class="string">'uint16'</span>
+        max_val = 65535;
+    <span class="keyword">case</span> <span class="string">'double'</span>
+        max_val = realmax(<span class="string">'double'</span>);    <span class="comment">% This is silly</span>
+<span class="keyword">end</span>
+
+<span class="comment">%display(max_val)</span>
+<span class="keyword">end</span>
+
+<span class="comment">% function out_val = round_color(val)</span>
+<span class="comment">% out_val = round(double(val));</span>
+<span class="comment">% end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in halftone_cvip (line 70)
+set_max_val(class(input_img));
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [ out_img ] = halftone_cvip( input_img, method , varargin)
+% HALFTONE_CVIP - convert image to binary with halftone technique.
+%
+% Syntax:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% [ out_img ] = halftone_cvip( input_img, method , varargin)
+%
+%  Description :
+%  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+%  This function converts the image to binary using one of the following
+%  halftoning techniques:
+% 
+%  # Floyd–steinberg dithering
+%  # Bayer's ordered dither
+%  # Clustered-dot-ordered
+%  # Simple threshold
+% 
+%
+%  method 4 (simple threshold) needs an extra argument, a number between
+%  0 and 1, which determines the threshold level. Based on the data type
+%  of the input image, this number is multiplied to the full range of the
+%  image to find the threshold level. 
+%
+%  Regardless of the method used, the full range of the image is reported in
+%  the commmand window as the value of the variable _max_val_
+%
+%
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%     
+%  'input_img'      The input image. Can be multi band.
+%
+%   'method'        an integer between 1,2,3,4 corresponsing 
+%                   to FS, Bayer, Cluster, and simple threshold
+%                   methods.
+%  'varargin'       An extra input which is used only when method is
+%                   simple threshold (4). This value is the threshold
+%                   level and is a rational number between [0,1];
+%
+% Output Parameter include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%   'Output'        Output Image.
+%  
+%  Example :
+%  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%             img = imread('Stripey.jpg');
+%             method = 4;
+%             varargin = 0.3;
+%             [ out_img ] = halftone_cvip( img ,method,varargin);
+%             figure; imshow(out_img);
+%
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%  1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Mehrdad Alvandipour
+%           Initial coding date:    7/11/2017
+%           Latest update date:     7/14/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+set_max_val(class(input_img));
+d = size(input_img,3);
+out_img = zeros(size(input_img));
+for band=1:d
+    switch method
+        case 1
+            out_img(:,:,band) = FS_alg(input_img(:,:,band));
+        case 2
+            out_img(:,:,band) = Bayer(input_img(:,:,band));
+        case 3
+            out_img(:,:,band) = Cluster(input_img(:,:,band));
+        case 4
+            if nargin ~= 3
+                error('threshold value should also be given as input.');
+            end
+            val = varargin{1};
+            out_img(:,:,band) = thresh(input_img(:,:,band), val);
+     end
+
+end
+
+end
+
+function out_I = thresh(I, val)
+global max_val
+    I = double(I)/max_val;
+    out_I = I >= val;
+end
+
+function out_I = Bayer(I)
+global max_val
+
+	U = ones(3);
+	D = [8 4 5;
+		  3 0 1;
+		  7 2 6];
+
+	S = [4*D 4*D+2*U;
+		  4*D+3*U 4*D+U];
+      % Size of image and S
+si = size(I);
+ss = size(S);
+
+% Create an image with the same size as I, 
+% which has the matrix S replicated. Replicate it using the ceiling
+% of their size ratio and then discard the last extra elements (if any).
+ts = ceil(si ./ ss);
+SImg = repmat(S, ts);
+SImg = SImg(1:si(1), 1:si(2));
+
+% Shift the values by 0.5 so that we can compare without floor.
+SImg = SImg + 0.5;
+
+% Number of levels N
+N = max(S(:)) - min(S(:)) + 2;
+% Quantization step and quantized image (with values in 0,1,2,...,N-1)
+D = max_val ./ (N-1);
+Q = double(I) ./ D;
+
+% Threshold image 
+% Pixels with value greater than that of S (at the same position) become 1,
+% the rest 0
+out_I = Q > SImg;
+end
+
+function out_I = Cluster(I)
+global max_val
+S = [34 29 17 21 30 35;
+		 28 14 9 16 20 31;
+		 13 8 4 5 15 19;
+		 12 3 0 1 10 18; 
+		 27 7 2 6 23 24;
+		 33 26 11 22 25 32];
+
+% Size of image and S
+si = size(I);
+ss = size(S);
+
+% Create an image with the same size as I, 
+% which has the matrix S replicated. Replicate it using the ceiling
+% of their size ratio and then discard the last extra elements (if any).
+ts = ceil(si ./ ss);
+SImg = repmat(S, ts);
+SImg = SImg(1:si(1), 1:si(2));
+
+% Shift the values by 0.5 so that we can compare without floor.
+SImg = SImg + 0.5;
+
+% Number of levels N
+N = max(S(:)) - min(S(:)) + 2;
+% Quantization step and quantized image (with values in 0,1,2,...,N-1)
+D = max_val ./ (N-1);
+Q = double(I) ./ D;
+
+% Threshold image 
+% Pixels with value greater than that of S (at the same position) become 1,
+% the rest 0
+out_I = Q > SImg;
+end
+
+function out_I = FS_alg(I)
+global max_val
+    [m,n] = size(I);
+    out_I = double(I)/max_val;
+    for i=1:m
+        for j=1:n
+            old_val = out_I(i,j);
+%             new_val  = round(double(old_val));
+            new_val = double(old_val > .1);
+            out_I(i,j) = new_val;
+            err = old_val - new_val;
+            if i == m %% last line - forget about diffusion
+                continue;
+            end
+            
+            out_I(i+1,j) = out_I(i+1,j) + ( (5/16)*err ); %% bottom
+            
+            if j < n    %% if next col exist -> take care of right and bottom right pixel
+                out_I(i,j+1) = out_I(i,j+1) + ( (7/16)*err );   %% right
+                out_I(i+1,j+1) = out_I(i+1,j+1) + ( (1/16)*err );   %% bottom right
+            end
+            
+            if j > 1    %% if not at the left edge -> set the bottom left
+                out_I(i+1,j-1) = out_I(i+1,j-1) + ( (3/16)*err );
+            end
+        end
+    end
+end
+
+function set_max_val(data_type)
+global max_val
+
+switch(data_type)
+    case 'uint8'
+        max_val = 255;
+    case 'uint16'
+        max_val = 65535;
+    case 'double'
+        max_val = realmax('double');    % This is silly
+end
+
+%display(max_val)
+end
+
+% function out_val = round_color(val)
+% out_val = round(double(val));
+% end
+##### SOURCE END #####
+--></body></html>

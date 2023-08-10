@@ -1,0 +1,365 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gray_linear_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="gray_linear_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [ outImage ] = gray_linear_cvip( inImage, startGray, endGray, s_gray, slope, change, band)
+<span class="comment">% GRAY_LINEAR_CVIP -Performs linear gray level modification.</span>
+<span class="comment">% The function performs gray level modification on a range of values in</span>
+<span class="comment">% an image. The user specifies a range of values to change with startGray</span>
+<span class="comment">% and endGray, the new gray level to apply at the startGray value, and</span>
+<span class="comment">% the function calculates a new value for each subsequent gray value by</span>
+<span class="comment">% applying userspecified slope to s_gray, until endGray is reached. Slope</span>
+<span class="comment">% can be positive, negative,  or zero. Those values not within the range</span>
+<span class="comment">% startGray ... endGray can be set to zero or left unmodified.</span>
+<span class="comment">% The parameter band specifies which band to modify, which can be a</span>
+<span class="comment">% non-negative integer for a specific band or -1 representing all bands.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax:</span>
+<span class="comment">% -------</span>
+<span class="comment">% outImage = gray_linear_cvip( inImage, startGray, endGray, s_gray, slope, change, band)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include:</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%   'inImage'       1-band input image of MxN size or 3-band input image of</span>
+<span class="comment">%                   MxNx3 size. The input image can be of uint8 or uint16</span>
+<span class="comment">%                   or double class.</span>
+<span class="comment">%   'startGray'     Initial gray level to modify.</span>
+<span class="comment">%   'endGray'       Final gray level to modify.</span>
+<span class="comment">%   's_gray'        New initial gray level.</span>
+<span class="comment">%   'slope'         Slope of modifying line.</span>
+<span class="comment">%   'change'        Change out-of_range pixels to black or keep without</span>
+<span class="comment">%                   modyfing it (1 -&gt; change to black, 0 -&gt; no</span>
+<span class="comment">%                   modification)</span>
+<span class="comment">%   'band'          The band number to modify.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter includes:</span>
+<span class="comment">% --------------------------</span>
+<span class="comment">%   'outImage'      Linearly modified image.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                   I = imread('butterfly.tif');    %original image</span>
+<span class="comment">%                   O = gray_linear_cvip( I, 10, 200, 30, 1.2, 0, 1);</span>
+<span class="comment">%                   figure; imshow(uint8(O));  %function returns as double</span>
+<span class="comment">%                                              %type (range = 0-255)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Norsang Lama</span>
+<span class="comment">%           Initial coding date:    04/14/2017</span>
+<span class="comment">%           Updated by:             Julian Rene Cuellar Buritica</span>
+<span class="comment">%           Latest update date:     06/01/2019</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2017 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">% Revision History</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.2  06/15/2019  13:14:49  jucuell</span>
+ <span class="comment">% Help description for change input parameter was updates according to</span>
+ <span class="comment">% code in the file.</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.1  04/14/2017  15:10:28  jucuell</span>
+ <span class="comment">% Initial revision: Coding and initial testing.</span>
+<span class="comment">%</span>
+
+MAX_BYTE = 255;
+MAX_UINT16 = 2^16 - 1;
+
+<span class="comment">%check number of input arguments</span>
+<span class="keyword">if</span> nargin ~=1 &amp;&amp; nargin ~= 2 &amp;&amp; nargin ~= 3 &amp;&amp; nargin ~= 4 &amp;&amp; <span class="keyword">...</span>
+        nargin ~= 5 &amp;&amp; nargin ~= 6 &amp;&amp; nargin ~= 7
+    error(<span class="string">'Too many or too few input arguments!'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">%check number of output arguments</span>
+<span class="keyword">if</span> nargout ~= 1 &amp;&amp; nargout ~= 0
+    error(<span class="string">'Too many output arguments!'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">%select the band to modify it</span>
+inImage = double(inImage);
+<span class="keyword">switch</span> band
+    <span class="keyword">case</span> 1
+        tempImage = inImage(:,:,1);
+    <span class="keyword">case</span> 2
+        tempImage = inImage(:,:,2);
+    <span class="keyword">case</span> 3
+        tempImage = inImage(:,:,3);
+    <span class="keyword">case</span> -1
+        tempImage = inImage;
+    <span class="keyword">otherwise</span>
+        error(<span class="string">'No such band available!'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">%find the pixels in range of [startGray endGray]</span>
+tempPels = (tempImage &gt;= startGray &amp; tempImage &lt;= endGray);
+
+<span class="comment">%find max value for data type</span>
+<span class="keyword">if</span> isa(inImage, <span class="string">'uint8'</span>) || isa(inImage, <span class="string">'double'</span>)
+    MAX = MAX_BYTE;
+<span class="keyword">elseif</span> isa(inImage,<span class="string">'uint16'</span>)
+    MAX = MAX_UINT16;
+<span class="keyword">end</span>
+
+<span class="comment">%Modify the pixel valuss that falls in the range of [startGray endGray]</span>
+tempImage = (slope*(tempImage-startGray) + s_gray).*tempPels;
+tempImage(tempImage &lt; 0) = 0;
+tempImage(tempImage &gt; MAX) = MAX;
+
+<span class="comment">%change out-of-range pixels to black if option is selected</span>
+outImage = inImage;
+<span class="keyword">if</span> change    <span class="comment">%out-of-range pixels set to BLACK</span>
+    <span class="keyword">switch</span> band
+        <span class="keyword">case</span> 1
+            outImage(:,:,1) = tempImage;
+        <span class="keyword">case</span> 2
+            outImage(:,:,2) = tempImage;
+        <span class="keyword">case</span> 3
+            outImage(:,:,3) = tempImage;
+        <span class="keyword">case</span> -1
+            outImage = tempImage;
+    <span class="keyword">end</span>
+<span class="keyword">else</span>         <span class="comment">%out-of-range pixels remains unmodified</span>
+
+    <span class="comment">%put modified values back in the image</span>
+    <span class="keyword">switch</span> band
+        <span class="keyword">case</span> 1
+            outImage(:,:,1) = outImage(:,:,1).* (~tempPels) + tempImage;
+        <span class="keyword">case</span> 2
+            outImage(:,:,2) = outImage(:,:,2).* (~tempPels) + tempImage;
+        <span class="keyword">case</span> 3
+            outImage(:,:,3) = outImage(:,:,3).* (~tempPels) + tempImage;
+        <span class="keyword">case</span> -1
+            outImage = outImage.* (~tempPels) + tempImage;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">end</span> <span class="comment">% end of function</span>
+</pre><pre class="codeoutput error">Error using gray_linear_cvip (line 79)
+Too many or too few input arguments!
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [ outImage ] = gray_linear_cvip( inImage, startGray, endGray, s_gray, slope, change, band)
+% GRAY_LINEAR_CVIP -Performs linear gray level modification.
+% The function performs gray level modification on a range of values in
+% an image. The user specifies a range of values to change with startGray
+% and endGray, the new gray level to apply at the startGray value, and
+% the function calculates a new value for each subsequent gray value by
+% applying userspecified slope to s_gray, until endGray is reached. Slope
+% can be positive, negative,  or zero. Those values not within the range
+% startGray ... endGray can be set to zero or left unmodified.
+% The parameter band specifies which band to modify, which can be a
+% non-negative integer for a specific band or -1 representing all bands.
+%
+%
+% Syntax:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% outImage = gray_linear_cvip( inImage, startGray, endGray, s_gray, slope, change, band)
+%   
+% 
+% Input Parameters include:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%   'inImage'       1-band input image of MxN size or 3-band input image of   
+%                   MxNx3 size. The input image can be of uint8 or uint16 
+%                   or double class. 
+%   'startGray'     Initial gray level to modify.
+%   'endGray'       Final gray level to modify.
+%   's_gray'        New initial gray level.
+%   'slope'         Slope of modifying line.
+%   'change'        Change out-of_range pixels to black or keep without
+%                   modyfing it (1 -> change to black, 0 -> no
+%                   modification) 
+%   'band'          The band number to modify.
+%
+%
+% Output Parameter includes:  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%   'outImage'      Linearly modified image.
+%                                         
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                   I = imread('butterfly.tif');    %original image
+%                   O = gray_linear_cvip( I, 10, 200, 30, 1.2, 0, 1);
+%                   figure; imshow(uint8(O));  %function returns as double
+%                                              %type (range = 0-255) 
+%
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Norsang Lama
+%           Initial coding date:    04/14/2017
+%           Updated by:             Julian Rene Cuellar Buritica
+%           Latest update date:     06/01/2019
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2017 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+% Revision History
+%
+ % Revision 1.2  06/15/2019  13:14:49  jucuell
+ % Help description for change input parameter was updates according to
+ % code in the file.
+%
+ % Revision 1.1  04/14/2017  15:10:28  jucuell
+ % Initial revision: Coding and initial testing.
+%
+
+MAX_BYTE = 255;
+MAX_UINT16 = 2^16 - 1;
+
+%check number of input arguments
+if nargin ~=1 && nargin ~= 2 && nargin ~= 3 && nargin ~= 4 && ...
+        nargin ~= 5 && nargin ~= 6 && nargin ~= 7     
+    error('Too many or too few input arguments!');
+end
+
+%check number of output arguments
+if nargout ~= 1 && nargout ~= 0
+    error('Too many output arguments!');
+end
+
+%select the band to modify it
+inImage = double(inImage);
+switch band 
+    case 1
+        tempImage = inImage(:,:,1);
+    case 2
+        tempImage = inImage(:,:,2);
+    case 3
+        tempImage = inImage(:,:,3);
+    case -1
+        tempImage = inImage;
+    otherwise
+        error('No such band available!');
+end
+      
+%find the pixels in range of [startGray endGray]
+tempPels = (tempImage >= startGray & tempImage <= endGray);
+
+%find max value for data type
+if isa(inImage, 'uint8') || isa(inImage, 'double')
+    MAX = MAX_BYTE;
+elseif isa(inImage,'uint16')
+    MAX = MAX_UINT16;
+end
+
+%Modify the pixel valuss that falls in the range of [startGray endGray] 
+tempImage = (slope*(tempImage-startGray) + s_gray).*tempPels;
+tempImage(tempImage < 0) = 0;
+tempImage(tempImage > MAX) = MAX;
+
+%change out-of-range pixels to black if option is selected
+outImage = inImage;
+if change    %out-of-range pixels set to BLACK
+    switch band 
+        case 1
+            outImage(:,:,1) = tempImage;
+        case 2
+            outImage(:,:,2) = tempImage;
+        case 3
+            outImage(:,:,3) = tempImage;
+        case -1
+            outImage = tempImage; 
+    end    
+else         %out-of-range pixels remains unmodified
+    
+    %put modified values back in the image    
+    switch band 
+        case 1
+            outImage(:,:,1) = outImage(:,:,1).* (~tempPels) + tempImage;
+        case 2
+            outImage(:,:,2) = outImage(:,:,2).* (~tempPels) + tempImage;
+        case 3
+            outImage(:,:,3) = outImage(:,:,3).* (~tempPels) + tempImage;
+        case -1
+            outImage = outImage.* (~tempPels) + tempImage; 
+    end
+end
+
+end % end of function
+
+##### SOURCE END #####
+--></body></html>

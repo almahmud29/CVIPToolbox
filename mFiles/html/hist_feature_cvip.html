@@ -1,0 +1,427 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>hist_feature_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="hist_feature_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Create the column Obj_id in the output</a></li><li><a href="#4">Create the list of selected features (feats_title) which sits in the first row of the output cell array</a></li><li><a href="#7">compute p(g) for each band</a></li><li><a href="#9">compute the features</a></li><li><a href="#11">put the feature values calculated in the correct position in feature_val</a></li><li><a href="#13">Create the output cell array</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> histfeats = hist_feature_cvip(originalImage, labeledImage, objLabel,out_file_name,featSelect,n)
+</pre><pre class="codeinput"><span class="comment">% HIST_FEATURE_CVIP - calculates the 5 first order histogram features for an object</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax:</span>
+<span class="comment">% -------</span>
+<span class="comment">% h = hist_feature_cvip(originalImage, labeledImage, objLabel,featSelect)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%   'originalImage' The orignial image which can be grayscale or RGB.</span>
+<span class="comment">%</span>
+<span class="comment">%   'labelImage'    Label image of MxN size with single object or multiple objects.</span>
+<span class="comment">%                   Each object has unique gray value.</span>
+<span class="comment">%   'objLabel'      Labels of the objects. Column vector (Yx1) or Yx2 matrix.</span>
+<span class="comment">%                   If row vector, objLabel must be unique gray value</span>
+<span class="comment">%                   corresponding to each object. If Yx2 matrix, objLabel</span>
+<span class="comment">%                   must have row index in first column and col index in</span>
+<span class="comment">%                   second column for each object.</span>
+<span class="comment">%   'featSelect'    Empty matrix '[]' or Row vector of size 1x5 with</span>
+<span class="comment">%                   values 1 or 0 (1-&gt;Select or 0-&gt;No Select). If [], then</span>
+<span class="comment">%                   all 5 features are selected. The elements of featSelect</span>
+<span class="comment">%                   correspond respectively to Mean, STD, Skew, Energy, and</span>
+<span class="comment">%                   Entropy.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameters include :</span>
+<span class="comment">% --------------------------</span>
+<span class="comment">%   'histfeats'     Cell array containing object name, object label, and feature</span>
+<span class="comment">%                   data for selected features.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                     originalImage = imread('Stripey.jpg');</span>
+<span class="comment">%                     labeledImage = zeros(size(originalImage));</span>
+<span class="comment">%                     labeledImage = labeledImage(:,:,1);</span>
+<span class="comment">%                     labeledImage(50:200,25:95) = 1;</span>
+<span class="comment">%                     labeledImage(100:300,255:400) = 2;</span>
+<span class="comment">%                     featSelect = [1 0 1 0 1];</span>
+<span class="comment">%                     objLabel = [1 ;2];</span>
+<span class="comment">%                     output = hist_feature_cvip(originalImage, labeledImage,objLabel,out_file_name,featSelect)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    3/13/2017</span>
+<span class="comment">%           Latest update date:     01/03/2021</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+<span class="comment">%%Revision 1.1 Hridoy</span>
+<span class="comment">% n is created for solving the excel and csv file issues.See the DIgfeat.m</span>
+<span class="comment">% file</span>
+o = size(originalImage,3);
+feats_name = {<span class="string">'Mean'</span> <span class="string">'STD'</span> <span class="string">'Skew'</span> <span class="string">'Energy'</span> <span class="string">'Entropy'</span>};
+total_feats = 5;
+
+<span class="comment">% If feat_list is empty matrix, all 20 features are selected</span>
+<span class="comment">% Also check if no feature is selected</span>
+<span class="keyword">if</span> isempty(featSelect)|| ~isnumeric(featSelect)
+    featSelect = ones(1,total_feats);
+<span class="keyword">elseif</span> ~sum(featSelect),         warning(<span class="string">'No feature is selected!!!'</span>);
+    histfeats = {};          <span class="keyword">return</span> ;
+<span class="keyword">elseif</span> size(featSelect,2) &lt; total_feats
+    featSelect = [featSelect zeros(1, total_feats - size(featSelect,2))];
+<span class="keyword">end</span>
+
+feat_length = nnz(featSelect);
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in hist_feature_cvip (line 63)
+o = size(originalImage,3);
+</pre><h2 id="3">Create the column Obj_id in the output</h2><pre class="codeinput">[num_obj, objdim] = size(objLabel);
+objList=zeros(num_obj,1);
+<span class="keyword">if</span> objdim== 2
+    <span class="keyword">for</span> i=1:size(objLabel,1)
+        objList(i) = labeledImage(objLabel(i,1),objLabel(i,2));
+    <span class="keyword">end</span>
+     <span class="keyword">if</span> n==0
+     obj_id = { <span class="string">'obj_id'</span> <span class="string">'row_obj'</span> <span class="string">'col_obj'</span>};
+    <span class="keyword">else</span>
+     obj_id = {  <span class="string">'row_obj'</span> <span class="string">'col_obj'</span>};
+    <span class="keyword">end</span>
+<span class="keyword">else</span>
+    objList = objLabel;
+    obj_id = {<span class="string">'obj_id'</span>};
+<span class="keyword">end</span>
+</pre><h2 id="4">Create the list of selected features (feats_title) which sits in the first row of the output cell array</h2><pre class="codeinput">k=1;
+feats_title = cell(1,feat_length);
+<span class="keyword">for</span> i=1:total_feats
+    <span class="keyword">for</span> j=1:o
+        <span class="keyword">if</span> featSelect(i)
+            feats_title(1,k) =  cellstr([char(feats_name(i)) <span class="string">'_'</span> num2str(j)]);
+            k=k+1;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><p>The number of feature values calculated are determined by #of features selected and #of bands of the original image.</p><pre class="codeinput">feature_val = zeros(num_obj,o*feat_length);
+obj_name=cell(num_obj,1);
+
+labeledImage = labeledImage(:,:,1); <span class="comment">% We ignore other bands on the labeled image.</span>
+<span class="keyword">for</span> count=1:num_obj
+</pre><pre class="codeinput">    obj_label = labeledImage;
+
+    MAX_GRAY_LEVEL = intmax(class(originalImage));
+    MIN_GRAY_LEVEL = intmin(class(originalImage));
+
+    gray_level = objList(count);
+    obj_label(obj_label ~= gray_level) = 0;
+    mask = (obj_label == gray_level);
+    M = sum(sum(mask));
+<span class="comment">%     mask3d = repmat(labeledImage,1,1,o);</span>
+    obj_img = double(originalImage) .* repmat(obj_label,[1 1 o]);
+</pre><h2 id="7">compute p(g) for each band</h2><pre class="codeinput">    gbar = zeros(o,1);
+    sigmag = gbar;
+    skew = gbar;
+    energy = gbar;
+    entropy = gbar;
+    <span class="keyword">for</span> d=1:o
+</pre><pre class="codeinput">        originalImage_one_band = obj_img(:,:,d);
+        MAX_GRAY_LEVEL = max(max(originalImage_one_band(mask)));
+        MIN_GRAY_LEVEL = min(min(originalImage_one_band(mask)));
+
+
+        g = double(MIN_GRAY_LEVEL:MAX_GRAY_LEVEL);
+        pg = g;
+        <span class="keyword">for</span> i = MIN_GRAY_LEVEL:MAX_GRAY_LEVEL
+            m = (originalImage_one_band(mask) == i);
+
+            pg(g == i) = sum(sum(m))/M;
+        <span class="keyword">end</span>
+</pre><h2 id="9">compute the features</h2><pre class="codeinput">        gbar(d) = sum(g.*pg);
+        sigmag(d) = sqrt(sum( ( (g- gbar(d)).^2 ).*pg ));
+        <span class="keyword">if</span> sigmag(d) == 0 &amp;&amp; sum((g- gbar(d)).^3) == 0
+            skew(d) = 256;
+        <span class="keyword">else</span>
+        	skew(d) = (1/sigmag(d)^3).* sum(((g- gbar(d)).^3).*pg );
+        <span class="keyword">end</span>
+        energy(d) = sum(pg.^2);
+        entropy(d) = -1* sum(log2(pg.^pg));
+</pre><pre class="codeinput">    <span class="keyword">end</span>
+
+    h = [gbar/count ,sigmag/count, skew, energy, entropy];
+</pre><h2 id="11">put the feature values calculated in the correct position in feature_val</h2><pre class="codeinput">    k=1;
+    <span class="keyword">for</span> i=1:total_feats
+        <span class="keyword">for</span> j=1:o
+            <span class="keyword">if</span> featSelect(i)
+                feature_val(count,k) =  h(j,i);
+                k=k+1;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+<span class="comment">%     obj_name(count) = cellstr(['Object' num2str(count)]);   % The first column of the output cell array.</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2 id="13">Create the output cell array</h2><pre class="codeinput"><span class="keyword">if</span> n==0
+  histfeats = [  obj_id feats_title ;out_file_name num2cell(objLabel) num2cell(feature_val) ];
+<span class="keyword">else</span>
+  histfeats = [  obj_id feats_title ;  num2cell(objLabel) num2cell(feature_val) ];
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function histfeats = hist_feature_cvip(originalImage, labeledImage, objLabel,out_file_name,featSelect,n)
+% HIST_FEATURE_CVIP - calculates the 5 first order histogram features for an object
+%
+% Syntax:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% h = hist_feature_cvip(originalImage, labeledImage, objLabel,featSelect)
+%   
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+%   'originalImage' The orignial image which can be grayscale or RGB.
+%
+%   'labelImage'    Label image of MxN size with single object or multiple objects.  
+%                   Each object has unique gray value.
+%   'objLabel'      Labels of the objects. Column vector (Yx1) or Yx2 matrix.
+%                   If row vector, objLabel must be unique gray value
+%                   corresponding to each object. If Yx2 matrix, objLabel
+%                   must have row index in first column and col index in
+%                   second column for each object.
+%   'featSelect'    Empty matrix '[]' or Row vector of size 1x5 with 
+%                   values 1 or 0 (1->Select or 0->No Select). If [], then
+%                   all 5 features are selected. The elements of featSelect
+%                   correspond respectively to Mean, STD, Skew, Energy, and
+%                   Entropy.
+%
+%
+% Output Parameters include :  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%   'histfeats'     Cell array containing object name, object label, and feature 
+%                   data for selected features.
+%                   
+%
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                     originalImage = imread('Stripey.jpg');
+%                     labeledImage = zeros(size(originalImage));
+%                     labeledImage = labeledImage(:,:,1);
+%                     labeledImage(50:200,25:95) = 1;
+%                     labeledImage(100:300,255:400) = 2;
+%                     featSelect = [1 0 1 0 1];
+%                     objLabel = [1 ;2];
+%                     output = hist_feature_cvip(originalImage, labeledImage,objLabel,out_file_name,featSelect)
+%                  
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Mehrdad Alvandipour
+%           Initial coding date:    3/13/2017
+%           Latest update date:     01/03/2021
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+%%Revision 1.1 Hridoy
+% n is created for solving the excel and csv file issues.See the DIgfeat.m
+% file
+o = size(originalImage,3);
+feats_name = {'Mean' 'STD' 'Skew' 'Energy' 'Entropy'};
+total_feats = 5;
+
+% If feat_list is empty matrix, all 20 features are selected
+% Also check if no feature is selected
+if isempty(featSelect)|| ~isnumeric(featSelect)          
+    featSelect = ones(1,total_feats);  
+elseif ~sum(featSelect),         warning('No feature is selected!!!'); 
+    histfeats = {};          return ;    
+elseif size(featSelect,2) < total_feats
+    featSelect = [featSelect zeros(1, total_feats - size(featSelect,2))];
+end
+
+feat_length = nnz(featSelect);
+
+
+%% Create the column Obj_id in the output
+[num_obj, objdim] = size(objLabel);
+objList=zeros(num_obj,1);
+if objdim== 2
+    for i=1:size(objLabel,1)
+        objList(i) = labeledImage(objLabel(i,1),objLabel(i,2)); 
+    end 
+     if n==0
+     obj_id = { 'obj_id' 'row_obj' 'col_obj'};
+    else
+     obj_id = {  'row_obj' 'col_obj'};  
+    end
+else
+    objList = objLabel;
+    obj_id = {'obj_id'};
+end
+
+
+%% Create the list of selected features (feats_title) which sits in the first row of the output cell array 
+k=1;
+feats_title = cell(1,feat_length);
+for i=1:total_feats
+    for j=1:o
+        if featSelect(i)
+            feats_title(1,k) =  cellstr([char(feats_name(i)) '_' num2str(j)]);
+            k=k+1;
+        end
+    end
+end
+
+%%  
+% The number of feature values calculated are determined by #of features
+% selected and #of bands of the original image.
+feature_val = zeros(num_obj,o*feat_length); 
+obj_name=cell(num_obj,1);
+
+labeledImage = labeledImage(:,:,1); % We ignore other bands on the labeled image.
+for count=1:num_obj
+    obj_label = labeledImage;
+
+    MAX_GRAY_LEVEL = intmax(class(originalImage));
+    MIN_GRAY_LEVEL = intmin(class(originalImage));
+
+    gray_level = objList(count);
+    obj_label(obj_label ~= gray_level) = 0;
+    mask = (obj_label == gray_level);
+    M = sum(sum(mask));
+%     mask3d = repmat(labeledImage,1,1,o);
+    obj_img = double(originalImage) .* repmat(obj_label,[1 1 o]);
+    
+    %% compute p(g) for each band
+    gbar = zeros(o,1);
+    sigmag = gbar;
+    skew = gbar;
+    energy = gbar;
+    entropy = gbar;
+    for d=1:o
+        originalImage_one_band = obj_img(:,:,d);
+        MAX_GRAY_LEVEL = max(max(originalImage_one_band(mask)));
+        MIN_GRAY_LEVEL = min(min(originalImage_one_band(mask)));
+
+        
+        g = double(MIN_GRAY_LEVEL:MAX_GRAY_LEVEL);
+        pg = g;
+        for i = MIN_GRAY_LEVEL:MAX_GRAY_LEVEL
+            m = (originalImage_one_band(mask) == i);
+            
+            pg(g == i) = sum(sum(m))/M;
+        end
+        %% compute the features 
+        gbar(d) = sum(g.*pg);
+        sigmag(d) = sqrt(sum( ( (g- gbar(d)).^2 ).*pg ));
+        if sigmag(d) == 0 && sum((g- gbar(d)).^3) == 0
+            skew(d) = 256;
+        else
+        	skew(d) = (1/sigmag(d)^3).* sum(((g- gbar(d)).^3).*pg );
+        end
+        energy(d) = sum(pg.^2);
+        entropy(d) = -1* sum(log2(pg.^pg));
+    end
+    
+    h = [gbar/count ,sigmag/count, skew, energy, entropy];
+    
+    %% put the feature values calculated in the correct position in feature_val
+    k=1;
+    for i=1:total_feats
+        for j=1:o
+            if featSelect(i)
+                feature_val(count,k) =  h(j,i);
+                k=k+1;
+            end
+        end
+    end
+
+%     obj_name(count) = cellstr(['Object' num2str(count)]);   % The first column of the output cell array.
+end
+
+%% Create the output cell array
+if n==0
+  histfeats = [  obj_id feats_title ;out_file_name num2cell(objLabel) num2cell(feature_val) ];
+else
+  histfeats = [  obj_id feats_title ;  num2cell(objLabel) num2cell(feature_val) ];
+end
+
+end
+
+##### SOURCE END #####
+--></body></html>

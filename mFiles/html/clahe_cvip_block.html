@@ -1,0 +1,508 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>clahe_cvip_block</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="clahe_cvip_block.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">%%%...................Contrast Limited Adaptve Histogram Equialization..........</span>
+<span class="comment">%%%The main aim of the function is to do adaptive histogram equilization</span>
+<span class="comment">%%%using conrast limiting parameter.The algorithm has been developed using</span>
+<span class="comment">%%%non-overlapping method.The results of the output image depends on the</span>
+<span class="comment">%%%contrast limitation and the block size.Bi-linear interpolation can be done to remove block artifacts.</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% -------</span>
+<span class="comment">% outImage = Clahe_cvip( inImage,block size, band, clipping limit)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%</span>
+<span class="comment">% 'inImage'       Input image of MxN or MxNxB size. The input image can</span>
+<span class="comment">%                 be of uint8 or double class.</span>
+<span class="comment">% 'block size'    Specify a block size.It can be any number.</span>
+<span class="comment">%</span>
+<span class="comment">% 'band'          Specify a band</span>
+<span class="comment">%                 [band=1=&gt; Red band,band=2 =&gt; Green band,band=2 =&gt; Blue band</span>
+<span class="comment">%</span>
+<span class="comment">% 'clipping limit' Specify a clipping limit form 0 to 1 to limit the contrast</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%  'byte'          If user wants the output as byte (0-255)  'y', 'n'</span>
+<span class="comment">%</span>
+
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">% 'outImage'      Output  subimage</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Examples :</span>
+<span class="comment">% --------</span>
+<span class="comment">%        I = imread('cam.bmp');      %original image</span>
+<span class="comment">%        Output=clahe_cvip_block(I,33,1,0.2,'y')</span>
+<span class="comment">%        figure; imshow(Output);</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications</span>
+<span class="comment">% with MATLAB and CVIPtools, 3rd Edition.</span>
+<span class="comment">%Reference</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">%%.....</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Hridoy Biswas</span>
+<span class="comment">%           Initial coding date:    9/15/2020</span>
+<span class="comment">%           Latest update date:     10/22/2020</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2019-2020 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="keyword">function</span> reconstructed=clahe_cvip_block(A,Block,band,limit,byte)
+
+[rows, columns, o] = size(A);
+A=double(A);
+<span class="comment">% Enlarge figure to full screen.</span>
+<span class="comment">% set(gcf, 'units','normalized','outerposition',[0 0 1 1]);</span>
+<span class="comment">% Divide the image up into 4 blocks.</span>
+<span class="comment">% Let's assume we know the block size and that all blocks will be the same size.</span>
+blockSizeR = Block; <span class="comment">% Rows in block.</span>
+blockSizeC = Block; <span class="comment">% Columns in block.</span>
+<span class="comment">% Figure out the size of each block.</span>
+wholeBlockRows = floor(rows / blockSizeR);
+wholeBlockCols = floor(columns / blockSizeC);
+<span class="comment">% Preallocate a 3D image</span>
+image3d = zeros(wholeBlockRows, wholeBlockCols, 3);
+<span class="comment">% Now scan though, getting each block and putting it as a slice of a 3D array.</span>
+sliceNumber = 1;
+reconstructed = zeros(size(A));
+
+
+<span class="keyword">for</span> row = 1 : blockSizeR : rows
+  <span class="keyword">for</span> col = 1 : blockSizeC : columns
+    <span class="comment">% Let's be a little explicit here in our variables</span>
+    <span class="comment">% to make it easier to see what's going on.</span>
+    <span class="comment">% Determine starting and ending rows.</span>
+    row1 = row;
+    row2 = row1 + blockSizeR - 1;
+    row2 = min(rows, row2); <span class="comment">% Don't let it go outside the image.</span>
+    <span class="comment">% Determine starting and ending columns.</span>
+    col1 = col;
+    col2 = col1 + blockSizeC - 1;
+    col2 = min(columns, col2); <span class="comment">% Don't let it go outside the image.</span>
+    <span class="comment">% Extract out the block into a single subimage.</span>
+    oneBlock = A(row1:row2, col1:col2);
+    oneBlock = (histeq_contrast(oneBlock,Block,limit));
+
+    <span class="comment">% Assign this slice to the image we just extracted.</span>
+    <span class="keyword">if</span> (row2-row1+1) == blockSizeR &amp;&amp; (col2-col1+1) == blockSizeC
+      <span class="comment">% Then the block size is the tile size,</span>
+      <span class="comment">% so add a slice to our 3D image stack.</span>
+      image3D(:, :, sliceNumber) = oneBlock;
+      reconstructed(row1:row2, col1:col2,band) = oneBlock ;
+<span class="comment">%       subplot(2, 2, 2);</span>
+<span class="comment">%       imshow(reconstructed,[] )</span>
+    <span class="keyword">else</span>
+
+     reconstructed(row1:row2, col1:col2,band) = oneBlock ;
+<span class="comment">%      subplot(2, 2, 2);</span>
+<span class="comment">%      imshow(uint8(reconstructed))</span>
+
+
+
+      newTileSize = [(row2-row1+1), (col2-col1+1)];
+<span class="comment">%       warningMessage = sprintf('Warning: this block size of %d rows and %d columns\ndoes not match the preset block size of %d rows and %d columns.\nIt will not be added to the 3D image stack.',...</span>
+<span class="comment">%         newTileSize(1), newTileSize(2), blockSizeR, blockSizeC);</span>
+<span class="comment">%       uiwait(warndlg(warningMessage));</span>
+    <span class="keyword">end</span>
+    sliceNumber = sliceNumber + 1;
+  <span class="keyword">end</span>
+
+
+<span class="keyword">end</span>
+<span class="keyword">if</span> o&gt;1
+    <span class="comment">%avoid divide-by-zero by replacing 0 with nan</span>
+    tempImage = A(:,:,band);
+    tempImage(tempImage == 0) = nan;
+
+
+      <span class="keyword">for</span> b=1:o
+          <span class="keyword">if</span> b ~= band
+              reconstructed(:,:, b) = ( reconstructed(:,:,band)./tempImage).*A(:,:,b);<span class="comment">%keeping the ratio same</span>
+          <span class="keyword">end</span>
+      <span class="keyword">end</span>
+
+    <span class="comment">%now replace all nan values with 0</span>
+     reconstructed(isnan( reconstructed)) = 0;
+
+<span class="keyword">end</span>
+<span class="keyword">if</span> strcmp(byte,<span class="string">'y'</span>)
+     reconstructed=uint8(reconstructed);
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="keyword">function</span> eq=histeq_contrast(A,block,limit)
+<span class="comment">% A=imread("Cameraman.tif");</span>
+limit=round((limit*block^2));
+
+x=unique(A);
+<span class="comment">% limit=(1-limit)*100;</span>
+<span class="comment">% limit=round((limit*(block^2)/length(x)));</span>
+<span class="comment">% s=sort(A);</span>
+out = (histc(A(:),x));
+sum=0;
+[r,c,b]=size(A);
+<span class="comment">% B=A(:);</span>
+no_bins=256;
+freq=zeros(256,1);
+
+ <span class="keyword">for</span> i=1:size(A,1)
+        <span class="keyword">for</span> j=1:size(A,2)
+            value = A(i,j);
+            freq(value+1) = freq(value+1)+1 ;
+<span class="comment">%             if freq(value+1)&gt;limit</span>
+<span class="comment">%                 sum1=(freq(value+1)-limit)+sum1;</span>
+<span class="comment">%                 freq(value+1)=limit;</span>
+<span class="comment">%             end% Frequency</span>
+        <span class="keyword">end</span>
+ <span class="keyword">end</span>
+<span class="comment">% %clippping histogram</span>
+<span class="keyword">for</span> i= 1:max(A(:))
+    <span class="keyword">if</span> freq(i+1)&gt;limit
+        f=freq(i+1)-limit;
+        freq(i+1)=limit;
+        sum=sum+f;
+    <span class="keyword">else</span>
+        freq(i+1)=freq(i+1);
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+average=sum/length(x);
+new_freq=zeros(256,1);
+<span class="keyword">for</span> i= 1:max(A(:))
+    <span class="keyword">if</span> freq(i+1)&lt;limit &amp;&amp; freq(i)&gt;0
+     new_freq(i+1)=freq(i+1)+average;
+     <span class="keyword">if</span> new_freq(i+1)&gt;limit
+         new_freq(i+1)=limit;
+
+     <span class="keyword">else</span>
+       new_freq(i+1)= new_freq(i+1);
+     <span class="keyword">end</span>
+    <span class="keyword">else</span>
+    new_freq(i+1)=freq(i+1);
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span><span class="comment">%add the average between all frequency</span>
+cum=zeros(256,1);
+probc=zeros(256,1);
+output = zeros(256,1);
+sum=0;
+eq=zeros(r*c,1);
+numOfPixels=r*c;
+<span class="comment">% maxGray=256;</span>
+maxGray=max(A(:));
+ <span class="keyword">for</span> i = 1:max(A(:))
+        sum=sum+new_freq(i+1);
+        cum(i)=sum; <span class="comment">% cumulative frequency</span>
+        probc(i)=cum(i)/numOfPixels; <span class="comment">% Normalized Frequency</span>
+        output(i) = round(probc(i)*maxGray); <span class="comment">%Hist Equalized pixel value</span>
+ <span class="keyword">end</span>
+    t=1:no_bins;
+<span class="comment">% t=0:max(A(:));</span>
+<span class="comment">%----Mapping the original pixels to hist equalized pixel value</span>
+    <span class="keyword">for</span> i=1:max(A(:))
+                eq(A==t(i))=output(i);
+    <span class="keyword">end</span>
+        eq = uint8(reshape(eq,size(A)));
+
+<span class="comment">%         imshow(eq,[]);</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in clahe_cvip_block (line 61)
+[rows, columns, o] = size(A);
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%%...................Contrast Limited Adaptve Histogram Equialization..........
+%%%The main aim of the function is to do adaptive histogram equilization
+%%%using conrast limiting parameter.The algorithm has been developed using   
+%%%non-overlapping method.The results of the output image depends on the
+%%%contrast limitation and the block size.Bi-linear interpolation can be done to remove block artifacts.
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% outImage = Clahe_cvip( inImage,block size, band, clipping limit)
+%   
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+% 'inImage'       Input image of MxN or MxNxB size. The input image can
+%                 be of uint8 or double class. 
+% 'block size'    Specify a block size.It can be any number.
+%                      
+% 'band'          Specify a band 
+%                 [band=1=> Red band,band=2 => Green band,band=2 => Blue band
+%                                                             
+% 'clipping limit' Specify a clipping limit form 0 to 1 to limit the contrast 
+%                       
+%                                                             
+%  'byte'          If user wants the output as byte (0-255)  'y', 'n'
+%                  
+
+% 
+%
+% Output Parameter include :  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% 'outImage'      Output  subimage
+%                                         
+%
+% Examples :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%        I = imread('cam.bmp');      %original image
+%        Output=clahe_cvip_block(I,33,1,0.2,'y')
+%        figure; imshow(Output);
+%                                                                      
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications
+% with MATLAB and CVIPtools, 3rd Edition.
+%Reference
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%%.....
+
+%==========================================================================
+%
+%           Author:                 Hridoy Biswas
+%           Initial coding date:    9/15/2020
+%           Latest update date:     10/22/2020
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2019-2020 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+function reconstructed=clahe_cvip_block(A,Block,band,limit,byte)
+
+[rows, columns, o] = size(A);
+A=double(A);
+% Enlarge figure to full screen.
+% set(gcf, 'units','normalized','outerposition',[0 0 1 1]);
+% Divide the image up into 4 blocks.
+% Let's assume we know the block size and that all blocks will be the same size.
+blockSizeR = Block; % Rows in block.
+blockSizeC = Block; % Columns in block.
+% Figure out the size of each block. 
+wholeBlockRows = floor(rows / blockSizeR);
+wholeBlockCols = floor(columns / blockSizeC);
+% Preallocate a 3D image
+image3d = zeros(wholeBlockRows, wholeBlockCols, 3);
+% Now scan though, getting each block and putting it as a slice of a 3D array.
+sliceNumber = 1;
+reconstructed = zeros(size(A));
+
+
+for row = 1 : blockSizeR : rows
+  for col = 1 : blockSizeC : columns
+    % Let's be a little explicit here in our variables
+    % to make it easier to see what's going on.
+    % Determine starting and ending rows.
+    row1 = row;
+    row2 = row1 + blockSizeR - 1;
+    row2 = min(rows, row2); % Don't let it go outside the image.
+    % Determine starting and ending columns.
+    col1 = col;
+    col2 = col1 + blockSizeC - 1;
+    col2 = min(columns, col2); % Don't let it go outside the image.
+    % Extract out the block into a single subimage.
+    oneBlock = A(row1:row2, col1:col2);
+    oneBlock = (histeq_contrast(oneBlock,Block,limit));
+   
+    % Assign this slice to the image we just extracted.
+    if (row2-row1+1) == blockSizeR && (col2-col1+1) == blockSizeC
+      % Then the block size is the tile size, 
+      % so add a slice to our 3D image stack.
+      image3D(:, :, sliceNumber) = oneBlock;
+      reconstructed(row1:row2, col1:col2,band) = oneBlock ;
+%       subplot(2, 2, 2);   
+%       imshow(reconstructed,[] )
+    else
+        
+     reconstructed(row1:row2, col1:col2,band) = oneBlock ;
+%      subplot(2, 2, 2);   
+%      imshow(uint8(reconstructed))
+    
+        
+        
+      newTileSize = [(row2-row1+1), (col2-col1+1)];
+%       warningMessage = sprintf('Warning: this block size of %d rows and %d columns\ndoes not match the preset block size of %d rows and %d columns.\nIt will not be added to the 3D image stack.',...
+%         newTileSize(1), newTileSize(2), blockSizeR, blockSizeC);
+%       uiwait(warndlg(warningMessage));
+    end
+    sliceNumber = sliceNumber + 1;
+  end
+
+    
+end
+if o>1
+    %avoid divide-by-zero by replacing 0 with nan
+    tempImage = A(:,:,band);
+    tempImage(tempImage == 0) = nan;
+
+
+      for b=1:o
+          if b ~= band
+              reconstructed(:,:, b) = ( reconstructed(:,:,band)./tempImage).*A(:,:,b);%keeping the ratio same
+          end
+      end
+
+    %now replace all nan values with 0
+     reconstructed(isnan( reconstructed)) = 0;
+
+end
+if strcmp(byte,'y')
+     reconstructed=uint8(reconstructed);
+end
+end
+function eq=histeq_contrast(A,block,limit)
+% A=imread("Cameraman.tif");
+limit=round((limit*block^2));
+
+x=unique(A);
+% limit=(1-limit)*100;
+% limit=round((limit*(block^2)/length(x)));
+% s=sort(A);
+out = (histc(A(:),x));
+sum=0;
+[r,c,b]=size(A);
+% B=A(:);
+no_bins=256;
+freq=zeros(256,1);
+
+ for i=1:size(A,1)
+        for j=1:size(A,2)
+            value = A(i,j);
+            freq(value+1) = freq(value+1)+1 ;
+%             if freq(value+1)>limit
+%                 sum1=(freq(value+1)-limit)+sum1;
+%                 freq(value+1)=limit;
+%             end% Frequency
+        end
+ end
+% %clippping histogram
+for i= 1:max(A(:))
+    if freq(i+1)>limit
+        f=freq(i+1)-limit;
+        freq(i+1)=limit;
+        sum=sum+f;
+    else
+        freq(i+1)=freq(i+1);
+    end
+
+end
+average=sum/length(x);
+new_freq=zeros(256,1);
+for i= 1:max(A(:))
+    if freq(i+1)<limit && freq(i)>0
+     new_freq(i+1)=freq(i+1)+average;
+     if new_freq(i+1)>limit
+         new_freq(i+1)=limit;
+     
+     else
+       new_freq(i+1)= new_freq(i+1);
+     end
+    else
+    new_freq(i+1)=freq(i+1);
+     
+    end
+end%add the average between all frequency
+cum=zeros(256,1);
+probc=zeros(256,1);
+output = zeros(256,1);
+sum=0;
+eq=zeros(r*c,1);
+numOfPixels=r*c;
+% maxGray=256;
+maxGray=max(A(:));
+ for i = 1:max(A(:))
+        sum=sum+new_freq(i+1);  
+        cum(i)=sum; % cumulative frequency
+        probc(i)=cum(i)/numOfPixels; % Normalized Frequency
+        output(i) = round(probc(i)*maxGray); %Hist Equalized pixel value
+ end
+    t=1:no_bins;
+% t=0:max(A(:));
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHMapping the original pixels to hist equalized pixel value
+    for i=1:max(A(:))
+                eq(A==t(i))=output(i);
+    end
+        eq = uint8(reshape(eq,size(A)));
+        
+%         imshow(eq,[]);
+end
+##### SOURCE END #####
+--></body></html>

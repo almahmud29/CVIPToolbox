@@ -1,0 +1,340 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gamma_noise_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="gamma_noise_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [ outImage ] = gamma_noise_cvip( inImage, gammaArgs, noiseImgSize)
+<span class="comment">% GAMMA_NOISE_CVIP -  Add Gamma noise to an image.</span>
+<span class="comment">% The function adds Gamma noise to an image or creates Gamma noise</span>
+<span class="comment">% image.If user wants to add Gamma noise to the image,the user needs</span>
+<span class="comment">% to pass only two input arguments(input image, and Gamma noise</span>
+<span class="comment">% argument).The Gamma noise argument consists of alpha and variance</span>
+<span class="comment">% value.If user wants to create a Gamma noise image only, pass input</span>
+<span class="comment">% image as an empty matrix []. And, the size of the noise image can be</span>
+<span class="comment">% defined by passing additional parameter (size of noise image).If not</span>
+<span class="comment">% passed, default size of 256*256 will be selected.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% -------</span>
+<span class="comment">% outImage = gamma_noise_cvip(inImage, gammagArgs, noiseImgSize)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%   'inImage'         1-band input image of MxN size or 3-band input image of</span>
+<span class="comment">%                     MxNx3 size. The input image can be of uint8 or uint16</span>
+<span class="comment">%                     or double class.</span>
+<span class="comment">%   'gammaArgs'       Gamma noise arguments.</span>
+<span class="comment">%                     gammaArgs(1): alpha value         (default 2)</span>
+<span class="comment">%                     gammaArgs(2): variance value     (default 100)</span>
+<span class="comment">%   'noiseImgSize'    Size of Gamma noise image. Only needed when noise</span>
+<span class="comment">%                     is added to black image.</span>
+<span class="comment">%                     noiseImgSize(1): height              (default 256)</span>
+<span class="comment">%                     noiseImgSize(2): width               (default 256)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%   'outImage'        Gamma noise added image or Gamma noise image</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                   I = imread('butterfly.tif');      %original image</span>
+<span class="comment">%                   O1 = gamma_noise_cvip(I);         %default parameters</span>
+<span class="comment">%                   figure;imshow(remap_cvip(O1,[]));</span>
+<span class="comment">%                   noise_parameter = [20 100];       %alpha = 3, variance = 200</span>
+<span class="comment">%                   %Gamma noise added image</span>
+<span class="comment">%                   O2 = gamma_noise_cvip(I,noise_parameter);</span>
+<span class="comment">%                   %Gamma noise image</span>
+<span class="comment">%                   image_size = [300 400];        %height = 300, width = 400</span>
+<span class="comment">%                   figure;imshow(remap_cvip(O2,[]));</span>
+<span class="comment">%                   O3 = gamma_noise_cvip([],noise_parameter, image_size);</span>
+<span class="comment">%                   figure;imshow(O3,[]);</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Norsang Lama</span>
+<span class="comment">%           Initial coding date:    4/10/2017</span>
+<span class="comment">%           Latest update date:     4/20/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2017 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">%check number of input arguments</span>
+<span class="keyword">if</span> nargin ~=1 &amp;&amp; nargin ~= 2 &amp;&amp; nargin ~= 3
+    error(<span class="string">'Too many or too few input arguments!'</span>);
+<span class="keyword">end</span>
+<span class="keyword">if</span> nargout ~=1 &amp;&amp; nargout ~=0
+    error(<span class="string">'Too many or too few output arguments!'</span>);
+<span class="keyword">end</span>
+
+default_gammaArgs = [2 100]; <span class="comment">%default alpha and variance</span>
+default_noiseImgSize = [256 256];  <span class="comment">%default size of black image</span>
+
+<span class="comment">%set up the default parameters</span>
+<span class="keyword">if</span> nargin == 1
+    gammaArgs = default_gammaArgs;
+    noiseImgSize = default_noiseImgSize;
+
+<span class="keyword">elseif</span> nargin == 2
+
+    <span class="keyword">if</span> isempty(gammaArgs)      <span class="comment">%check enough elements in input argument #2</span>
+        gammaArgs = default_gammaArgs;
+    <span class="keyword">elseif</span> length(gammaArgs)==1
+        gammaArgs = [gammaArgs default_gammaArgs(2)];
+    <span class="keyword">elseif</span> length(gammaArgs)&gt; 2
+        gammaArgs = gammaArgs(1:2);
+    <span class="keyword">end</span>
+<span class="keyword">elseif</span> nargin == 3
+    <span class="keyword">if</span> isempty(noiseImgSize)
+        noiseImgSize = default_noiseImgSize;
+    <span class="keyword">elseif</span> length(noiseImgSize)==1
+        noiseImgSize = [noiseImgSize default_noiseImgSize(2)];
+    <span class="keyword">elseif</span> length(noiseImgSize)&gt; 2
+        noiseImgSize = noiseImgSize(1:2);
+    <span class="keyword">end</span>
+    <span class="comment">%check enough elements in input argument #2</span>
+    <span class="keyword">if</span> isempty(gammaArgs)
+        gammaArgs = default_gammaArgs;
+    <span class="keyword">elseif</span> length(gammaArgs)==1
+        gammaArgs = [gammaArgs default_gammaArgs(2)];
+    <span class="keyword">elseif</span> length(gammaArgs)&gt; 2
+        gammaArgs = gammaArgs(1:2);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">%check number of output arguments</span>
+<span class="keyword">if</span> nargout ~= 1 &amp;&amp; nargout ~= 0
+    error(<span class="string">'Too many output arguments!'</span>);
+<span class="keyword">end</span>
+
+alpha = gammaArgs(1);
+var = gammaArgs(2);
+
+
+<span class="comment">%check if user wants black image</span>
+<span class="keyword">if</span> isempty(inImage)
+    inImage = zeros(noiseImgSize);
+<span class="keyword">end</span>
+
+<span class="comment">%Gamma noise image</span>
+A = sqrt(var/alpha)/2;
+gamma_noise = zeros(size(inImage));
+<span class="keyword">for</span> i = 1:alpha
+    <span class="comment">%generate uniformly distributed pseudo-random sequence</span>
+    PN1 = rand(size(inImage));
+    PN2 = rand(size(inImage));
+    noise = (-2)*A*log(1-PN1);
+    theta = PN2*2*pi - pi;
+    gamma_noise = gamma_noise + noise.*((cos(theta)).^2+(sin(theta)).^2);
+<span class="keyword">end</span>
+
+outImage = double(inImage) + gamma_noise + 0.5;
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Error using gamma_noise_cvip (line 65)
+Too many or too few input arguments!
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [ outImage ] = gamma_noise_cvip( inImage, gammaArgs, noiseImgSize)
+% GAMMA_NOISE_CVIP -  Add Gamma noise to an image.
+% The function adds Gamma noise to an image or creates Gamma noise
+% image.If user wants to add Gamma noise to the image,the user needs
+% to pass only two input arguments(input image, and Gamma noise 
+% argument).The Gamma noise argument consists of alpha and variance 
+% value.If user wants to create a Gamma noise image only, pass input 
+% image as an empty matrix []. And, the size of the noise image can be 
+% defined by passing additional parameter (size of noise image).If not
+% passed, default size of 256*256 will be selected. 
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% outImage = gamma_noise_cvip(inImage, gammagArgs, noiseImgSize)
+%   
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%   'inImage'         1-band input image of MxN size or 3-band input image of   
+%                     MxNx3 size. The input image can be of uint8 or uint16 
+%                     or double class. 
+%   'gammaArgs'       Gamma noise arguments.   
+%                     gammaArgs(1): alpha value         (default 2)
+%                     gammaArgs(2): variance value     (default 100)
+%   'noiseImgSize'    Size of Gamma noise image. Only needed when noise
+%                     is added to black image. 
+%                     noiseImgSize(1): height              (default 256)
+%                     noiseImgSize(2): width               (default 256)
+%
+%
+% Output Parameter include :  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%   'outImage'        Gamma noise added image or Gamma noise image 
+%                                         
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                   I = imread('butterfly.tif');      %original image
+%                   O1 = gamma_noise_cvip(I);         %default parameters  
+%                   figure;imshow(remap_cvip(O1,[]));
+%                   noise_parameter = [20 100];       %alpha = 3, variance = 200
+%                   %Gamma noise added image
+%                   O2 = gamma_noise_cvip(I,noise_parameter);
+%                   %Gamma noise image
+%                   image_size = [300 400];        %height = 300, width = 400
+%                   figure;imshow(remap_cvip(O2,[]));
+%                   O3 = gamma_noise_cvip([],noise_parameter, image_size);               
+%                   figure;imshow(O3,[]);
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Norsang Lama
+%           Initial coding date:    4/10/2017
+%           Latest update date:     4/20/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2017 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+%check number of input arguments
+if nargin ~=1 && nargin ~= 2 && nargin ~= 3 
+    error('Too many or too few input arguments!');
+end
+if nargout ~=1 && nargout ~=0
+    error('Too many or too few output arguments!');
+end
+
+default_gammaArgs = [2 100]; %default alpha and variance
+default_noiseImgSize = [256 256];  %default size of black image
+
+%set up the default parameters
+if nargin == 1                   
+    gammaArgs = default_gammaArgs;
+    noiseImgSize = default_noiseImgSize;
+          
+elseif nargin == 2               
+    
+    if isempty(gammaArgs)      %check enough elements in input argument #2
+        gammaArgs = default_gammaArgs;
+    elseif length(gammaArgs)==1
+        gammaArgs = [gammaArgs default_gammaArgs(2)];
+    elseif length(gammaArgs)> 2
+        gammaArgs = gammaArgs(1:2);
+    end    
+elseif nargin == 3     
+    if isempty(noiseImgSize) 
+        noiseImgSize = default_noiseImgSize;
+    elseif length(noiseImgSize)==1
+        noiseImgSize = [noiseImgSize default_noiseImgSize(2)];
+    elseif length(noiseImgSize)> 2
+        noiseImgSize = noiseImgSize(1:2);
+    end               
+    %check enough elements in input argument #2
+    if isempty(gammaArgs)      
+        gammaArgs = default_gammaArgs;
+    elseif length(gammaArgs)==1
+        gammaArgs = [gammaArgs default_gammaArgs(2)];
+    elseif length(gammaArgs)> 2
+        gammaArgs = gammaArgs(1:2);
+    end 
+end
+
+%check number of output arguments
+if nargout ~= 1 && nargout ~= 0
+    error('Too many output arguments!');
+end
+
+alpha = gammaArgs(1);
+var = gammaArgs(2);
+
+
+%check if user wants black image
+if isempty(inImage)      
+    inImage = zeros(noiseImgSize);    
+end 
+
+%Gamma noise image
+A = sqrt(var/alpha)/2;
+gamma_noise = zeros(size(inImage));
+for i = 1:alpha
+    %generate uniformly distributed pseudo-random sequence
+    PN1 = rand(size(inImage));  
+    PN2 = rand(size(inImage));      
+    noise = (-2)*A*log(1-PN1);
+    theta = PN2*2*pi - pi;
+    gamma_noise = gamma_noise + noise.*((cos(theta)).^2+(sin(theta)).^2);
+end
+
+outImage = double(inImage) + gamma_noise + 0.5;
+end
+##### SOURCE END #####
+--></body></html>

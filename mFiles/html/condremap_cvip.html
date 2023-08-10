@@ -1,0 +1,330 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>condremap_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="condremap_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [ outImage ] = condremap_cvip( inImage, rangeIn, datatype)
+<span class="comment">% CONDREMAP_CVIP - perfom conditional remapping,user specified range and data type.</span>
+<span class="comment">% The function linearly remaps the data range of input image into new</span>
+<span class="comment">% range.The user has choice to either specify the new range or let the</span>
+<span class="comment">% function choose the default parameter.For the remapped image, the user</span>
+<span class="comment">% can explicitly define the new datatype or let the function to select</span>
+<span class="comment">% same class of input image.First, it remaps the image into the user</span>
+<span class="comment">% defined range.Second, the function checks whether the new range is</span>
+<span class="comment">% within the maximum range of user specfied datatype.If not, the</span>
+<span class="comment">% function remaps the output image into the maximum range of user</span>
+<span class="comment">% specified datatype.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% -------</span>
+<span class="comment">% outImage = condremap_cvip(inImage, rangeIn,datatype)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%   'inImage'        1-band input image of MxN size or 3-band input image of</span>
+<span class="comment">%                    MxNx3 size.The input image can be of uint8 or uint16</span>
+<span class="comment">%                    or double class.If double class, the function assumes</span>
+<span class="comment">%                    the data range of image is from 0 to 1.</span>
+<span class="comment">%  'rangeIn'         New data range of image.A row vector or column</span>
+<span class="comment">%                    vector of length two.First element should be low end</span>
+<span class="comment">%                    and second element should be high end.</span>
+<span class="comment">%  'datatype'        Class of the remapped image.It can be uint8 or uint16</span>
+<span class="comment">%                    or double.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%   'outImage'        Remapped image having same size of input image. But,</span>
+<span class="comment">%                     the class can be either user specified class type or</span>
+<span class="comment">%                     or same class as of input image.</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                   I = imread('butterfly.tif');     %original image</span>
+<span class="comment">%                   O1 = condremap_cvip(I);          %default range &amp; class</span>
+<span class="comment">%                   rangeIN = [0 4e+4];              %new range</span>
+<span class="comment">%                   O2 = condremap_cvip(I,rangeIN,'uint16');      %user specified range and class</span>
+<span class="comment">%                   figure;imshow(O2,[]);</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Norsang Lama</span>
+<span class="comment">%           Initial coding date:    3/20/2017</span>
+<span class="comment">%           Latest update date:     3/23/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2017 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="keyword">if</span> nargin ~= 1 &amp;&amp; nargin ~= 2 &amp;&amp; nargin ~= 3
+    error(<span class="string">'Too many or too few input arguments!'</span>)
+<span class="keyword">end</span>
+<span class="keyword">if</span> nargout ~= 0 &amp;&amp; nargout ~= 1
+    error(<span class="string">'Too many or too few output arguments!'</span>)
+<span class="keyword">end</span>
+
+<span class="comment">%set up default parameters</span>
+<span class="keyword">if</span> nargin == 1
+    datatype = class(inImage);
+    rangeIn = [];
+<span class="keyword">else</span>
+    <span class="keyword">if</span> nargin == 2
+        datatype = class(inImage);
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> length(rangeIn) == 1
+        rangeIn(2) = rangeIn;
+        rangeIn(1) = 0;
+    <span class="keyword">elseif</span> length(rangeIn)&gt;2
+        rangeIn = [min(rangeIn) max(rangIn)];
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">%find the maximum range of data type</span>
+<span class="keyword">if</span> strcmp(datatype,<span class="string">'uint8'</span>)
+    max_range = [0 2^8-1];
+<span class="keyword">elseif</span> strcmp(datatype,<span class="string">'uint16'</span>)
+    max_range = [0 2^16-1];
+<span class="keyword">else</span>  <span class="comment">%otherwise, assume datatype as double</span>
+    max_range = [0.0 1.0];
+<span class="keyword">end</span>
+inImage = double(inImage);
+[nrow,ncol,nband] = size(inImage);
+
+<span class="keyword">if</span> ~isempty(rangeIn)
+    <span class="comment">%First, convert the image into user's input range</span>
+    ymin=rangeIn(1);
+    ymax=rangeIn(2);
+    xmax=max(max(inImage));
+    xmin=min(min(inImage));
+    outImage = repmat(ymax-ymin,[nrow ncol nband])<span class="keyword">...</span>
+        ./repmat(xmax-xmin,[nrow ncol 1]).*(inImage - repmat(xmin,[nrow ncol 1]))<span class="keyword">...</span>
+        +repmat(ymin,[nrow ncol nband]);
+
+    <span class="comment">%Second, check if user's new range is within the range of user's new</span>
+    <span class="comment">%datatype</span>
+    <span class="comment">% if the user's input range is not within the range of user's datatype,</span>
+    <span class="comment">%it will be remapped into maximum range of the datatype</span>
+    <span class="keyword">if</span> rangeIn(1) &lt; max_range(1) || rangeIn(2) &gt; max_range(2)
+        xmax=max(max(outImage));
+        xmin=min(min(outImage));
+        outImage = repmat(max_range(2)-max_range(1),[nrow ncol nband])<span class="keyword">...</span>
+                ./repmat(xmax-xmin,[nrow ncol 1]).*(outImage - repmat(xmin,[nrow ncol 1]))<span class="keyword">...</span>
+                +repmat(max_range(1),[nrow ncol nband]);
+    <span class="keyword">end</span>
+<span class="keyword">else</span> <span class="comment">%if rangeIN is empty, then the image is remapped into the maximum</span>
+    <span class="comment">% range of new datatype</span>
+    outImage = remap_cvip(inImage, max_range);
+<span class="keyword">end</span>
+
+<span class="comment">%Final, type conversion</span>
+<span class="keyword">if</span> strcmp(datatype,<span class="string">'uint8'</span>)
+    outImage = uint8(outImage);
+<span class="keyword">elseif</span> strcmp(datatype,<span class="string">'uint16'</span>)
+    outImage = uint16(outImage);
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Error using condremap_cvip (line 61)
+Too many or too few input arguments!
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [ outImage ] = condremap_cvip( inImage, rangeIn, datatype)
+% CONDREMAP_CVIP - perfom conditional remapping,user specified range and data type.
+% The function linearly remaps the data range of input image into new 
+% range.The user has choice to either specify the new range or let the 
+% function choose the default parameter.For the remapped image, the user 
+% can explicitly define the new datatype or let the function to select 
+% same class of input image.First, it remaps the image into the user 
+% defined range.Second, the function checks whether the new range is 
+% within the maximum range of user specfied datatype.If not, the 
+% function remaps the output image into the maximum range of user 
+% specified datatype.
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% outImage = condremap_cvip(inImage, rangeIn,datatype)
+%    
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%   'inImage'        1-band input image of MxN size or 3-band input image of   
+%                    MxNx3 size.The input image can be of uint8 or uint16
+%                    or double class.If double class, the function assumes
+%                    the data range of image is from 0 to 1.
+%  'rangeIn'         New data range of image.A row vector or column
+%                    vector of length two.First element should be low end
+%                    and second element should be high end.
+%  'datatype'        Class of the remapped image.It can be uint8 or uint16 
+%                    or double.
+%
+%
+% Output Parameter include :  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%   'outImage'        Remapped image having same size of input image. But, 
+%                     the class can be either user specified class type or
+%                     or same class as of input image.  
+%                                         
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                   I = imread('butterfly.tif');     %original image
+%                   O1 = condremap_cvip(I);          %default range & class          
+%                   rangeIN = [0 4e+4];              %new range
+%                   O2 = condremap_cvip(I,rangeIN,'uint16');      %user specified range and class
+%                   figure;imshow(O2,[]);
+%
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Norsang Lama
+%           Initial coding date:    3/20/2017
+%           Latest update date:     3/23/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2017 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+if nargin ~= 1 && nargin ~= 2 && nargin ~= 3
+    error('Too many or too few input arguments!')
+end
+if nargout ~= 0 && nargout ~= 1
+    error('Too many or too few output arguments!')
+end
+
+%set up default parameters
+if nargin == 1
+    datatype = class(inImage);
+    rangeIn = [];
+else      
+    if nargin == 2
+        datatype = class(inImage);        
+    end      
+    if length(rangeIn) == 1
+        rangeIn(2) = rangeIn;
+        rangeIn(1) = 0; 
+    elseif length(rangeIn)>2
+        rangeIn = [min(rangeIn) max(rangIn)];
+    end
+end
+
+%find the maximum range of data type
+if strcmp(datatype,'uint8')
+    max_range = [0 2^8-1];
+elseif strcmp(datatype,'uint16')
+    max_range = [0 2^16-1];
+else  %otherwise, assume datatype as double 
+    max_range = [0.0 1.0];
+end
+inImage = double(inImage);
+[nrow,ncol,nband] = size(inImage);
+
+if ~isempty(rangeIn)
+    %First, convert the image into user's input range
+    ymin=rangeIn(1);
+    ymax=rangeIn(2);
+    xmax=max(max(inImage));
+    xmin=min(min(inImage));   
+    outImage = repmat(ymax-ymin,[nrow ncol nband])...
+        ./repmat(xmax-xmin,[nrow ncol 1]).*(inImage - repmat(xmin,[nrow ncol 1]))...
+        +repmat(ymin,[nrow ncol nband]);  
+    
+    %Second, check if user's new range is within the range of user's new
+    %datatype
+    % if the user's input range is not within the range of user's datatype, 
+    %it will be remapped into maximum range of the datatype
+    if rangeIn(1) < max_range(1) || rangeIn(2) > max_range(2)
+        xmax=max(max(outImage));
+        xmin=min(min(outImage));
+        outImage = repmat(max_range(2)-max_range(1),[nrow ncol nband])...
+                ./repmat(xmax-xmin,[nrow ncol 1]).*(outImage - repmat(xmin,[nrow ncol 1]))...
+                +repmat(max_range(1),[nrow ncol nband]); 
+    end
+else %if rangeIN is empty, then the image is remapped into the maximum 
+    % range of new datatype
+    outImage = remap_cvip(inImage, max_range);  
+end
+
+%Final, type conversion
+if strcmp(datatype,'uint8')   
+    outImage = uint8(outImage);
+elseif strcmp(datatype,'uint16')     
+    outImage = uint16(outImage);
+end
+
+end
+
+
+##### SOURCE END #####
+--></body></html>

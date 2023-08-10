@@ -1,0 +1,180 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>INVERSE_XFORMFILTER_CVIP</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-15"><meta name="DC.source" content="inverse_xformfilter_cvip_test.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1><b>INVERSE_XFORMFILTER_CVIP</b></h1><!--introduction--><p><b>inverse_xformfilter_cvip()</b> - performs the inverse restoration frequency domain filtering.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">SYNTAX</a></li><li><a href="#2">DESCRIPTION</a></li><li><a href="#3">REFERENCE</a></li><li><a href="#4">EXAMPLE</a></li><li><a href="#5">CREDITS</a></li></ul></div><h2>SYNTAX<a name="1"></a></h2><pre>Y = inverse_xformfilter_cvip(d,h,cutoff,limitGain)</pre><p>Input Parameters include:</p><div><ul><li>d      -       The degraded image. A single or multiband image.</li></ul></div><div><ul><li>h      -       The degradation function. It can be single band.</li></ul></div><div><ul><li>cutoff   -     Cutoff frequency for filtering.</li></ul></div><div><ul><li>limitGain  -   Sets the maximum gain using the DC value as a baseline.                 limitGain=1 --&gt; DC value is the maximum gain.                 limitGain&gt;1 --&gt; DC_value*limitGain is the maximum gain.</li></ul></div><p>Output Parameter include:</p><div><ul><li>Y       -       The output image after restoration filtering.</li></ul></div><h2>DESCRIPTION<a name="2"></a></h2><p>The function performs inverse restoration filtering operation on a degraded image to restore the image to its original state. The function multiplies the fourier transform of the degraded image by the inverse filter to obtain the original image.</p><h2>REFERENCE<a name="3"></a></h2><p>1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</p><h2>EXAMPLE<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Read image</span>
+
+ d = imread(<span class="string">'butterfly.gaussian.tif'</span>);
+
+<span class="comment">% degradation function.</span>
+
+ h = [ 2.50 4.500 2.250 :4.500 9.001 4.500 : 2.250 4.500 2.250];
+
+<span class="comment">% Cutoff frequency</span>
+
+ cutoff = 32;
+
+<span class="comment">% Limit gain</span>
+
+ limitGain = 10;
+
+<span class="comment">% Calling function</span>
+
+ Y = inverse_xformfilter_cvip(d,h,cutoff,limitGain);
+
+<span class="comment">% Display input image</span>
+
+ figure;imshow(d);title(<span class="string">'Input Image'</span>);
+
+<span class="comment">% Display output image</span>
+
+ figure;imshow(remap_cvip(Y));title(<span class="string">'Output Image'</span>);
+</pre><img vspace="5" hspace="5" src="inverse_xformfilter_cvip_test_01.png" alt=""> <img vspace="5" hspace="5" src="inverse_xformfilter_cvip_test_02.png" alt=""> <h2>CREDITS<a name="5"></a></h2><p>
+Author: Norsang Lama, March 2017<br>
+Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+E Umbaugh</a><br>
+For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% *INVERSE_XFORMFILTER_CVIP*
+% *inverse_xformfilter_cvip()* - performs the inverse restoration frequency domain filtering.
+%% SYNTAX
+% 
+%  Y = inverse_xformfilter_cvip(d,h,cutoff,limitGain)
+% 
+%
+% Input Parameters include:
+% 
+%
+% * d      -       The degraded image. A single or multiband image.
+%                                  
+% * h      -       The degradation function. It can be single band.
+%
+% * cutoff   -     Cutoff frequency for filtering.
+% 
+% * limitGain  -   Sets the maximum gain using the DC value as a baseline.
+%                 limitGain=1 REPLACE_WITH_DASH_DASH> DC value is the maximum gain.
+%                 limitGain>1 REPLACE_WITH_DASH_DASH> DC_value*limitGain is the maximum gain.
+%
+% Output Parameter include:  
+% 
+% * Y       -       The output image after restoration filtering.
+%   
+%% DESCRIPTION
+% The function performs inverse restoration filtering operation on a
+% degraded image to restore the image to its original state. The function
+% multiplies the fourier transform of the degraded image by the inverse
+% filter to obtain the original image. 
+% 
+%% REFERENCE
+%  
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+%                                                  
+
+%% EXAMPLE
+
+% Read image
+       
+ d = imread('butterfly.gaussian.tif');
+ 
+% degradation function. 
+
+ h = [ 2.50 4.500 2.250 :4.500 9.001 4.500 : 2.250 4.500 2.250]; 
+ 
+% Cutoff frequency
+
+ cutoff = 32;
+
+% Limit gain
+
+ limitGain = 10;
+ 
+% Calling function
+
+ Y = inverse_xformfilter_cvip(d,h,cutoff,limitGain);
+ 
+% Display input image
+ 
+ figure;imshow(d);title('Input Image');
+
+% Display output image
+
+ figure;imshow(remap_cvip(Y));title('Output Image');
+
+
+ 
+%% CREDITS
+%
+% <html>
+% Author: Norsang Lama, March 2017<br>
+% Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+% E Umbaugh</a><br>
+% For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+% </html>
+%
+##### SOURCE END #####
+--></body></html>

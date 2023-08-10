@@ -1,0 +1,242 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>homomorphic_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="homomorphic_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">1- Natural Log</a></li><li><a href="#4">2- Fourier</a></li><li><a href="#5">3- Filtering</a></li><li><a href="#6">4- Inverse Fourier</a></li><li><a href="#7">5- Inverse Log</a></li><li><a href="#8">prepare the output size</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> out_img = homomorphic_cvip(input_img, upper,  lower, cutoff)
+</pre><pre class="codeinput"><span class="comment">% HOMOMORPHIC_CVIP -Homomorphic filtering is used to reduce the effect of</span>
+<span class="comment">% illumination  variations in a scene while emphasizing the</span>
+<span class="comment">% reflectance components.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% --------</span>
+<span class="comment">% out_img = homomorphic_cvip(input_img, upper,  lower, cutoff)</span>
+<span class="comment">%</span>
+<span class="comment">% Description :</span>
+<span class="comment">% -------------</span>
+<span class="comment">%  The upper limit should be greater than 1;the lower limit should</span>
+<span class="comment">%  be less than 1.Typical values range between 2.0 and 0.5.</span>
+<span class="comment">%  The function has 5 steps</span>
+<span class="comment">%   1- Natural Log</span>
+<span class="comment">%   2- Fourier Transform</span>
+<span class="comment">%   3- Filtering</span>
+<span class="comment">%   4- Inverse Fourier</span>
+<span class="comment">%   5- Inverse Log</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters Include :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%  'Input_img'   Input Image .</span>
+<span class="comment">%</span>
+<span class="comment">%  'Upper'         Upper limit has to be greater than 1.</span>
+<span class="comment">%</span>
+<span class="comment">%  'Lower'         Lower limit has to be less than 1.</span>
+<span class="comment">%</span>
+<span class="comment">%  'cutoff'        Cutoff frequency.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% output Parameter Include :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%  'Out_img'       Output Image.</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% ---------</span>
+<span class="comment">%</span>
+<span class="comment">%       Input_img = imread('butterfly.tif');</span>
+<span class="comment">%       upper = 1.5;</span>
+<span class="comment">%       lower = 0.5;</span>
+<span class="comment">%       cutoff = 32;</span>
+<span class="comment">%       outputImage = homomorphic_cvip(Input_img,upper,lower,cutoff);</span>
+<span class="comment">%       figure;imshow(remap_cvip(outputImage,[]));</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    06/27/2017</span>
+<span class="comment">%           Latest update date:     06/27/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2017 Scott Umbaugh and SIUE</span>
+<span class="comment">%==========================================================================</span>
+
+[height, width, ~] = size(input_img);
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in homomorphic_cvip (line 62)
+[height, width, ~] = size(input_img);
+</pre><h2 id="3">1- Natural Log</h2><p>input_img = condremap_cvip(input_img,[0 1],'double');</p><pre class="codeinput">input_img = double(input_img);
+input_img = log(1+input_img);
+</pre><h2 id="4">2- Fourier</h2><pre class="codeinput">X = fft_cvip(input_img,[]);
+</pre><h2 id="5">3- Filtering</h2><pre class="codeinput">c = upper - lower;
+[m,n,d] = size(X);
+H = butterworth_h_cvip( <span class="string">'high'</span>, [m n] , <span class="string">'center'</span>,<span class="string">''</span>, 6,cutoff );
+
+H = c*H + lower;
+X = X.*repmat(H,[1 1 d]);
+</pre><h2 id="6">4- Inverse Fourier</h2><pre class="codeinput">X = ifft_cvip(X, []);
+out_img = real(X);
+</pre><h2 id="7">5- Inverse Log</h2><pre class="codeinput">out_img = exp(out_img);
+</pre><h2 id="8">prepare the output size</h2><pre class="codeinput">out_img = out_img(1:height,1:width,:);
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function out_img = homomorphic_cvip(input_img, upper,  lower, cutoff)
+% HOMOMORPHIC_CVIP -Homomorphic filtering is used to reduce the effect of
+% illumination  variations in a scene while emphasizing the
+% reflectance components.
+% 
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% out_img = homomorphic_cvip(input_img, upper,  lower, cutoff)
+%
+% Description :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%  The upper limit should be greater than 1;the lower limit should
+%  be less than 1.Typical values range between 2.0 and 0.5.
+%  The function has 5 steps
+%   1- Natural Log
+%   2- Fourier Transform
+%   3- Filtering
+%   4- Inverse Fourier
+%   5- Inverse Log
+%
+% Input Parameters Include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+%  'Input_img'   Input Image .
+%
+%  'Upper'         Upper limit has to be greater than 1.
+%     
+%  'Lower'         Lower limit has to be less than 1.
+%
+%  'cutoff'        Cutoff frequency.
+%
+%
+% output Parameter Include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+%  'Out_img'       Output Image.
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+%       Input_img = imread('butterfly.tif');
+%       upper = 1.5;
+%       lower = 0.5;
+%       cutoff = 32;
+%       outputImage = homomorphic_cvip(Input_img,upper,lower,cutoff);
+%       figure;imshow(remap_cvip(outputImage,[]));
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+% 
+%           Author:                Mehrdad Alvandipour
+%           Initial coding date:    06/27/2017
+%           Latest update date:     06/27/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2017 Scott Umbaugh and SIUE
+%==========================================================================
+
+[height, width, ~] = size(input_img);
+
+%% 1- Natural Log
+% input_img = condremap_cvip(input_img,[0 1],'double');
+input_img = double(input_img);
+input_img = log(1+input_img);
+
+%% 2- Fourier
+X = fft_cvip(input_img,[]);
+
+%% 3- Filtering
+c = upper - lower;
+[m,n,d] = size(X);
+H = butterworth_h_cvip( 'high', [m n] , 'center','', 6,cutoff );
+
+H = c*H + lower;
+X = X.*repmat(H,[1 1 d]);
+
+%% 4- Inverse Fourier
+X = ifft_cvip(X, []);
+out_img = real(X);
+
+%% 5- Inverse Log
+out_img = exp(out_img);
+
+%% prepare the output size
+out_img = out_img(1:height,1:width,:);
+
+end
+##### SOURCE END #####
+--></body></html>

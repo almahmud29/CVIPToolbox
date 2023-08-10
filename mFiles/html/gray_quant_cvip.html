@@ -1,0 +1,248 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gray_quant_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="gray_quant_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [ outImage ] = gray_quant_cvip( inImage, graylevel)
+<span class="comment">% GRAY_QUANT_CVIP - Gray level quantization of an image.</span>
+<span class="comment">% The function performs the gray level quantization of an image using</span>
+<span class="comment">% standard method.The number of gray-level must be a power of 2.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% ------</span>
+<span class="comment">% outImage = gray_quant_cvip(inImage, graylevel)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include:</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%   'inImage'       1-band input image of MxN size or 3-band input image of</span>
+<span class="comment">%                   MxNx3 size. The input image can be of uint8 or double</span>
+<span class="comment">%                   class. If double class, the function assumes</span>
+<span class="comment">%                   the data range of image is from 0 to 1.</span>
+<span class="comment">%   'graylevel'     Number of gray levels. It must be a power of 2, but not</span>
+<span class="comment">%                   greater than 256.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter includes:</span>
+<span class="comment">% --------------------------</span>
+<span class="comment">%   'outImage'      Quantized image having same size and same class of</span>
+<span class="comment">%                   input image.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                   I = imread('butterfly.tif');           %original image</span>
+<span class="comment">%                   O1 = gray_quant_cvip(I);                %default graylevel = 4</span>
+<span class="comment">%                   graylevel = 16;                        %new graylevel</span>
+<span class="comment">%                   O2 = gray_quant_cvip(I,graylevel);      %user specified graylevel</span>
+<span class="comment">%                   figure; imshow(O2,[]);</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications</span>
+<span class="comment">% with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Norsang Lama</span>
+<span class="comment">%           Initial coding date:    2/15/2017</span>
+<span class="comment">%           Latest update date:     3/27/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2017 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="keyword">if</span> nargin ~= 1 &amp;&amp; nargin ~= 2
+    error(<span class="string">'Too many or too few input arguments!'</span>)
+<span class="keyword">end</span>
+<span class="keyword">if</span> nargout ~= 0 &amp;&amp; nargout ~= 1
+    error(<span class="string">'Too many or too few output arguments!'</span>)
+<span class="keyword">end</span>
+
+<span class="comment">%set up default parameters</span>
+<span class="keyword">if</span> nargin == 1
+    graylevel = 4;
+<span class="keyword">else</span>
+    <span class="comment">%check if the gray level is power of 2</span>
+    <span class="keyword">if</span> mod(log2(graylevel),1)
+        warning(<span class="string">'The number of gray levels must be power of 2! Default option for number of gray levels is selected!'</span>);
+        graylevel = 4;
+    <span class="keyword">elseif</span> graylevel&gt;256
+        warning(<span class="string">'The number of gray levels must be less than 256! Default option for number of gray levels is selected!'</span>);
+        graylevel = 4;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">%check image data is of unsigned integer type</span>
+<span class="keyword">if</span> ~isa(inImage,<span class="string">'uint8'</span>)
+    inImage = double(inImage);
+<span class="keyword">end</span>
+
+<span class="comment">%compute gray level quantized images</span>
+[n_rows, n_cols, n_bands] = size(inImage);
+outImage = inImage;
+msk = (256/graylevel)-1;
+<span class="keyword">for</span> b=1:n_bands
+    outImage(:,:,b)=bitand(inImage(:,:,b),<span class="keyword">...</span>
+        uint8(repmat(bitxor(255,msk,<span class="string">'uint8'</span>),[n_rows n_cols])),<span class="string">'uint8'</span>);
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+<span class="comment">%end of function grayquantCVIP</span>
+</pre><pre class="codeoutput error">Error using gray_quant_cvip (line 51)
+Too many or too few input arguments!
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [ outImage ] = gray_quant_cvip( inImage, graylevel)
+% GRAY_QUANT_CVIP - Gray level quantization of an image.
+% The function performs the gray level quantization of an image using
+% standard method.The number of gray-level must be a power of 2.
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% outImage = gray_quant_cvip(inImage, graylevel)
+%    
+% Input Parameters include:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%   'inImage'       1-band input image of MxN size or 3-band input image of   
+%                   MxNx3 size. The input image can be of uint8 or double
+%                   class. If double class, the function assumes
+%                   the data range of image is from 0 to 1.
+%   'graylevel'     Number of gray levels. It must be a power of 2, but not
+%                   greater than 256.
+%
+%
+% Output Parameter includes:  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%   'outImage'      Quantized image having same size and same class of
+%                   input image. 
+%                                         
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                   I = imread('butterfly.tif');           %original image
+%                   O1 = gray_quant_cvip(I);                %default graylevel = 4          
+%                   graylevel = 16;                        %new graylevel
+%                   O2 = gray_quant_cvip(I,graylevel);      %user specified graylevel
+%                   figure; imshow(O2,[]);
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications
+% with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Norsang Lama
+%           Initial coding date:    2/15/2017
+%           Latest update date:     3/27/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2017 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+if nargin ~= 1 && nargin ~= 2 
+    error('Too many or too few input arguments!')
+end
+if nargout ~= 0 && nargout ~= 1
+    error('Too many or too few output arguments!')
+end
+
+%set up default parameters
+if nargin == 1
+    graylevel = 4;
+else      
+    %check if the gray level is power of 2
+    if mod(log2(graylevel),1)
+        warning('The number of gray levels must be power of 2! Default option for number of gray levels is selected!');
+        graylevel = 4;
+    elseif graylevel>256
+        warning('The number of gray levels must be less than 256! Default option for number of gray levels is selected!');
+        graylevel = 4;
+    end
+end
+
+%check image data is of unsigned integer type
+if ~isa(inImage,'uint8')
+    inImage = double(inImage);
+end
+
+%compute gray level quantized images
+[n_rows, n_cols, n_bands] = size(inImage);
+outImage = inImage;
+msk = (256/graylevel)-1;
+for b=1:n_bands
+    outImage(:,:,b)=bitand(inImage(:,:,b),...
+        uint8(repmat(bitxor(255,msk,'uint8'),[n_rows n_cols])),'uint8');
+end
+
+end
+
+%end of function grayquantCVIP
+##### SOURCE END #####
+--></body></html>

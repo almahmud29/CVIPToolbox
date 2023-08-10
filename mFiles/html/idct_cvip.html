@@ -1,0 +1,450 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>idct_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="idct_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> img = idct_cvip(input_spect,block_size)
+<span class="comment">% IDCT_CVIP - perform inverse discrete cosine transform</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% --------</span>
+<span class="comment">% img = idct_cvip( input_spect, block_size )</span>
+<span class="comment">%</span>
+<span class="comment">% Input  Parameters include :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%   'input_spect'   The DCT spectrum of an image. This spectrum must be obtained</span>
+<span class="comment">%                   by dct_cvip(). Also the same variable block_size that</span>
+<span class="comment">%                   is used in forward transform should be used here.</span>
+<span class="comment">%</span>
+<span class="comment">%   'block_size'    Should be a power of 2 or []. if empty, then functions</span>
+<span class="comment">%                   finds the nearest power of 2 and zero pad the image, to</span>
+<span class="comment">%                   that block size. Any other value smaller than image</span>
+<span class="comment">%                   size will partiotion the image to windows of that block</span>
+<span class="comment">%                   size and DCT will be calculated separately in each</span>
+<span class="comment">%                   window.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%   'Spect'         The inverse fourier transform of the input spectrum.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                 I = imread('butterfly.tif');</span>
+<span class="comment">%                 spect = dct_cvip( I,[] );</span>
+<span class="comment">%                 I_hat = idct_cvip( spect,[] );   % the inverse transform</span>
+<span class="comment">%                 figure;imshow(I);title('Input Image');</span>
+<span class="comment">%                 figure;imshow(remap_cvip(log(1+abs(spect))));title('DCT output Image');</span>
+<span class="comment">%                 figure; imshow(hist_stretch_cvip(I_hat,0,1,0,0));title(' output image after Idct transform');</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    5/29/2017</span>
+<span class="comment">%           Latest update date:     6/1/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+
+
+[m,n,~] = size(input_spect);
+
+<span class="keyword">if</span> ~isempty(block_size) &amp;&amp; block_size ~= 0 <span class="comment">% if block_size is given by the user and it is not 0, then it has to be a power of 2. Also the size of the spectrum should be a multiple of block_size.</span>
+
+    [F,~] = log2(block_size);
+    <span class="keyword">if</span> F~=.5
+        error(<span class="string">'block size should be a power of 2'</span>);
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> mod(m, block_size) ~= 0 || mod(n, block_size) ~= 0
+        error(<span class="string">'The given block size does not match the size of the spectrum.'</span>);
+    <span class="keyword">end</span>
+<span class="keyword">else</span>        <span class="comment">% block_size is 0 or emtpy, thus the given spectrum contains only one fourier window and its size is a power of 2.</span>
+    block_size = 0;
+    siz = 2.^nextpow2([m n]);
+    M = siz(1);
+    N = siz(2);
+
+    <span class="keyword">if</span> M~=m || N~= n
+        error(<span class="string">'The spectrums created by fft_cvip() have heights and width that are power of 2. The given spectrum does not match this criteria.'</span>);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+
+    <span class="keyword">if</span> block_size   <span class="comment">% non-zero block_size, means we have multiple fourier window. To compute the inverse transform, we need for-loop.</span>
+
+        <span class="keyword">for</span> i=1:(m/block_size)
+            <span class="keyword">for</span> j=1:(n/block_size)
+                is_ind = block_size*(i-1) + 1;
+                ie_ind = block_size*i;
+                js_ind = block_size*(j-1) + 1;
+                je_ind = block_size*j;
+                img(is_ind:ie_ind,js_ind:je_ind,:) = real ( idct2_cvip ( input_spect(is_ind:ie_ind,js_ind:je_ind,:)) ) ;
+    <span class="comment">%             Y = fftshift(X)</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">else</span>    <span class="comment">% 0 block_size means, input_spect contains only one fourier window, thus the inverse transform is straightforward.</span>
+<span class="comment">%         img = ifftshift(input_spect);</span>
+        img = real(idct2_cvip(input_spect));
+    <span class="keyword">end</span>
+
+
+
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span> img = idct2_cvip(input_spect)
+
+d = size(input_spect,3);
+img = zeros(size(input_spect));
+<span class="keyword">for</span> i=1:d
+    img(:,:,i) = basic_alg(input_spect(:,:,i));
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+
+
+
+<span class="keyword">function</span> a = basic_alg(arg1)
+
+a = CVIPidct1(CVIPidct1(arg1).').';
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> a = CVIPidct1(b)
+<span class="comment">%   References:</span>
+<span class="comment">% 1) A. K. Jain, "Fundamentals of Digital Image Processing", pp. 150-153.</span>
+<span class="comment">% 2) Wallace, "The JPEG Still Picture Compression Standard", Communications of the ACM, April 1991.</span>
+
+
+<span class="keyword">if</span> nargin == 0,
+	error(<span class="string">'Not enough input arguments.'</span>);
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> isempty(b),
+   a = [];
+   <span class="keyword">return</span>
+<span class="keyword">end</span>
+
+<span class="comment">% If input is a vector, make it a column:</span>
+do_trans = (size(b,1) == 1);
+<span class="keyword">if</span> do_trans, b = b(:); <span class="keyword">end</span>
+
+
+n = size(b,1);
+
+m = size(b,2);
+
+n =  2^nextpow2(n);
+
+bb=b;
+
+<span class="comment">% Compute wieghts</span>
+ww = sqrt(2*n) * exp(1i*(0:n-1)*pi/(2*n)).';
+
+<span class="keyword">if</span> rem(n,2)==1 || ~isreal(b), <span class="comment">% odd case</span>
+  <span class="comment">% Form intermediate even-symmetric matrix.</span>
+  ww(1) = ww(1) * sqrt(2);
+  W = ww(:,ones(1,m,class(b)));
+  yy = zeros(2*n,m,class(b));
+  yy(1:n,:) = W.*bb;
+  yy(n+2:2*n,:) = -1i*W(2:n,:).*flipud(bb(2:n,:));
+
+  y = ifft(yy);
+
+  <span class="comment">% Extract inverse DCT</span>
+  a = y(1:n,:);
+
+<span class="keyword">else</span> <span class="comment">% even case</span>
+  <span class="comment">% Compute precorrection factor</span>
+  ww(1) = ww(1)/sqrt(2);
+  W = ww(:,ones(1,m,class(b)));
+  yy = W.*bb;
+
+  <span class="comment">% Compute x tilde using equation (5.93) in Jain</span>
+  y = ifft(yy);
+
+  <span class="comment">% Re-order elements of each column according to equations (5.93) and</span>
+  <span class="comment">% (5.94) in Jain</span>
+  a = zeros(n,m,class(b));
+  a(1:2:n,:) = y(1:n/2,:);
+  a(2:2:n,:) = y(n:-1:n/2+1,:);
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> isreal(b)
+  a = real(a);
+<span class="keyword">end</span>
+<span class="keyword">if</span> do_trans
+  a = a.';
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in idct_cvip (line 57)
+[m,n,~] = size(input_spect);
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function img = idct_cvip(input_spect,block_size)
+% IDCT_CVIP - perform inverse discrete cosine transform
+% 
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% img = idct_cvip( input_spect, block_size )
+%   
+% Input  Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%   'input_spect'   The DCT spectrum of an image. This spectrum must be obtained
+%                   by dct_cvip(). Also the same variable block_size that
+%                   is used in forward transform should be used here.
+%
+%   'block_size'    Should be a power of 2 or []. if empty, then functions
+%                   finds the nearest power of 2 and zero pad the image, to
+%                   that block size. Any other value smaller than image
+%                   size will partiotion the image to windows of that block
+%                   size and DCT will be calculated separately in each
+%                   window.
+%
+%
+%
+% Output Parameter include : 
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%   'Spect'         The inverse fourier transform of the input spectrum.
+%                   
+%
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                 I = imread('butterfly.tif');
+%                 spect = dct_cvip( I,[] );
+%                 I_hat = idct_cvip( spect,[] );   % the inverse transform
+%                 figure;imshow(I);title('Input Image');
+%                 figure;imshow(remap_cvip(log(1+abs(spect))));title('DCT output Image');
+%                 figure; imshow(hist_stretch_cvip(I_hat,0,1,0,0));title(' output image after Idct transform');
+%
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Mehrdad Alvandipour
+%           Initial coding date:    5/29/2017
+%           Latest update date:     6/1/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+
+
+[m,n,~] = size(input_spect);
+
+if ~isempty(block_size) && block_size ~= 0 % if block_size is given by the user and it is not 0, then it has to be a power of 2. Also the size of the spectrum should be a multiple of block_size.
+    
+    [F,~] = log2(block_size);
+    if F~=.5
+        error('block size should be a power of 2');
+    end
+    if mod(m, block_size) ~= 0 || mod(n, block_size) ~= 0
+        error('The given block size does not match the size of the spectrum.');
+    end
+else        % block_size is 0 or emtpy, thus the given spectrum contains only one fourier window and its size is a power of 2.
+    block_size = 0;
+    siz = 2.^nextpow2([m n]);
+    M = siz(1);
+    N = siz(2);
+    
+    if M~=m || N~= n
+        error('The spectrums created by fft_cvip() have heights and width that are power of 2. The given spectrum does not match this criteria.');
+    end
+end
+
+
+    if block_size   % non-zero block_size, means we have multiple fourier window. To compute the inverse transform, we need for-loop.
+        
+        for i=1:(m/block_size)
+            for j=1:(n/block_size)
+                is_ind = block_size*(i-1) + 1;
+                ie_ind = block_size*i;
+                js_ind = block_size*(j-1) + 1;
+                je_ind = block_size*j;
+                img(is_ind:ie_ind,js_ind:je_ind,:) = real ( idct2_cvip ( input_spect(is_ind:ie_ind,js_ind:je_ind,:)) ) ;
+    %             Y = fftshift(X)
+            end
+        end
+    else    % 0 block_size means, input_spect contains only one fourier window, thus the inverse transform is straightforward.
+%         img = ifftshift(input_spect);
+        img = real(idct2_cvip(input_spect));
+    end
+    
+       
+
+end
+
+
+function img = idct2_cvip(input_spect)
+
+d = size(input_spect,3);
+img = zeros(size(input_spect));
+for i=1:d
+    img(:,:,i) = basic_alg(input_spect(:,:,i));
+end
+
+end
+
+
+
+
+function a = basic_alg(arg1)
+
+a = CVIPidct1(CVIPidct1(arg1).').';
+
+end
+
+function a = CVIPidct1(b)
+%   References: 
+% 1) A. K. Jain, "Fundamentals of Digital Image Processing", pp. 150-153.
+% 2) Wallace, "The JPEG Still Picture Compression Standard", Communications of the ACM, April 1991.
+
+
+if nargin == 0,
+	error('Not enough input arguments.');
+end
+
+if isempty(b),
+   a = [];
+   return
+end
+
+% If input is a vector, make it a column:
+do_trans = (size(b,1) == 1);
+if do_trans, b = b(:); end
+   
+
+n = size(b,1);
+
+m = size(b,2);
+
+n =  2^nextpow2(n);
+
+bb=b;
+
+% Compute wieghts
+ww = sqrt(2*n) * exp(1i*(0:n-1)*pi/(2*n)).';
+
+if rem(n,2)==1 || ~isreal(b), % odd case
+  % Form intermediate even-symmetric matrix.
+  ww(1) = ww(1) * sqrt(2);
+  W = ww(:,ones(1,m,class(b)));
+  yy = zeros(2*n,m,class(b));
+  yy(1:n,:) = W.*bb;
+  yy(n+2:2*n,:) = -1i*W(2:n,:).*flipud(bb(2:n,:));
+  
+  y = ifft(yy);
+
+  % Extract inverse DCT
+  a = y(1:n,:);
+
+else % even case
+  % Compute precorrection factor
+  ww(1) = ww(1)/sqrt(2);
+  W = ww(:,ones(1,m,class(b)));
+  yy = W.*bb;
+
+  % Compute x tilde using equation (5.93) in Jain
+  y = ifft(yy);
+  
+  % Re-order elements of each column according to equations (5.93) and
+  % (5.94) in Jain
+  a = zeros(n,m,class(b));
+  a(1:2:n,:) = y(1:n/2,:);
+  a(2:2:n,:) = y(n:-1:n/2+1,:);
+end
+
+if isreal(b)
+  a = real(a); 
+end
+if do_trans
+  a = a.';
+end
+end
+##### SOURCE END #####
+--></body></html>

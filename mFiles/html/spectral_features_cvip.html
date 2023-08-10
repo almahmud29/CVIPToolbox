@@ -1,0 +1,234 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>SPECTRAL_FEATURES_CVIP</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-01-29"><meta name="DC.source" content="spectral_features_cvip_test.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1><b>SPECTRAL_FEATURES_CVIP</b></h1><!--introduction--><p><b>spectral_features_cvip()</b> - extracts spectral features based on Fourier transform ,ring and sector power.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">SYNTAX</a></li><li><a href="#2">DESCRIPTION</a></li><li><a href="#3">REFERENCE</a></li><li><a href="#4">EXAMPLE</a></li><li><a href="#5">CREDITS</a></li></ul></div><h2>SYNTAX<a name="1"></a></h2><pre>out_feat = spectral_features_cvip( input_img,mask_img, objLabel, spec_feat )</pre><p>Input Parameters include :</p><div><ul><li>input_img   -   The orignial image which can be grayscale or RGB.</li></ul></div><div><ul><li>mask_img    -   Label image of MxN size with single object or multiple objects.                   Each object has unique gray value.</li><li>objLabel     -  Labels of the objects. Column vector (Yx1) or Yx2 matrix.                   If row vector, objLabel must be unique gray value                   corresponding to each object. If Yx2 matrix, objLabel                   must have row index in first column and col index in                   second column for each object.</li><li>spec_feat     - a Row vector of size 1x2 with which its first element                   determines the number of rings and the 2nd element                   determines the number of sectors.If empty, the default                   values are [3 3].</li></ul></div><p>Output Parameter include :</p><div><ul><li>out_feat    -   Cell array containing object name,object label,and feature                   values for selected features.</li></ul></div><h2>DESCRIPTION<a name="2"></a></h2><p>This function calculates the spectral features of an object, given as input by the user, based on the spectral features selected by the user. The spectral features measure the power in the Fourier spectrum of the binary object. Due to the redundancy in the Fourier spectral symmetry, the sector power features are often measured over one-half of the spectrum and the ring power features are measured over the other half of the spectrum.</p><h2>REFERENCE<a name="3"></a></h2><p>1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</p><h2>EXAMPLE<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Read image</span>
+
+ input_img = imread(<span class="string">'Stripey.jpg'</span>);
+
+<span class="comment">% Mask image</span>
+
+ mask_img = zeros(size(input_img));
+
+ mask_img = mask_img(:,:,1);
+
+ mask_img(50:200,25:95) = 1;
+
+ mask_img(100:300,255:400) = 2;
+
+<span class="comment">% Object label</span>
+
+ objLabel = [1 ;2];
+
+<span class="comment">% Spectral features</span>
+
+ spec_feat  = [3 4];
+
+<span class="comment">% Calling function</span>
+
+ out_feat = spectral_features_cvip( input_img,mask_img, objLabel, spec_feat )
+</pre><pre class="codeoutput">
+out_feat = 
+
+  Columns 1 through 4
+
+    'obj_id'    'Spectral_DC_band_1'    'Rings1_band_1'    'Rings2_band_1'
+    [     1]    [           1869179]    [   2.9986e+12]    [   6.3262e+10]
+    [     2]    [           2616651]    [   4.5460e+12]    [   9.7588e+10]
+
+  Columns 5 through 7
+
+    'Rings3_band_1'    'Sectors1_band_1'    'Sectors2_band_1'
+    [   3.5313e+10]    [     5.4117e+12]    [     2.1080e+12]
+    [   2.7891e+10]    [     1.0329e+13]    [     2.2241e+12]
+
+  Columns 8 through 10
+
+    'Sectors3_band_1'    'Sectors4_band_1'    'Spectral_DC_band_2'
+    [     2.2661e+12]    [     6.5898e+11]    [           1662063]
+    [     2.8340e+12]    [     1.0340e+12]    [           4993557]
+
+  Columns 11 through 14
+
+    'Rings1_band_2'    'Rings2_band_2'    'Rings3_band_2'    'Sectors1_band_2'
+    [   2.2177e+12]    [   5.5750e+10]    [   3.1541e+10]    [     4.2236e+12]
+    [   7.2473e+12]    [   1.3011e+11]    [   4.3527e+10]    [     3.5656e+13]
+
+  Columns 15 through 17
+
+    'Sectors2_band_2'    'Sectors3_band_2'    'Sectors4_band_2'
+    [     1.5350e+12]    [     1.7147e+12]    [     4.9543e+11]
+    [     4.9259e+12]    [     5.2401e+12]    [     1.2806e+12]
+
+  Columns 18 through 20
+
+    'Spectral_DC_band_3'    'Rings1_band_3'    'Rings2_band_3'
+    [           1733443]    [   2.5725e+12]    [   5.6889e+10]
+    [           3303625]    [   4.8445e+12]    [   1.0290e+11]
+
+  Columns 21 through 23
+
+    'Rings3_band_3'    'Sectors1_band_3'    'Sectors2_band_3'
+    [   3.1260e+10]    [     4.6491e+12]    [     1.7979e+12]
+    [   3.0239e+10]    [     1.6001e+13]    [     2.7530e+12]
+
+  Columns 24 through 25
+
+    'Sectors3_band_3'    'Sectors4_band_3'
+    [     1.9543e+12]    [     5.7212e+11]
+    [     3.1978e+12]    [     1.0172e+12]
+
+</pre><h2>CREDITS<a name="5"></a></h2><p>
+Author:  Mehrdad Alvandipour, March 2017<br>
+Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+E Umbaugh</a><br>
+For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% *SPECTRAL_FEATURES_CVIP*
+% *spectral_features_cvip()* - extracts spectral features based on Fourier
+% transform ,ring and sector power.
+%% SYNTAX
+% 
+%  out_feat = spectral_features_cvip( input_img,mask_img, objLabel, spec_feat )
+%
+% Input Parameters include :
+% 
+%
+% * input_img   -   The orignial image which can be grayscale or RGB.
+%
+% * mask_img    -   Label image of MxN size with single object or multiple objects.  
+%                   Each object has unique gray value.
+% * objLabel     -  Labels of the objects. Column vector (Yx1) or Yx2 matrix.
+%                   If row vector, objLabel must be unique gray value
+%                   corresponding to each object. If Yx2 matrix, objLabel
+%                   must have row index in first column and col index in
+%                   second column for each object.
+% * spec_feat     - a Row vector of size 1x2 with which its first element
+%                   determines the number of rings and the 2nd element
+%                   determines the number of sectors.If empty, the default
+%                   values are [3 3].
+%
+%
+% Output Parameter include :  
+% 
+% * out_feat    -   Cell array containing object name,object label,and feature 
+%                   values for selected features.
+%                
+%                                         
+%% DESCRIPTION
+% This function calculates the spectral features of an object, given as
+% input by the user, based on the spectral features selected by the user.
+% The spectral features measure the power in the Fourier spectrum of the
+% binary object. Due to the redundancy in the Fourier spectral symmetry,
+% the sector power features are often measured over one-half of the
+% spectrum and the ring power features are measured over the other half of
+% the spectrum.
+%                                     
+%% REFERENCE
+%  
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+%
+%%  EXAMPLE
+            
+% Read image
+
+ input_img = imread('Stripey.jpg');
+ 
+% Mask image 
+                     
+ mask_img = zeros(size(input_img));
+                     
+ mask_img = mask_img(:,:,1);
+                     
+ mask_img(50:200,25:95) = 1;
+                     
+ mask_img(100:300,255:400) = 2; 
+                     
+% Object label
+ 
+ objLabel = [1 ;2];
+ 
+% Spectral features 
+                     
+ spec_feat  = [3 4];
+ 
+% Calling function
+
+ out_feat = spectral_features_cvip( input_img,mask_img, objLabel, spec_feat )
+                     
+%% CREDITS
+%
+% <html>
+% Author:  Mehrdad Alvandipour, March 2017<br>
+% Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+% E Umbaugh</a><br>
+% For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+% </html>
+%
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,528 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>hist_spec_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="hist_spec_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [ outImage ] = hist_spec_cvip( inImage, histFunc, cA, cB)
+<span class="comment">% HIST_SPEC_CVIP -Histogram specification of an input image.</span>
+<span class="comment">% The function performs a histogram specification on an image. For single</span>
+<span class="comment">% or multi-band image, the histograms can be specified separately for</span>
+<span class="comment">% each band.The specified histogram is computed by calculating the</span>
+<span class="comment">% cumulative distribution function of both the original histogram and the</span>
+<span class="comment">% desired histogram.The cdf for the original histogram is then mapped to</span>
+<span class="comment">% the desired histogram using  the inverse cdf.If Pr(x) is the original</span>
+<span class="comment">% histogram, and Pz(x) is the desired histogram, then the cdf[Pr(x)] = T(r)</span>
+<span class="comment">% = s, and cdf[Pz(x)] = G(z) = v.The inverse of this is z = inv[G(v)].</span>
+<span class="comment">% Therefore z = inv[G(T(r))]. Where r is the original grey-level, and z is</span>
+<span class="comment">% the new grey-level.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax:</span>
+<span class="comment">% -------</span>
+<span class="comment">% outImage = hist_spec_cvip( inImage, histFunc, cA, cB)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include:</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%  'inImage'      Input image of MxN or MxNxB size.The input image can be</span>
+<span class="comment">%                  of uint8 or uint16 or double class.</span>
+<span class="comment">%  'histFunc'     Single value or array with the number of the functions to</span>
+<span class="comment">%                  specify histogram per each band. The inputs to the</span>
+<span class="comment">%                  functions have the expression cAx+cB. Where x are gray</span>
+<span class="comment">%                  values, and cA &amp; cB are constants.</span>
+<span class="comment">%                       histFunc(1): specified histogram of band 1</span>
+<span class="comment">%                       histFunc(2): specified histogram of band 2</span>
+<span class="comment">%                               .</span>
+<span class="comment">%                               .</span>
+<span class="comment">%                               .</span>
+<span class="comment">%                       histFunc(B): specified histogram of band B</span>
+<span class="comment">%</span>
+<span class="comment">%                  Functions available for histogram specification are:</span>
+<span class="comment">%                  1  ---&gt; sin(Ax + B)</span>
+<span class="comment">%                  2  ---&gt; Ax+B</span>
+<span class="comment">%                  3  ---&gt; ramp(Ax + B)</span>
+<span class="comment">%                  4  ---&gt; exp(Ax+B)</span>
+<span class="comment">%                  5  ---&gt; log(Ax + B)</span>
+<span class="comment">%                  6  ---&gt; cos(Ax + B)</span>
+<span class="comment">%                  7  ---&gt; sinh(Ax + B)</span>
+<span class="comment">%                  8  ---&gt; cosh(Ax + B)</span>
+<span class="comment">%                  9  ---&gt; tanh(Ax + B)</span>
+<span class="comment">%                  10 ---&gt; sqrt(Ax + B)</span>
+<span class="comment">%                                                       ([1 1 1] | default)</span>
+<span class="comment">%</span>
+<span class="comment">%  'cA'           Values of constant cA of expression cAx+cB.</span>
+<span class="comment">%                        cA(1): value of constant cA for band 1</span>
+<span class="comment">%                        cA(2): value of constant cA for band 2</span>
+<span class="comment">%                                   .</span>
+<span class="comment">%                                   .</span>
+<span class="comment">%                                   .</span>
+<span class="comment">%                        cA(B): value of constant cA for band B</span>
+<span class="comment">%                                                       ([1 1 1] | default)</span>
+<span class="comment">%</span>
+<span class="comment">%  'cB'           Values of constant cB of expression cAx+cB.</span>
+<span class="comment">%                        cB(1): value of constant cB for band 1</span>
+<span class="comment">%                        cB(2): value of constant cB for band 2</span>
+<span class="comment">%                                   .</span>
+<span class="comment">%                                   .</span>
+<span class="comment">%                                   .</span>
+<span class="comment">%                        cB(B): value of constant cB for band B</span>
+<span class="comment">%                                                       ([0 0 0] | default)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter includes :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%  'outImage'      Histogram specified image.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%         I = imread('butterfly.tif');    %original image</span>
+<span class="comment">%         O1 = hist_spec_cvip(I);         %default parameters</span>
+<span class="comment">%         figure; imshow(O1/255);</span>
+<span class="comment">%         %user defined parameters [sine line exp] for histFunc</span>
+<span class="comment">%         O2 = hist_spec_cvip(I,[1 2 4], [0.025 1 0.03], [1 0.5 1]);</span>
+<span class="comment">%         figure; imshow(O2/255);</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications</span>
+<span class="comment">% with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Norsang Lama</span>
+<span class="comment">%           Initial coding date:    04/14/2017</span>
+<span class="comment">%           Modified by:            Julian Rene Cuellar Buritica</span>
+<span class="comment">%           Latest update date:     06/14/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2017 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">% Revision History</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.2  06/14/2019  11:35:07  jucuell</span>
+ <span class="comment">% The function information was updated in order to be more concise with</span>
+ <span class="comment">% previous functions and undertandable by the user.</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.1  04/14/2017  17:22:00  norlama</span>
+ <span class="comment">% Initial coding and testing.</span>
+<span class="comment">%</span>
+
+<span class="comment">%check number of input arguments</span>
+<span class="keyword">if</span> nargin ~=1 &amp;&amp; nargin ~= 2 &amp;&amp; nargin ~= 3 &amp;&amp; nargin ~=4
+    error(<span class="string">'Too many or too few input arguments!'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">%check number of output arguments</span>
+<span class="keyword">if</span> nargout ~= 1 &amp;&amp; nargout ~= 0
+    error(<span class="string">'Too many output arguments!'</span>);
+<span class="keyword">end</span>
+
+L = 256;  <span class="comment">%maximum number of Levels</span>
+inImage = double(inImage);
+
+<span class="comment">%find the size of an input image</span>
+[P, Q, R] = size(inImage);
+
+<span class="comment">%check if coefficients A and B exists and has finite value</span>
+<span class="keyword">if</span> ~exist(<span class="string">'histFunc'</span>, <span class="string">'var'</span>) || isempty(histFunc)
+    histFunc = [1 1 1];
+<span class="keyword">end</span>
+<span class="keyword">if</span> ~exist(<span class="string">'A'</span>, <span class="string">'var'</span>) || isempty(cA)
+    cA = [1 1 1];
+<span class="keyword">end</span>
+<span class="keyword">if</span> ~exist(<span class="string">'B'</span>, <span class="string">'var'</span>) || isempty(cB)
+    cB = [0 0 0];
+<span class="keyword">end</span>
+
+<span class="comment">%create output image</span>
+outImage = zeros(P,Q,R);
+
+
+<span class="comment">%histogram specification/matching</span>
+<span class="keyword">for</span> b = 1:R
+    <span class="comment">%Mapping table 1</span>
+    <span class="comment">%find the histogram equalized mapping values of input image</span>
+    tempImage = inImage(:,:,b);
+    histeq_vals = histeq_mapvals(tempImage, L);
+
+    <span class="comment">%Mapping table 2</span>
+    <span class="comment">%setting up desired histogram  and compute desired histogram's mapping values</span>
+    <span class="keyword">switch</span> histFunc(b)
+        <span class="keyword">case</span> 1  <span class="comment">%  sin(Ax + B)</span>
+            tempHist = sin(cA(b)*(0:L-1) + cB(b));
+            minvalue = min(tempHist);
+            <span class="keyword">if</span> minvalue &lt; 0    <span class="comment">%if less than 0, shift the values to make it positive or zero</span>
+               tempHist = tempHist - minvalue;
+            <span class="keyword">end</span>
+
+        <span class="keyword">case</span> 2  <span class="comment">%  Ax+B</span>
+            tempHist = cA(b)*(0:L-1)+cB(b);
+
+        <span class="keyword">case</span> 3  <span class="comment">%  ramp(Ax + B)</span>
+            tempHist = cA(b)*(0:L-1) + cB(b);
+
+        <span class="keyword">case</span> 4  <span class="comment">%  exp(Ax+B)</span>
+            tempHist = exp(cA(b)*(0:L-1) + cB(b));
+
+        <span class="keyword">case</span> 5  <span class="comment">%  log(Ax + B)</span>
+            tempHist = log10(cA(b)*(0:L-1) + cB(b));
+            tempHist(1) = 0;  <span class="comment">%log10(0) = -Inf, make it zero</span>
+
+        <span class="keyword">case</span> 6  <span class="comment">%  cos(Ax + B)</span>
+            tempHist = cos(cA(b)*(0:L-1) + cB(b));
+            minvalue = min(tempHist);
+            <span class="keyword">if</span> minvalue &lt; 0   <span class="comment">%if less than 0, shift the values to make it positive or zero</span>
+               tempHist = tempHist - minvalue;
+            <span class="keyword">end</span>
+
+        <span class="keyword">case</span> 7  <span class="comment">%  sinh(Ax + B)</span>
+            tempHist = sinh(cA(b)*(0:L-1) + cB(b));
+
+        <span class="keyword">case</span> 8  <span class="comment">%  cosh(Ax + B)</span>
+            tempHist = sinh(cA(b)*(0:L-1) + cB(b));
+
+        <span class="keyword">case</span> 9  <span class="comment">%  tanh(Ax + B)</span>
+            tempHist = sinh(cA(b)*(0:L-1) + cB(b));
+
+        <span class="keyword">case</span> 10  <span class="comment">%  sqrt(Ax + B)</span>
+            tempHist = sqrt(cA(b)*(0:L-1) + cB(b));
+        <span class="keyword">otherwise</span>
+            error(<span class="string">'No such function available! Choose other function for band %d.'</span>, b);
+
+    <span class="keyword">end</span>
+    <span class="comment">%compute CDF of desired histogram</span>
+    desiredHistCDF = tempHist/sum(tempHist);
+
+    desiredHist_vals = cumsum(desiredHistCDF) *(L-1);
+
+    <span class="comment">%map the original pixel values using table 1 and table 2</span>
+    <span class="keyword">for</span> i =1:L
+        [~,ind] = min(abs(histeq_vals(i) - desiredHist_vals));
+        tempImage(inImage(:,:,b) == i-1) = ind-1;
+    <span class="keyword">end</span>
+
+    <span class="comment">%output image of histogram specification process</span>
+    outImage(:,:,b) = tempImage;
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">end</span> <span class="comment">% end of function</span>
+
+
+<span class="comment">%**************************************************************************</span>
+<span class="comment">%%%%%%function to compute histogram equalization mapping values%%%%%%%%%%%%</span>
+
+<span class="keyword">function</span> histeq_vals = histeq_mapvals(inImage, L)
+
+[P,Q] = size(inImage);
+
+
+<span class="comment">%compute the histogram</span>
+edges = 0:L;
+hist_count = histcounts(inImage, edges)/(P*Q);
+hist_cumsum = cumsum(hist_count);
+
+<span class="comment">%map old pixel levels to new one</span>
+histeq_vals = (L-1)*hist_cumsum;
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Error using hist_spec_cvip (line 109)
+Too many or too few input arguments!
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [ outImage ] = hist_spec_cvip( inImage, histFunc, cA, cB)
+% HIST_SPEC_CVIP -Histogram specification of an input image.
+% The function performs a histogram specification on an image. For single
+% or multi-band image, the histograms can be specified separately for 
+% each band.The specified histogram is computed by calculating the
+% cumulative distribution function of both the original histogram and the
+% desired histogram.The cdf for the original histogram is then mapped to
+% the desired histogram using  the inverse cdf.If Pr(x) is the original
+% histogram, and Pz(x) is the desired histogram, then the cdf[Pr(x)] = T(r)
+% = s, and cdf[Pz(x)] = G(z) = v.The inverse of this is z = inv[G(v)].
+% Therefore z = inv[G(T(r))]. Where r is the original grey-level, and z is
+% the new grey-level. 
+%
+% Syntax:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% outImage = hist_spec_cvip( inImage, histFunc, cA, cB)
+%   
+% 
+% Input Parameters include:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%  'inImage'      Input image of MxN or MxNxB size.The input image can be
+%                  of uint8 or uint16 or double class. 
+%  'histFunc'     Single value or array with the number of the functions to
+%                  specify histogram per each band. The inputs to the
+%                  functions have the expression cAx+cB. Where x are gray
+%                  values, and cA & cB are constants. 
+%                       histFunc(1): specified histogram of band 1
+%                       histFunc(2): specified histogram of band 2
+%                               .                 
+%                               .                 
+%                               .
+%                       histFunc(B): specified histogram of band B
+%
+%                  Functions available for histogram specification are:
+%                  1  REPLACE_WITH_DASH_DASH-> sin(Ax + B)
+%                  2  REPLACE_WITH_DASH_DASH-> Ax+B   
+%                  3  REPLACE_WITH_DASH_DASH-> ramp(Ax + B)  
+%                  4  REPLACE_WITH_DASH_DASH-> exp(Ax+B)
+%                  5  REPLACE_WITH_DASH_DASH-> log(Ax + B)
+%                  6  REPLACE_WITH_DASH_DASH-> cos(Ax + B)
+%                  7  REPLACE_WITH_DASH_DASH-> sinh(Ax + B)
+%                  8  REPLACE_WITH_DASH_DASH-> cosh(Ax + B)
+%                  9  REPLACE_WITH_DASH_DASH-> tanh(Ax + B)
+%                  10 REPLACE_WITH_DASH_DASH-> sqrt(Ax + B)
+%                                                       ([1 1 1] | default)
+%
+%  'cA'           Values of constant cA of expression cAx+cB.
+%                        cA(1): value of constant cA for band 1
+%                        cA(2): value of constant cA for band 2
+%                                   .                 
+%                                   .                 
+%                                   .
+%                        cA(B): value of constant cA for band B
+%                                                       ([1 1 1] | default)
+%
+%  'cB'           Values of constant cB of expression cAx+cB.
+%                        cB(1): value of constant cB for band 1
+%                        cB(2): value of constant cB for band 2
+%                                   .                 
+%                                   .                 
+%                                   .
+%                        cB(B): value of constant cB for band B
+%                                                       ([0 0 0] | default)
+%
+%
+% Output Parameter includes :  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%  'outImage'      Histogram specified image.
+%                                         
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%         I = imread('butterfly.tif');    %original image
+%         O1 = hist_spec_cvip(I);         %default parameters  
+%         figure; imshow(O1/255);
+%         %user defined parameters [sine line exp] for histFunc    
+%         O2 = hist_spec_cvip(I,[1 2 4], [0.025 1 0.03], [1 0.5 1]); 
+%         figure; imshow(O2/255);              
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications
+% with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Norsang Lama
+%           Initial coding date:    04/14/2017
+%           Modified by:            Julian Rene Cuellar Buritica
+%           Latest update date:     06/14/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2017 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+% Revision History
+%
+ % Revision 1.2  06/14/2019  11:35:07  jucuell
+ % The function information was updated in order to be more concise with
+ % previous functions and undertandable by the user.
+%
+ % Revision 1.1  04/14/2017  17:22:00  norlama
+ % Initial coding and testing.
+%
+
+%check number of input arguments
+if nargin ~=1 && nargin ~= 2 && nargin ~= 3 && nargin ~=4   
+    error('Too many or too few input arguments!');
+end
+
+%check number of output arguments
+if nargout ~= 1 && nargout ~= 0
+    error('Too many output arguments!');
+end
+
+L = 256;  %maximum number of Levels
+inImage = double(inImage);
+
+%find the size of an input image
+[P, Q, R] = size(inImage);
+
+%check if coefficients A and B exists and has finite value
+if ~exist('histFunc', 'var') || isempty(histFunc)
+    histFunc = [1 1 1];
+end
+if ~exist('A', 'var') || isempty(cA)
+    cA = [1 1 1];
+end
+if ~exist('B', 'var') || isempty(cB)
+    cB = [0 0 0];
+end
+
+%create output image
+outImage = zeros(P,Q,R);
+
+
+%histogram specification/matching
+for b = 1:R
+    %Mapping table 1
+    %find the histogram equalized mapping values of input image
+    tempImage = inImage(:,:,b);
+    histeq_vals = histeq_mapvals(tempImage, L);  
+
+    %Mapping table 2
+    %setting up desired histogram  and compute desired histogram's mapping values
+    switch histFunc(b)
+        case 1  %  sin(Ax + B)
+            tempHist = sin(cA(b)*(0:L-1) + cB(b));
+            minvalue = min(tempHist);
+            if minvalue < 0    %if less than 0, shift the values to make it positive or zero
+               tempHist = tempHist - minvalue;
+            end         
+            
+        case 2  %  Ax+B
+            tempHist = cA(b)*(0:L-1)+cB(b);
+            
+        case 3  %  ramp(Ax + B)
+            tempHist = cA(b)*(0:L-1) + cB(b);
+            
+        case 4  %  exp(Ax+B)
+            tempHist = exp(cA(b)*(0:L-1) + cB(b));
+            
+        case 5  %  log(Ax + B)
+            tempHist = log10(cA(b)*(0:L-1) + cB(b));
+            tempHist(1) = 0;  %log10(0) = -Inf, make it zero  
+            
+        case 6  %  cos(Ax + B)
+            tempHist = cos(cA(b)*(0:L-1) + cB(b));
+            minvalue = min(tempHist);
+            if minvalue < 0   %if less than 0, shift the values to make it positive or zero
+               tempHist = tempHist - minvalue;
+            end   
+            
+        case 7  %  sinh(Ax + B)
+            tempHist = sinh(cA(b)*(0:L-1) + cB(b));
+            
+        case 8  %  cosh(Ax + B)
+            tempHist = sinh(cA(b)*(0:L-1) + cB(b));
+            
+        case 9  %  tanh(Ax + B)
+            tempHist = sinh(cA(b)*(0:L-1) + cB(b));
+            
+        case 10  %  sqrt(Ax + B)
+            tempHist = sqrt(cA(b)*(0:L-1) + cB(b));
+        otherwise 
+            error('No such function available! Choose other function for band %d.', b);
+            
+    end    
+    %compute CDF of desired histogram
+    desiredHistCDF = tempHist/sum(tempHist);
+    
+    desiredHist_vals = cumsum(desiredHistCDF) *(L-1);
+
+    %map the original pixel values using table 1 and table 2    
+    for i =1:L
+        [~,ind] = min(abs(histeq_vals(i) - desiredHist_vals)); 
+        tempImage(inImage(:,:,b) == i-1) = ind-1;
+    end
+    
+    %output image of histogram specification process
+    outImage(:,:,b) = tempImage;
+end
+
+
+
+end % end of function
+
+
+%**************************************************************************
+%%%%%%function to compute histogram equalization mapping values%%%%%%%%%%%%
+
+function histeq_vals = histeq_mapvals(inImage, L)
+
+[P,Q] = size(inImage);
+
+
+%compute the histogram
+edges = 0:L;
+hist_count = histcounts(inImage, edges)/(P*Q);
+hist_cumsum = cumsum(hist_count); 
+
+%map old pixel levels to new one
+histeq_vals = (L-1)*hist_cumsum;
+
+end
+
+
+##### SOURCE END #####
+--></body></html>

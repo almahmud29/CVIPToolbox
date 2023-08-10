@@ -1,0 +1,194 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>SPATIAL_QUANT_CVIP</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-01-29"><meta name="DC.source" content="spatial_quant_cvip_test.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1><b>SPATIAL_QUANT_CVIP</b></h1><!--introduction--><p><b>spatial_quant_cvip()</b> - Reduces the image size using spatial quantization method.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">SYNTAX</a></li><li><a href="#2">DESCRIPTION</a></li><li><a href="#3">REFERENCE</a></li><li><a href="#4">EXAMPLE</a></li><li><a href="#5">CREDITS</a></li></ul></div><h2>SYNTAX<a name="1"></a></h2><pre>outImage = spatial_quant_cvip( inImage, row, col, method)</pre><p>Input Parameters include :</p><div><ul><li>inImage   -     Input image of MxN or MxNxB size. The input image can                   be of uint8 or uint16 or double class.</li><li>row      -     Number of rows or height(1 &lt; row &lt;= M).                  ( M | default)</li><li>col      -     Number of columns or width (1 &lt; col &lt;= N).                  ( N | default)</li><li>method   -     Reduction method.</li></ul></div><pre>                   method = 1 ---&gt; average</pre><pre>                   method = 2 ---&gt; median</pre><pre>                   method = 3 ---&gt; decimation</pre><pre>                   method = 4 ---&gt; maximum</pre><pre>                   method = 5 ---&gt; minimum</pre><pre>                  ( 1 | default)</pre><p>Output Parameter includes :</p><div><ul><li>outImage   -    Spatial quant image</li></ul></div><h2>DESCRIPTION<a name="2"></a></h2><p>The function performs spatial quantization using five reduction methods. spatial_quant allows the user to specify the number of rows and columns in the resultant image, corresponding to the height and width of the new image. The integers specified for row and column sizes must be equal to or less than the input image sizes or an error results. Three methods are available for image reduction: 1) AVERAGE - each pixel in the new image represents an average of the              original image pixels it replaces. 2) MEDIAN - each pixel  in  the  new  image  represents  the median             value of the original image pixels it replaces. 3) DECIMATION - each pixel in the new  image  has  the  same value as              a corresponding pixel in the original image; other original-image              pixels are discarded. 4) MAXIMUM - each pixel  in  the  new  image  represents  the maximum              value of the original image pixels it replaces. 5) MINIMUM - each pixel  in  the  new  image  represents  the minimum              value of the original image pixels it replaces.</p><p>Because the user may enter different values for  height  and  width, spatial_quant may  be used to geometrically distort the image in a rubber-sheet fashion.</p><h2>REFERENCE<a name="3"></a></h2><p>1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</p><h2>EXAMPLE<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Read image</span>
+
+ I = imread(<span class="string">'cam.bmp'</span>);
+
+<span class="comment">% Perform spatial quantization with default method</span>
+
+ O1 = spatial_quant_cvip(I, 200, 200,1);
+
+<span class="comment">% Perform spatial quantization with user specified parameters</span>
+
+ O2 = spatial_quant_cvip(I, 180, 200, 3);
+
+<span class="comment">% Display input image</span>
+
+ figure;imshow(I);title(<span class="string">'Input Image'</span>);
+
+<span class="comment">% Display output image</span>
+
+ figure; imshow(hist_stretch_cvip(O1,0,1,0,0));title(<span class="string">'Output Image with default parameters'</span>);
+
+ figure; imshow(hist_stretch_cvip(O2,0,1,0,0));title(<span class="string">'Output Image with user specified parameters'</span>);
+</pre><img vspace="5" hspace="5" src="spatial_quant_cvip_test_01.png" alt=""> <img vspace="5" hspace="5" src="spatial_quant_cvip_test_02.png" alt=""> <img vspace="5" hspace="5" src="spatial_quant_cvip_test_03.png" alt=""> <h2>CREDITS<a name="5"></a></h2><p>
+Author:  Norsang Lama, June 2017<br>
+Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+E Umbaugh</a><br>
+For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% *SPATIAL_QUANT_CVIP*
+% *spatial_quant_cvip()* - Reduces the image size using spatial quantization method.
+%% SYNTAX
+% 
+%  outImage = spatial_quant_cvip( inImage, row, col, method)
+%
+% Input Parameters include :
+%  
+% * inImage   -     Input image of MxN or MxNxB size. The input image can
+%                   be of uint8 or uint16 or double class.  
+% * row      -     Number of rows or height(1 < row <= M).
+%                  ( M | default)                                        
+% * col      -     Number of columns or width (1 < col <= N).
+%                  ( N | default)                                         
+% * method   -     Reduction method.
+%
+%                     method = 1 REPLACE_WITH_DASH_DASH-> average   
+%
+%                     method = 2 REPLACE_WITH_DASH_DASH-> median  
+%
+%                     method = 3 REPLACE_WITH_DASH_DASH-> decimation 
+%
+%                     method = 4 REPLACE_WITH_DASH_DASH-> maximum  
+%
+%                     method = 5 REPLACE_WITH_DASH_DASH-> minimum   
+%
+%                    ( 1 | default)                                        
+%
+%
+% Output Parameter includes :  
+%  
+% * outImage   -    Spatial quant image
+%                                         
+%        
+%% DESCRIPTION
+% The function performs spatial quantization using five reduction methods.
+% spatial_quant allows the user to specify the number of rows and columns
+% in the resultant image, corresponding to the height and width of the new
+% image. The integers specified for row and column sizes must be equal to
+% or less than the input image sizes or an error results.  
+% Three methods are available for image reduction:
+% 1) AVERAGE - each pixel in the new image represents an average of the
+%              original image pixels it replaces. 
+% 2) MEDIAN - each pixel  in  the  new  image  represents  the median 
+%             value of the original image pixels it replaces.
+% 3) DECIMATION - each pixel in the new  image  has  the  same value as
+%              a corresponding pixel in the original image; other original-image
+%              pixels are discarded.
+% 4) MAXIMUM - each pixel  in  the  new  image  represents  the maximum 
+%              value of the original image pixels it replaces.
+% 5) MINIMUM - each pixel  in  the  new  image  represents  the minimum 
+%              value of the original image pixels it replaces.
+% 
+% Because the user may enter different values for  height  and  width,
+% spatial_quant may  be used to geometrically distort the image in a
+% rubber-sheet fashion. 
+%
+                             
+%% REFERENCE
+% 
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+%
+%%  EXAMPLE
+
+% Read image
+
+ I = imread('cam.bmp');   
+     
+% Perform spatial quantization with default method
+     
+ O1 = spatial_quant_cvip(I, 200, 200,1); 
+ 
+% Perform spatial quantization with user specified parameters
+ 
+ O2 = spatial_quant_cvip(I, 180, 200, 3); 
+ 
+% Display input image   
+   
+ figure;imshow(I);title('Input Image');
+ 
+% Display output image 
+      
+ figure; imshow(hist_stretch_cvip(O1,0,1,0,0));title('Output Image with default parameters');
+      
+ figure; imshow(hist_stretch_cvip(O2,0,1,0,0));title('Output Image with user specified parameters');
+
+    
+%% CREDITS
+%
+% <html>
+% Author:  Norsang Lama, June 2017<br>
+% Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+% E Umbaugh</a><br>
+% For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+% </html>
+%
+##### SOURCE END #####
+--></body></html>

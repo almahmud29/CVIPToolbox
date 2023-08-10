@@ -1,0 +1,388 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>geometric_mean_xformfilter_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="geometric_mean_xformfilter_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> Y = geometric_mean_xformfilter_cvip(d,h,cutoff,limitGain,noiseImage,originalImage,alpha,gamma)
+<span class="comment">% GEOMETRIC_MEAN_XFORMFILTER_CVIP - performs the geometric mean restoration filter.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% -------</span>
+<span class="comment">% Y = geometric_mean_xformfilter_cvip(d,h,cutoff,limitGain,noiseImage,originalImage,alpha,gamma)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include:</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%   'd'             The degraded image. A single or multiband image.</span>
+<span class="comment">%</span>
+<span class="comment">%   'h'             The degradation function. It can be single band.</span>
+<span class="comment">%</span>
+<span class="comment">%   'cutoff'        Cutoff frequency for filtering.</span>
+<span class="comment">%</span>
+<span class="comment">%   'limitGain'     Sets the maximum gain using the DC value as a baseline.</span>
+<span class="comment">%                   limitGain=1 --&gt; DC value is the maximum gain.</span>
+<span class="comment">%                   limitGain&gt;1 --&gt; DC_value*limitGain is the maximum gain.</span>
+<span class="comment">%</span>
+<span class="comment">%   'noiseImage'    The noise image. It can be single band.</span>
+<span class="comment">%</span>
+<span class="comment">%   'originalImage' The original image. A single or multiband image. The</span>
+<span class="comment">%                   number of bands should match with the input 'd'.</span>
+<span class="comment">%</span>
+<span class="comment">%   'alpha'         'alpha' in the  generalized  restoration  equation.</span>
+<span class="comment">%</span>
+<span class="comment">%   'gamma'         'gamma' in the generalized restorationequation.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter Include:</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%   'Y'              output image after restoration filtering.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%           originalImage = imread('cam.bmp');</span>
+<span class="comment">%           d   = imread('cam_noise.bmp');</span>
+<span class="comment">%           h = [2.250 4.500 2.250; 4.500 9.001 4.500; 2.250 4.500 2.250]</span>
+<span class="comment">%           noiseImage = imread('cam_noise.bmp');</span>
+<span class="comment">%           cutoff = 32;</span>
+<span class="comment">%           alpha = 0.5;</span>
+<span class="comment">%           gamma = 0.5;</span>
+<span class="comment">%           limitGain = 10;</span>
+<span class="comment">%           Y =geometric_mean_xformfilter_cvip(d,h,cutoff,limitGain,noiseImage,originalImage,alpha,gamma);</span>
+<span class="comment">%           figure;imshow(remap_cvip(Y));title('Output Image');</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">%  ---------</span>
+<span class="comment">%  1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    10/13/2016</span>
+<span class="comment">%           Latest update date:     10/19/2016</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+
+
+<span class="comment">% alpha = .5;</span>
+<span class="comment">% gamma = .5;</span>
+
+[m , n, o] = size(d);
+
+
+
+<span class="keyword">if</span> o&gt;size(h,3)
+    h = repmat(h,[1 1 o]);
+<span class="keyword">end</span>
+
+[~,~,noiseImageSize] = size(noiseImage);
+<span class="keyword">if</span> o&gt;noiseImageSize
+    noiseImage = repmat(noiseImage,[1 1 o]);
+<span class="keyword">end</span>
+
+
+
+D = fft2(d,m,n);
+
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%% Create R(u,v) %%%%%%%%%%%%%%%%%%%%%%%%%</span>
+H = fft2(h,m,n);    <span class="comment">% change the size</span>
+Hstar = conj(H);
+Hpower = Hstar.*H;
+
+Im = fft2(originalImage,m,n);  <span class="comment">%original image</span>
+N = fft2(noiseImage,m,n);    <span class="comment">%noise</span>
+
+Sn = conj(N).*N;
+SIm = conj(Im).*Im;
+
+Rgm = ( (Hstar./Hpower).^(alpha) ).* ( (Hstar./(Hpower + (gamma* ( Sn./SIm)) ) ).^(1-alpha) );
+
+<span class="comment">% a = Rgm &gt; 100*Rgm(1,1); % Limit gain of R to a multiple of</span>
+<span class="comment">% Rgm(a) = 100*Rgm(1,1);  % the DC gain</span>
+
+<span class="comment">%%%%%%%%%%%%%%%%%%%%% Limit gain of R to a multiple of the DC gain</span>
+M = Rgm;
+<span class="keyword">for</span> i=1:o
+    bitPlane = Rgm(:,:,i);
+    a = bitPlane &gt; limitGain*bitPlane(1,1);
+    bitPlane(a) = limitGain*bitPlane(1,1);
+    M(:,:,i) = bitPlane;
+<span class="keyword">end</span>
+Rgm = M;
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+
+Ihat = Rgm.*D;          <span class="comment">% Apply R(u,v)</span>
+
+Ihat = myFilter2(Ihat,cutoff);  <span class="comment">%low pass filter</span>
+
+Y = real(ifft2(Ihat));
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> Y = myFilter2(X, cutoff)
+    [m , n, o] = size(X);
+    Y = zeros(m,n,o);
+    [U, V] = dftuv(m, n);
+
+    <span class="comment">% Compute the distances D(U, V).</span>
+    D = sqrt(U.^2 + V.^2);
+
+    H = double(D &lt;=cutoff);
+    <span class="keyword">for</span> i=1:o
+        Y(:,:,i) = H.*X(:,:,i);
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> [U, V] = dftuv(M, N)
+<span class="comment">%DFTUV Computes meshgrid frequency matrices.</span>
+<span class="comment">%   [U, V] = DFTUV(M, N) computes meshgrid frequency matrices U and</span>
+<span class="comment">%   V. U and V are useful for computing frequency-domain filter</span>
+<span class="comment">%   functions that can be used with DFTFILT.  U and V are both M-by-N.</span>
+
+<span class="comment">% Set up range of variables.</span>
+u = 0:(M-1);
+v = 0:(N-1);
+
+<span class="comment">% Compute the indices for use in meshgrid</span>
+idx = find(u &gt; M/2);
+u(idx) = u(idx) - M;
+idy = find(v &gt; N/2);
+v(idy) = v(idy) - N;
+
+<span class="comment">% Compute the meshgrid arrays</span>
+[V, U] = meshgrid(v, u);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in geometric_mean_xformfilter_cvip (line 71)
+[m , n, o] = size(d);
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function Y = geometric_mean_xformfilter_cvip(d,h,cutoff,limitGain,noiseImage,originalImage,alpha,gamma)
+% GEOMETRIC_MEAN_XFORMFILTER_CVIP - performs the geometric mean restoration filter.
+%  
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% Y = geometric_mean_xformfilter_cvip(d,h,cutoff,limitGain,noiseImage,originalImage,alpha,gamma)
+%   
+% Input Parameters include:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%   'd'             The degraded image. A single or multiband image.
+%                                  
+%   'h'             The degradation function. It can be single band.
+%
+%   'cutoff'        Cutoff frequency for filtering.
+% 
+%   'limitGain'     Sets the maximum gain using the DC value as a baseline.
+%                   limitGain=1 REPLACE_WITH_DASH_DASH> DC value is the maximum gain.
+%                   limitGain>1 REPLACE_WITH_DASH_DASH> DC_value*limitGain is the maximum gain.
+% 
+%   'noiseImage'    The noise image. It can be single band.
+% 
+%   'originalImage' The original image. A single or multiband image. The
+%                   number of bands should match with the input 'd'.
+% 
+%   'alpha'         'alpha' in the  generalized  restoration  equation.
+% 
+%   'gamma'         'gamma' in the generalized restorationequation.
+% 
+%
+% Output Parameter Include:  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+%   'Y'              output image after restoration filtering.
+% 
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%           originalImage = imread('cam.bmp');
+%           d   = imread('cam_noise.bmp');
+%           h = [2.250 4.500 2.250; 4.500 9.001 4.500; 2.250 4.500 2.250]
+%           noiseImage = imread('cam_noise.bmp');
+%           cutoff = 32;
+%           alpha = 0.5;
+%           gamma = 0.5;
+%           limitGain = 10;
+%           Y =geometric_mean_xformfilter_cvip(d,h,cutoff,limitGain,noiseImage,originalImage,alpha,gamma);
+%           figure;imshow(remap_cvip(Y));title('Output Image');
+%
+%
+% Reference
+%  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%  1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Mehrdad Alvandipour
+%           Initial coding date:    10/13/2016
+%           Latest update date:     10/19/2016
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+
+
+% alpha = .5;
+% gamma = .5;
+
+[m , n, o] = size(d);
+
+
+
+if o>size(h,3)
+    h = repmat(h,[1 1 o]);
+end
+
+[~,~,noiseImageSize] = size(noiseImage);
+if o>noiseImageSize
+    noiseImage = repmat(noiseImage,[1 1 o]);
+end
+
+
+
+D = fft2(d,m,n);
+
+%%%%%%%%%%%%%%%%%%%%%%%% Create R(u,v) %%%%%%%%%%%%%%%%%%%%%%%%%
+H = fft2(h,m,n);    % change the size
+Hstar = conj(H);
+Hpower = Hstar.*H;
+
+Im = fft2(originalImage,m,n);  %original image
+N = fft2(noiseImage,m,n);    %noise
+
+Sn = conj(N).*N;
+SIm = conj(Im).*Im;
+
+Rgm = ( (Hstar./Hpower).^(alpha) ).* ( (Hstar./(Hpower + (gamma* ( Sn./SIm)) ) ).^(1-alpha) );
+
+% a = Rgm > 100*Rgm(1,1); % Limit gain of R to a multiple of
+% Rgm(a) = 100*Rgm(1,1);  % the DC gain
+
+%%%%%%%%%%%%%%%%%%%%% Limit gain of R to a multiple of the DC gain
+M = Rgm;
+for i=1:o
+    bitPlane = Rgm(:,:,i);
+    a = bitPlane > limitGain*bitPlane(1,1); 
+    bitPlane(a) = limitGain*bitPlane(1,1);
+    M(:,:,i) = bitPlane;
+end
+Rgm = M;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Ihat = Rgm.*D;          % Apply R(u,v)
+
+Ihat = myFilter2(Ihat,cutoff);  %low pass filter
+
+Y = real(ifft2(Ihat));
+
+end
+
+function Y = myFilter2(X, cutoff)
+    [m , n, o] = size(X);
+    Y = zeros(m,n,o);
+    [U, V] = dftuv(m, n);
+
+    % Compute the distances D(U, V).
+    D = sqrt(U.^2 + V.^2);
+
+    H = double(D <=cutoff);
+    for i=1:o
+        Y(:,:,i) = H.*X(:,:,i);
+    end
+    
+end
+
+function [U, V] = dftuv(M, N)
+%DFTUV Computes meshgrid frequency matrices.
+%   [U, V] = DFTUV(M, N) computes meshgrid frequency matrices U and
+%   V. U and V are useful for computing frequency-domain filter 
+%   functions that can be used with DFTFILT.  U and V are both M-by-N.
+
+% Set up range of variables.
+u = 0:(M-1);
+v = 0:(N-1);
+
+% Compute the indices for use in meshgrid
+idx = find(u > M/2);
+u(idx) = u(idx) - M;
+idy = find(v > N/2);
+v(idy) = v(idy) - N;
+
+% Compute the meshgrid arrays
+[V, U] = meshgrid(v, u);
+end
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,299 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>highfreqemphasis_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="highfreqemphasis_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">1- Fourier</a></li><li><a href="#4">2- Filtering</a></li><li><a href="#5">3- Inverse Fourier</a></li><li><a href="#6">prepare the output size</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [ out_img ] = highfreqemphasis_cvip (input_img, filter_type, block_size,cutoff, alfa, keep_DC, order)
+</pre><pre class="codeinput"><span class="comment">% HIGHFREQEMPHASIS_CVIP - Performs high frequency emphasis filtering.</span>
+<span class="comment">%</span>
+<span class="comment">% syntax :</span>
+<span class="comment">% --------</span>
+<span class="comment">% [ out_img ] = highfreqemphasis_cvip (input_img, filter_type, block_size,cutoff, alfa, keep_DC,order)</span>
+<span class="comment">%</span>
+<span class="comment">% Description :</span>
+<span class="comment">% ----------</span>
+<span class="comment">%  High_frequency_emphasis performs a two-dimensional high frequency</span>
+<span class="comment">%  emphasis filtering in transform domain on input image.It is implemented</span>
+<span class="comment">%  by adding a constant to a butterworth high pass filter transfer</span>
+<span class="comment">%  function.This preserves the low frequency components of the image and at</span>
+<span class="comment">%  the same time,amplifies the high-frequency components.The result of this</span>
+<span class="comment">%  process is better tonality in the final image. The  cut-off frequency</span>
+<span class="comment">%  and filter order &lt;order&gt; is for the butter worth high pass filter used</span>
+<span class="comment">%  in this high frequency emphasis filter.Experiment revealed that the</span>
+<span class="comment">%  constant alfa in the range of 1.0 to 2.0 yields good result.</span>
+<span class="comment">%  If dc equals 1,the dc component will be retained,if it equals 0,</span>
+<span class="comment">%  the dc compenent will be dropped.</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%  'input_img'      Input Image</span>
+<span class="comment">%</span>
+<span class="comment">%  'block_size'     desired block size.</span>
+<span class="comment">%</span>
+<span class="comment">%  'cutoff'         Cutoff frequency .</span>
+<span class="comment">%</span>
+<span class="comment">%  'Alfa'           a constant typically from 1.0 to 2.0.</span>
+<span class="comment">%</span>
+<span class="comment">%  'keep_DC'        'y'/'n' to keep or ignore</span>
+<span class="comment">%</span>
+<span class="comment">%  'order'          filter order,range has to be from 1 to 8.</span>
+<span class="comment">%</span>
+<span class="comment">%  'filter_type'    the type of filter, FFT, DCT, Walsh-Hadamard, Haar</span>
+<span class="comment">%</span>
+<span class="comment">% output Parameters include:</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%  'out_img'         Output image.</span>
+<span class="comment">%</span>
+<span class="comment">% Example:</span>
+<span class="comment">% -------</span>
+<span class="comment">%</span>
+<span class="comment">%      input_image =  imread('butterfly.tif');</span>
+<span class="comment">%      filter_type = 'fft';</span>
+<span class="comment">%      block_size = [];</span>
+<span class="comment">%      cutoff = 128;</span>
+<span class="comment">%      Alfa = 1.5;</span>
+<span class="comment">%      keep_DC = 'y';</span>
+<span class="comment">%      order = 5;</span>
+<span class="comment">%      out_img  = highfreqemphasis_cvip (input_image, filter_type, block_size,cutoff, Alfa,keep_DC,order);</span>
+<span class="comment">%      figure;imshow(remap_cvip(out_img,[]));</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    10/13/2016</span>
+<span class="comment">%           Latest update date:     05/04/2020</span>
+<span class="comment">%           Updated by:             Joey Olden</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">%modified to allow for more than just a fft transform</span>
+<span class="comment">%the change was made to fit the parameters desired in the GUI</span>
+
+[height, width, ~] = size(input_img);
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in highfreqemphasis_cvip (line 75)
+[height, width, ~] = size(input_img);
+</pre><h2 id="3">1- Fourier</h2><pre class="codeinput"><span class="keyword">switch</span> filter_type
+    <span class="keyword">case</span> <span class="string">'FFT'</span>
+        X = fft_cvip(input_img,block_size);
+        origin = <span class="string">'center'</span>;
+    <span class="keyword">case</span> <span class="string">'DCT'</span>
+        X = dct_cvip(input_img,block_size);
+        origin = <span class="string">'uppleft'</span>;
+    <span class="keyword">case</span> <span class="string">'Walsh-Hadamard'</span>
+        X = walhad_cvip(input_img,block_size);
+        origin = <span class="string">'uppleft'</span>;
+    <span class="keyword">case</span> <span class="string">'Haar'</span>
+        X = haar_cvip(input_img,block_size);
+        origin = <span class="string">'uppleft'</span>;
+<span class="keyword">end</span>
+</pre><h2 id="4">2- Filtering</h2><pre class="codeinput">[m,n,d] = size(X);
+H = butterworth_h_cvip( <span class="string">'high'</span>, [m n] , origin, keep_DC,order, cutoff );
+H = H + alfa;
+X = X.*repmat(H,[1 1 d]);
+</pre><h2 id="5">3- Inverse Fourier</h2><pre class="codeinput"><span class="keyword">switch</span> filter_type
+    <span class="keyword">case</span> <span class="string">'FFT'</span>
+        X = ifft_cvip(X, block_size);
+    <span class="keyword">case</span> <span class="string">'DCT'</span>
+        X = idct_cvip(X, block_size);
+    <span class="keyword">case</span> <span class="string">'Walsh-Hadamard'</span>
+        X = iwalhad_cvip(X, block_size);
+    <span class="keyword">case</span> <span class="string">'Haar'</span>
+        X = ihaar_cvip(X, block_size);
+<span class="keyword">end</span>
+out_img = real(X);
+</pre><h2 id="6">prepare the output size</h2><pre class="codeinput">out_img = out_img(1:height,1:width,:);
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [ out_img ] = highfreqemphasis_cvip (input_img, filter_type, block_size,cutoff, alfa, keep_DC, order)
+% HIGHFREQEMPHASIS_CVIP - Performs high frequency emphasis filtering.
+% 
+% syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% [ out_img ] = highfreqemphasis_cvip (input_img, filter_type, block_size,cutoff, alfa, keep_DC,order)
+%
+% Description :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%  High_frequency_emphasis performs a two-dimensional high frequency
+%  emphasis filtering in transform domain on input image.It is implemented
+%  by adding a constant to a butterworth high pass filter transfer
+%  function.This preserves the low frequency components of the image and at
+%  the same time,amplifies the high-frequency components.The result of this
+%  process is better tonality in the final image. The  cut-off frequency 
+%  and filter order <order> is for the butter worth high pass filter used 
+%  in this high frequency emphasis filter.Experiment revealed that the 
+%  constant alfa in the range of 1.0 to 2.0 yields good result.
+%  If dc equals 1,the dc component will be retained,if it equals 0,
+%  the dc compenent will be dropped.
+%
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 
+%  'input_img'      Input Image
+%  
+%  'block_size'     desired block size.
+%
+%  'cutoff'         Cutoff frequency .
+%
+%  'Alfa'           a constant typically from 1.0 to 2.0.
+%
+%  'keep_DC'        'y'/'n' to keep or ignore
+%
+%  'order'          filter order,range has to be from 1 to 8.
+%
+%  'filter_type'    the type of filter, FFT, DCT, Walsh-Hadamard, Haar
+%
+% output Parameters include:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%  'out_img'         Output image. 
+%
+% Example:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+%      input_image =  imread('butterfly.tif');
+%      filter_type = 'fft';
+%      block_size = [];
+%      cutoff = 128;
+%      Alfa = 1.5;
+%      keep_DC = 'y';
+%      order = 5;
+%      out_img  = highfreqemphasis_cvip (input_image, filter_type, block_size,cutoff, Alfa,keep_DC,order);
+%      figure;imshow(remap_cvip(out_img,[]));
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Mehrdad Alvandipour
+%           Initial coding date:    10/13/2016
+%           Latest update date:     05/04/2020
+%           Updated by:             Joey Olden
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+%modified to allow for more than just a fft transform
+%the change was made to fit the parameters desired in the GUI
+
+[height, width, ~] = size(input_img);
+
+%% 1- Fourier
+switch filter_type
+    case 'FFT'
+        X = fft_cvip(input_img,block_size);
+        origin = 'center';
+    case 'DCT'
+        X = dct_cvip(input_img,block_size);
+        origin = 'uppleft';
+    case 'Walsh-Hadamard'
+        X = walhad_cvip(input_img,block_size);
+        origin = 'uppleft';
+    case 'Haar'
+        X = haar_cvip(input_img,block_size);
+        origin = 'uppleft';
+end
+
+%% 2- Filtering
+[m,n,d] = size(X);
+H = butterworth_h_cvip( 'high', [m n] , origin, keep_DC,order, cutoff );
+H = H + alfa;
+X = X.*repmat(H,[1 1 d]);
+
+%% 3- Inverse Fourier
+switch filter_type
+    case 'FFT'
+        X = ifft_cvip(X, block_size);
+    case 'DCT'
+        X = idct_cvip(X, block_size);
+    case 'Walsh-Hadamard'
+        X = iwalhad_cvip(X, block_size);
+    case 'Haar'
+        X = ihaar_cvip(X, block_size);
+end
+out_img = real(X);
+
+%% prepare the output size
+out_img = out_img(1:height,1:width,:);
+
+end
+
+
+##### SOURCE END #####
+--></body></html>

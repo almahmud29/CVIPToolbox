@@ -1,0 +1,327 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>TRAIN_TEST_CVIP</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-07-15"><meta name="DC.source" content="train_test_cvip_test.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1><b>TRAIN_TEST_CVIP</b></h1><!--introduction--><p><b>train_test_cvip()</b> reads test and training files of feature vectors and creates output file for classification using Train/Test Sets as algorithm testing method.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">SYNTAX</a></li><li><a href="#2">REFERENCE</a></li><li><a href="#3">EXAMPLES</a></li><li><a href="#4">SEE ALSO</a></li><li><a href="#5">CREDITS</a></li></ul></div><h2 id="1">SYNTAX</h2><p>train_test_cvip(file_tt, file_tr, file_out, option_normalize, ...       option_distance, opt_classification, count)</p><p>train_test_cvip(file_tt, file_tr, file_out, [option_normalize ...       s_min/r_softmax s_max], [option_distance r_minkowski], [opt_classification k], count)</p><p>Input Parameters include :</p><div><ul><li>file_tt   -   Name of the test set file.                   A CSV file with a predefined structure.</li><li>file_tr   -   Name of the training set file.                   A CSV file with a predefined structure.</li><li>file_out  -   Name of the output file.                   A CSV file as the inputs with the feature vectors                   classified based on classification parameters.</li></ul></div><div><ul><li>option_normalize(1)</li></ul></div><pre>   0 &#8211; No Normalization
+   1 &#8211; Range-normalize
+   2 &#8211; Unit Vector normalization
+   3 &#8211; Standard Normal Density normalization
+   4 &#8211; Min-max normalization     ----&gt; s_min, s_max
+   5 &#8211; Softmax scaling           ----&gt; r_softmax</pre><div><ul><li>option_distance(1)</li></ul></div><pre>   1 &#8211; Euclidean Distance
+   2 &#8211; City block or Absolute value metric
+   3 &#8211; Maximum value metric
+   4 &#8211; Minkowski distance        ----&gt; r_minkowski
+   5 &#8211; Vector inner product
+   6 &#8211; Tanimoto metric</pre><div><ul><li>option_classification</li></ul></div><pre>   1 &#8211; Nearest Neighbor
+   2 &#8211; k-Nearest Neighbor        ----&gt; k
+   3 &#8211; Nearest Centroid</pre><div><ul><li>count           An integer value with the number of Train/Test set to be                   tested for Leave One Out algorithm, for single Train/Test                   set it must be equal to 1. Default value 1</li></ul></div><p>If option_normalize(1) is either 4 or 5, or option_distance(1) is 4, then their corresponding parameters should be given as input arguments seperated by comma after option_distance(1). Look at the below examples:</p><h2 id="2">REFERENCE</h2><p>1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</p><h2 id="3">EXAMPLES</h2><pre class="codeinput"><span class="comment">% Example 1 :   Classify Test vectors using Min-max normalization(s_min = 0;</span>
+<span class="comment">% ---------     s_max = 1), Tanimoto metric, and Nearest Neighbor.</span>
+
+                <span class="comment">% Setting input parameters</span>
+                file_tt = <span class="string">'myTestVectors.CSV'</span>;
+                file_tr = <span class="string">'myTrainingVectors.CSV'</span>;
+                file_out = <span class="string">'ClassifiedTestVectors.CSV'</span>;
+                option_normalize = [4 0 1];
+                option_distance = 6;
+                option_classification = 1;
+
+                <span class="comment">% Calling function</span>
+                TestVector = readtable(file_tt)
+                ClassVector1 = train_test_cvip(file_tt, file_tr, file_out, <span class="keyword">...</span>
+                option_normalize, option_distance, option_classification, [])
+
+
+<span class="comment">% Example 2 :   Classify Test vectors using Min-max normalization(s_min = 0;</span>
+<span class="comment">% ---------     s_max = 1), Minkowski distance(r_minkowski = 3), and Nearest Centroid.</span>
+
+                <span class="comment">% Setting input parameters</span>
+                file_tt = <span class="string">'myTestVectors.CSV'</span>;
+                file_tr = <span class="string">'myTrainingVectors.CSV'</span>;
+                file_out = <span class="string">'ClassifiedTestVectors.CSV'</span>;
+                option_normalize = [4 0 1];
+                option_distance = [4 3];
+                option_classification = 3;
+                <span class="comment">% Calling function</span>
+                TestVector = readtable(file_tt);
+                ClassVector2 = train_test_cvip(file_tt, file_tr, file_out, <span class="keyword">...</span>
+                option_normalize, option_distance, option_classification, [])
+</pre><pre class="codeoutput">
+TestVector =
+
+  33&times;8 table
+
+            obj_id            STD_1      Skew_1      ASM_Avg     ASM_Range    IDNorm_Avg    IDNorm_Range      Class   
+    ______________________    ______    _________    ________    _________    __________    ____________    __________
+
+    'barcha110907A1D.tif'     10.177      0.72487     0.00356    0.000435     0.27347       0.041078        'NOSyrinx'
+    'barhon033115a1d.tif'      8.581    -0.080133    0.007144    0.002801     0.36642       0.054772        'NOSyrinx'
+    'barnor101207A1D.tif'     10.343       0.4553     0.00683    0.001652      0.3292       0.067506        'NOSyrinx'
+    'biligo042809A1D.tif'     11.201      -1.1426     0.00341     0.00082     0.30496       0.041916        'NOSyrinx'
+    'cardai041108A1D.tif'     7.7035      0.84656    0.005715     0.00066     0.31364       0.048482        'NOSyrinx'
+    'chakin050109A1D.tif'      10.88      0.99514    0.005163     0.00234     0.28433       0.059032        'NOSyrinx'
+    'chalil052809A1D.tif'     11.899     -0.10111    0.002103    0.000829     0.28072       0.061953        'NOSyrinx'
+    'chapet052709A1D.tif'     8.7307       1.0788       0.006    0.002072     0.37453       0.076911        'NOSyrinx'
+    'colmol080610a1d.tif'     9.2497      0.62493    0.003962    0.001247     0.31326       0.067093        'NOSyrinx'
+    'copcha011413a1d.tif'     18.777      0.46282    0.001736    0.000479     0.28368        0.04384        'NOSyrinx'
+    'balluc111213a1d.tif'     14.568      0.87633    0.002271    0.000732     0.27634        0.06744        'Syrinxs' 
+    'bargra111706A1D.tif'     5.6843     -0.33897    0.008228    0.002239       0.354       0.046216        'Syrinxs' 
+    'bekpan122309A1D.tif'     11.293      0.14483    0.002474    0.000468     0.24378       0.053078        'Syrinxs' 
+    'buamuf120709A1D.tif'     7.5736    -0.042735     0.00571    0.001507     0.34799        0.04524        'Syrinxs' 
+    'cammag011210A1D.tif'     15.184      0.86615    0.002393     0.00073     0.28478       0.053462        'Syrinxs' 
+    'candia013014a1d.tif'     9.4862      0.19586    0.004749    0.001724      0.3445       0.058396        'Syrinxs' 
+    'capenz090415a1d.tif'      12.08      0.80624    0.003272    0.001403     0.31863       0.070567        'Syrinxs' 
+    'chageo050109A1D.tif'     20.498      -1.1119    0.002333    0.000741     0.29117         0.0543        'Syrinxs' 
+    'chamor052809A1D.tif'      11.22     0.077528    0.002171    0.000668     0.28946       0.060125        'Syrinxs' 
+    'chasam050509A1D.tif'     8.3458      0.62444    0.006433    0.001763     0.37934       0.044544        'Syrinxs' 
+    'Binary:'                      0            0           0           0           0              0        '0'       
+    'Projections Width:'           5            0           0           0           0              0        '0'       
+    'Projections Height:'          5            0           0           0           0              0        '0'       
+    'RST-Invariant:'               0            0           0           0           0              0        '0'       
+    'Histogram:'                   2            0           0           0           0              0        '0'       
+    'Texture:'                     2            0           0           0           0              0        '0'       
+    'Texture Distance:'            6            0           0           0           0              0        '0'       
+    'Te. Quant Level:'           256            0           0           0           0              0        '0'       
+    'Stats(Avg Rang Var):'       110            0           0           0           0              0        '0'       
+    'Spectral:'                    0            0           0           0           0              0        '0'       
+    'Rings:'                       0            0           0           0           0              0        '0'       
+    'Sectors:'                     0            0           0           0           0              0        '0'       
+    'Images:'                     20            0           0           0           0              0        '0'       
+
+
+ClassVector1 =
+
+  20&times;8 table
+
+           obj_id            STD_1      Skew_1      ASM_Avg     ASM_Range    IDNorm_Avg    IDNorm_Range      class   
+    _____________________    ______    _________    ________    _________    __________    ____________    __________
+
+    'barcha110907A1D.tif'    10.177      0.72487     0.00356    0.000435     0.27347       0.041078        'NOSyrinx'
+    'barhon033115a1d.tif'     8.581    -0.080133    0.007144    0.002801     0.36642       0.054772        'NOSyrinx'
+    'barnor101207A1D.tif'    10.343       0.4553     0.00683    0.001652      0.3292       0.067506        'NOSyrinx'
+    'biligo042809A1D.tif'    11.201      -1.1426     0.00341     0.00082     0.30496       0.041916        'NOSyrinx'
+    'cardai041108A1D.tif'    7.7035      0.84656    0.005715     0.00066     0.31364       0.048482        'NOSyrinx'
+    'chakin050109A1D.tif'     10.88      0.99514    0.005163     0.00234     0.28433       0.059032        'NOSyrinx'
+    'chalil052809A1D.tif'    11.899     -0.10111    0.002103    0.000829     0.28072       0.061953        'NOSyrinx'
+    'chapet052709A1D.tif'    8.7307       1.0788       0.006    0.002072     0.37453       0.076911        'NOSyrinx'
+    'colmol080610a1d.tif'    9.2497      0.62493    0.003962    0.001247     0.31326       0.067093        'NOSyrinx'
+    'copcha011413a1d.tif'    18.777      0.46282    0.001736    0.000479     0.28368        0.04384        'NOSyrinx'
+    'balluc111213a1d.tif'    14.568      0.87633    0.002271    0.000732     0.27634        0.06744        'Syrinxs' 
+    'bargra111706A1D.tif'    5.6843     -0.33897    0.008228    0.002239       0.354       0.046216        'Syrinxs' 
+    'bekpan122309A1D.tif'    11.293      0.14483    0.002474    0.000468     0.24378       0.053078        'Syrinxs' 
+    'buamuf120709A1D.tif'    7.5736    -0.042735     0.00571    0.001507     0.34799        0.04524        'Syrinxs' 
+    'cammag011210A1D.tif'    15.184      0.86615    0.002393     0.00073     0.28478       0.053462        'Syrinxs' 
+    'candia013014a1d.tif'    9.4862      0.19586    0.004749    0.001724      0.3445       0.058396        'Syrinxs' 
+    'capenz090415a1d.tif'     12.08      0.80624    0.003272    0.001403     0.31863       0.070567        'Syrinxs' 
+    'chageo050109A1D.tif'    20.498      -1.1119    0.002333    0.000741     0.29117         0.0543        'Syrinxs' 
+    'chamor052809A1D.tif'     11.22     0.077528    0.002171    0.000668     0.28946       0.060125        'Syrinxs' 
+    'chasam050509A1D.tif'    8.3458      0.62444    0.006433    0.001763     0.37934       0.044544        'Syrinxs' 
+
+
+ClassVector2 =
+
+  20&times;8 table
+
+           obj_id            STD_1      Skew_1      ASM_Avg     ASM_Range    IDNorm_Avg    IDNorm_Range      class   
+    _____________________    ______    _________    ________    _________    __________    ____________    __________
+
+    'barcha110907A1D.tif'    10.177      0.72487     0.00356    0.000435     0.27347       0.041078        'NOSyrinx'
+    'barhon033115a1d.tif'     8.581    -0.080133    0.007144    0.002801     0.36642       0.054772        'NOSyrinx'
+    'barnor101207A1D.tif'    10.343       0.4553     0.00683    0.001652      0.3292       0.067506        'NOSyrinx'
+    'biligo042809A1D.tif'    11.201      -1.1426     0.00341     0.00082     0.30496       0.041916        'Syrinxs' 
+    'cardai041108A1D.tif'    7.7035      0.84656    0.005715     0.00066     0.31364       0.048482        'NOSyrinx'
+    'chakin050109A1D.tif'     10.88      0.99514    0.005163     0.00234     0.28433       0.059032        'NOSyrinx'
+    'chalil052809A1D.tif'    11.899     -0.10111    0.002103    0.000829     0.28072       0.061953        'Syrinxs' 
+    'chapet052709A1D.tif'    8.7307       1.0788       0.006    0.002072     0.37453       0.076911        'NOSyrinx'
+    'colmol080610a1d.tif'    9.2497      0.62493    0.003962    0.001247     0.31326       0.067093        'NOSyrinx'
+    'copcha011413a1d.tif'    18.777      0.46282    0.001736    0.000479     0.28368        0.04384        'Syrinxs' 
+    'balluc111213a1d.tif'    14.568      0.87633    0.002271    0.000732     0.27634        0.06744        'NOSyrinx'
+    'bargra111706A1D.tif'    5.6843     -0.33897    0.008228    0.002239       0.354       0.046216        'NOSyrinx'
+    'bekpan122309A1D.tif'    11.293      0.14483    0.002474    0.000468     0.24378       0.053078        'Syrinxs' 
+    'buamuf120709A1D.tif'    7.5736    -0.042735     0.00571    0.001507     0.34799        0.04524        'NOSyrinx'
+    'cammag011210A1D.tif'    15.184      0.86615    0.002393     0.00073     0.28478       0.053462        'Syrinxs' 
+    'candia013014a1d.tif'    9.4862      0.19586    0.004749    0.001724      0.3445       0.058396        'NOSyrinx'
+    'capenz090415a1d.tif'     12.08      0.80624    0.003272    0.001403     0.31863       0.070567        'NOSyrinx'
+    'chageo050109A1D.tif'    20.498      -1.1119    0.002333    0.000741     0.29117         0.0543        'Syrinxs' 
+    'chamor052809A1D.tif'     11.22     0.077528    0.002171    0.000668     0.28946       0.060125        'Syrinxs' 
+    'chasam050509A1D.tif'    8.3458      0.62444    0.006433    0.001763     0.37934       0.044544        'NOSyrinx'
+
+</pre><h2 id="4">SEE ALSO</h2><p><a href="matlab:doc('leave_one_out_cvip')">leave_one_out_cvip</a> | <a href="matlab:doc('nearest_neighbor_cvip')">nearest_neighbor_cvip</a></p><h2 id="5">CREDITS</h2><p>
+Author: Julian rene Cuellar Buritica, February 2019<br>
+Copyright &#169; 2017-2019 <a href="http://www.siue.edu/~sumbaug/">Scott
+E Umbaugh</a><br>
+For updates visit <a href="http://cviptools.siue.edu/">CVIP Toolbox Website</a>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% *TRAIN_TEST_CVIP* 
+% *train_test_cvip()* reads test and training files of feature vectors and 
+% creates output file for classification using Train/Test Sets as algorithm
+% testing method.
+%
+%% SYNTAX
+%
+% train_test_cvip(file_tt, file_tr, file_out, option_normalize, ...
+%       option_distance, opt_classification, count)
+%
+% train_test_cvip(file_tt, file_tr, file_out, [option_normalize ...
+%       s_min/r_softmax s_max], [option_distance r_minkowski], [opt_classification k], count)
+%   
+% Input Parameters include :
+% 
+% * file_tt   -   Name of the test set file.  
+%                   A CSV file with a predefined structure.
+% * file_tr   -   Name of the training set file. 
+%                   A CSV file with a predefined structure.
+% * file_out  -   Name of the output file.  
+%                   A CSV file as the inputs with the feature vectors 
+%                   classified based on classification parameters.
+%
+% * option_normalize(1)
+% 
+%     0 – No Normalization
+%     1 – Range-normalize
+%     2 – Unit Vector normalization
+%     3 – Standard Normal Density normalization
+%     4 – Min-max normalization     REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH> s_min, s_max
+%     5 – Softmax scaling           REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH> r_softmax
+% 
+% * option_distance(1)
+% 
+%     1 – Euclidean Distance
+%     2 – City block or Absolute value metric
+%     3 – Maximum value metric
+%     4 – Minkowski distance        REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH> r_minkowski
+%     5 – Vector inner product
+%     6 – Tanimoto metric
+%
+% * option_classification
+% 
+%     1 – Nearest Neighbor
+%     2 – k-Nearest Neighbor        REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH> k
+%     3 – Nearest Centroid
+%
+% * count           An integer value with the number of Train/Test set to be
+%                   tested for Leave One Out algorithm, for single Train/Test
+%                   set it must be equal to 1. Default value 1
+%
+% If option_normalize(1) is either 4 or 5, or option_distance(1) is 4, then their
+% corresponding parameters should be given as input arguments seperated
+% by comma after option_distance(1). Look at the below examples:
+%                                
+%% REFERENCE
+% 
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications
+% with MATLAB and CVIPtools, 3rd Edition.
+%
+%% EXAMPLES   
+
+% Example 1 :   Classify Test vectors using Min-max normalization(s_min = 0; 
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-     s_max = 1), Tanimoto metric, and Nearest Neighbor.
+
+                % Setting input parameters
+                file_tt = 'myTestVectors.CSV';
+                file_tr = 'myTrainingVectors.CSV';
+                file_out = 'ClassifiedTestVectors.CSV';
+                option_normalize = [4 0 1];
+                option_distance = 6;
+                option_classification = 1;
+
+                % Calling function
+                TestVector = readtable(file_tt)
+                ClassVector1 = train_test_cvip(file_tt, file_tr, file_out, ...
+                option_normalize, option_distance, option_classification, [])
+
+             
+% Example 2 :   Classify Test vectors using Min-max normalization(s_min = 0; 
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-     s_max = 1), Minkowski distance(r_minkowski = 3), and Nearest Centroid.
+
+                % Setting input parameters
+                file_tt = 'myTestVectors.CSV';
+                file_tr = 'myTrainingVectors.CSV';
+                file_out = 'ClassifiedTestVectors.CSV';
+                option_normalize = [4 0 1];
+                option_distance = [4 3];
+                option_classification = 3;
+                % Calling function
+                TestVector = readtable(file_tt);
+                ClassVector2 = train_test_cvip(file_tt, file_tr, file_out, ...
+                option_normalize, option_distance, option_classification, [])
+
+
+%% SEE ALSO 
+% <matlab:doc('leave_one_out_cvip') leave_one_out_cvip> | <matlab:doc('nearest_neighbor_cvip') nearest_neighbor_cvip>
+%
+%% CREDITS
+%
+% <html>
+% Author: Julian rene Cuellar Buritica, February 2019<br>
+% Copyright &#169; 2017-2019 <a href="http://www.siue.edu/~sumbaug/">Scott
+% E Umbaugh</a><br>
+% For updates visit <a href="http://cviptools.siue.edu/">CVIP Toolbox Website</a>
+% </html>
+
+##### SOURCE END #####
+--></body></html>

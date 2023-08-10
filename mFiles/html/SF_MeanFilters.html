@@ -1,0 +1,150 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>SF_MeanFilters</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-04-18"><meta name="DC.source" content="SF_MeanFilters.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><p>
+<center>
+<h1 style="color: ##000000;"><i><b>MATLAB CVIP Toolbox Functions</b></i></h1>
+<img width=180 height=72 id="_x0000_i1029" src="Images/CVIP-toolbox-logo.png" alt="CVIPtools Home">
+</center>
+<h2 style="color: #2e6c80;">Spatial Filters: Mean Filters</h2>
+<p>The spatial filter group in the CVIP Toolbox has a variety of
+different types of functions. They are organized into the separate
+categories of adaptive filters, mean filters, order filters and a
+miscellaneous group. The adaptive filters category contains spatial
+domain based filters that are used primarily for contrast enhancement,
+noise mitigation or image smoothing. The adaptive filters included here
+function by adjusting parameters based on the characteristics of the
+underlying local pixel values. The characteristics can be standard
+statistics, order statistics or neighborhood image features, such as edge
+energy. Included are filters to adjust image contrast, such as the ACE
+(adaptive contrast enhancement) filters. Filters for noise removal, such
+as the adaptive median and minimum-mean-squared-error filters are also
+part of this group.</p>
+<p>The mean filters are primarily smoothing filters, which perform
+various methods of averaging and will provide noise mitigation or simply
+add a “soft” look to the image. The order filers include the median,
+midpoint, minimum, maximum, and the alpha-trimmed mean which varies
+between a mean and a median filter to handle multiple types of noise.
+Utility functions for convolution, which allows the implementation of any
+linear spatial filter mask, and difference filters are included in the
+miscellaneous group.</p>
+<ul>
+    <li><strong><a href="arithmetic_mean_cvip.html">arithmetic_mean_cvip</a></strong> - perform an arithmetic mean averaging filter</li>
+    <li><strong><a href="contra_mean_cvip.html">contra_mean_cvip</a></strong> - perform a contra-harmonic mean filter</li>
+    <li><strong><a href="geometric_mean_cvip.html">geometric_mean_cvip</a></strong> - performs a geometric mean filter</li>
+    <li><strong><a href="harmonic_mean_cvip.html">harmonic_mean_cvip</a></strong> - performs a harmonic mean filter</li>
+    <li><strong><a href="raster_deblur_mean_cvip.html">raster_deblur_mean_cvip</a></strong> - raster deblurring filter</li>
+    <li><strong><a href="yp_mean_cvip.html">yp_mean_cvip</a></strong> - performs a Yp mean filter</li>
+</ul>
+<div class="footer">&#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/"> Scott E Umbaugh</a>, CVIP Toolbox Development Team, CVIP Lab, <a href="http://www.siue.edu/index.shtml">Southern Illinois University Edwardsville</a>, Edwardsville, IL 62026
+</div>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%
+% <html>
+% <center>
+% <h1 style="color: ##000000;"><i><b>MATLAB CVIP Toolbox Functions</b></i></h1>
+% <img width=180 height=72 id="_x0000_i1029" src="Images/CVIP-toolbox-logo.png" alt="CVIPtools Home">
+% </center>
+% <h2 style="color: #2e6c80;">Spatial Filters: Mean Filters</h2>
+% <p>The spatial filter group in the CVIP Toolbox has a variety of 
+% different types of functions. They are organized into the separate 
+% categories of adaptive filters, mean filters, order filters and a 
+% miscellaneous group. The adaptive filters category contains spatial 
+% domain based filters that are used primarily for contrast enhancement, 
+% noise mitigation or image smoothing. The adaptive filters included here 
+% function by adjusting parameters based on the characteristics of the 
+% underlying local pixel values. The characteristics can be standard 
+% statistics, order statistics or neighborhood image features, such as edge
+% energy. Included are filters to adjust image contrast, such as the ACE 
+% (adaptive contrast enhancement) filters. Filters for noise removal, such 
+% as the adaptive median and minimum-mean-squared-error filters are also 
+% part of this group.</p> 
+% <p>The mean filters are primarily smoothing filters, which perform 
+% various methods of averaging and will provide noise mitigation or simply 
+% add a “soft” look to the image. The order filers include the median, 
+% midpoint, minimum, maximum, and the alpha-trimmed mean which varies 
+% between a mean and a median filter to handle multiple types of noise. 
+% Utility functions for convolution, which allows the implementation of any
+% linear spatial filter mask, and difference filters are included in the 
+% miscellaneous group.</p>
+% <ul>
+%     <li><strong><a href="arithmetic_mean_cvip.html">arithmetic_mean_cvip</a></strong> - perform an arithmetic mean averaging filter</li>
+%     <li><strong><a href="contra_mean_cvip.html">contra_mean_cvip</a></strong> - perform a contra-harmonic mean filter</li>
+%     <li><strong><a href="geometric_mean_cvip.html">geometric_mean_cvip</a></strong> - performs a geometric mean filter</li>
+%     <li><strong><a href="harmonic_mean_cvip.html">harmonic_mean_cvip</a></strong> - performs a harmonic mean filter</li>
+%     <li><strong><a href="raster_deblur_mean_cvip.html">raster_deblur_mean_cvip</a></strong> - raster deblurring filter</li>
+%     <li><strong><a href="yp_mean_cvip.html">yp_mean_cvip</a></strong> - performs a Yp mean filter</li>
+% </ul>
+% <div class="footer">&#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/"> Scott E Umbaugh</a>, CVIP Toolbox Development Team, CVIP Lab, <a href="http://www.siue.edu/index.shtml">Southern Illinois University Edwardsville</a>, Edwardsville, IL 62026 
+% </div>
+% </html>
+%
+
+##### SOURCE END #####
+--></body></html>

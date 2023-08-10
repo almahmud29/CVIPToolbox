@@ -1,0 +1,19 @@
+obj_id,row_obj,col_obj,Area,Centroid_r,Centroid_c,Orientation,Perimeter,Euler,Class
+testing1105,143,220,16081,142,222,3.38853800054427,494,1,cancer
+testing1105,169,190,14504,170,187,-2.71033309384577,458,1,cancer
+testing1105,115,177,26568,122,183,-53.7609312487309,555,1,cancer
+testing1105,96,103,17018,110,104,-1.7250321191226,464,1,nocancer
+testing1105,172,227,14341,174,230,-22.8620947627228,457,1,nocancer
+Binary:,5,0,0,0,0,0,0,0,0
+Projections W:,10,0,0,0,0,0,0,0,0
+Projections H:,10,0,0,0,0,0,0,0,0
+RST-Invariant:,0,0,0,0,0,0,0,0,0
+Histogram:,0,0,0,0,0,0,0,0,0
+Texture:,0,0,0,0,0,0,0,0,0
+Tex. Distance:,2,0,0,0,0,0,0,0,0
+Quant. Level:,1,0,0,0,0,0,0,0,0
+Stats(Avg Rang Var):,100,0,0,0,0,0,0,0,0
+Spectral:,0,0,0,0,0,0,0,0,0
+Rings:,0,0,0,0,0,0,0,0,0
+Sectors:,0,0,0,0,0,0,0,0,0
+Images:,5,0,0,0,0,0,0,0,0

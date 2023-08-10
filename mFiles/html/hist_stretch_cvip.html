@@ -1,0 +1,347 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>hist_stretch_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="hist_stretch_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">RETURN Values</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> output = hist_stretch_cvip(im,low,high, lowClip, highClip)
+</pre><pre class="codeinput"><span class="comment">% HIST_STRETCH_CVIP - This function stretches a histogram.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% -------</span>
+<span class="comment">% outputImage = hist_stretch_cvip(inputImage, low, high, lowClip, highClip);</span>
+<span class="comment">%</span>
+<span class="comment">% Description :</span>
+<span class="comment">% ------------</span>
+<span class="comment">%</span>
+<span class="comment">% This function stretches a histogram of an input image.This histogram</span>
+<span class="comment">% stretch technique can be used to improve the contrast of an image.</span>
+<span class="comment">% By clipping a small percentage at the ends,you can avoid the possibility</span>
+<span class="comment">% of a few high or low pixel values compromising the stretch effect.</span>
+<span class="comment">% The mapping function for a histogram stretch can be</span>
+<span class="comment">% found in the function documentation page.</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters Include :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%  'inputImage'    - input image.</span>
+<span class="comment">%  'low'           - lower limit for stretch.</span>
+<span class="comment">%  'high'          - higher limit for stretch.</span>
+<span class="comment">%  'lowClip'       - percentage of low values to clip before stretching.</span>
+<span class="comment">%  'highClip'      - percentage of high values to clip before stretching.</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter Include :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%  'Output Image'    Output hist stretch image.</span>
+<span class="comment">%</span>
+<span class="comment">% Example 1 :</span>
+<span class="comment">% ---------</span>
+<span class="comment">%   Stretches the histogram of the input grayscale image</span>
+<span class="comment">%</span>
+<span class="comment">%                    X = imread('Cam.bmp');</span>
+<span class="comment">%                    low = 0;</span>
+<span class="comment">%                    high = 255;</span>
+<span class="comment">%                    lowClip = 0.025;</span>
+<span class="comment">%                    highClip = 0.025;</span>
+<span class="comment">%                    S = hist_stretch_cvip(X,low,high,lowClip,highClip);</span>
+<span class="comment">%                    figure;imshow(X);title('Input Image');</span>
+<span class="comment">%                    figure;imshow(S,[]);title('Output Hist stretch Image');</span>
+<span class="comment">%</span>
+<span class="comment">% Example 2 :</span>
+<span class="comment">% ---------</span>
+<span class="comment">%   Stretches the histogram of the input color image:</span>
+<span class="comment">%                    X = imread('Car.bmp');</span>
+<span class="comment">%                    low = 0;</span>
+<span class="comment">%                    high = 255;</span>
+<span class="comment">%                    lowClip = 0.025;</span>
+<span class="comment">%                    highClip = 0.025;</span>
+<span class="comment">%                    S = hist_stretch_cvip(X,low,high,lowClip,highClip);</span>
+<span class="comment">%                    figure;imshow(X);title('Input Image');</span>
+<span class="comment">%                    figure;imshow(S,[]);title('Output Hist stretch Image');</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">%  1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Deependra Mishra</span>
+<span class="comment">%           Initial coding date:    03/17/2017</span>
+<span class="comment">%           Latest update date:     03/17/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2017 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+</pre><h2 id="3">RETURN Values</h2><p>A stretched image.</p><pre class="codeinput"><span class="comment">%---------- Argument Check -----------------------------------------</span>
+    <span class="keyword">if</span> nargin&lt;5
+        error(<span class="string">'Too few arguments for histogram stretch operation'</span>);
+    <span class="keyword">elseif</span> nargin&gt;5
+        error(<span class="string">'Too many arguments for histogram stretch operation'</span>);
+    <span class="keyword">end</span>
+<span class="comment">%--------- Data Type Check and Conversion ---------------------------</span>
+    <span class="keyword">if</span> ~isa(im,<span class="string">'double'</span>)
+        im=im2double(im);
+    <span class="keyword">end</span>
+<span class="comment">%-----Logic to clip high end and low end pixels----------------------</span>
+    total = length(im(:));
+    fig=figure;
+
+    h = histogram(im,<span class="string">'visible'</span>,<span class="string">'off'</span>);
+
+    counts = h.Values;
+    edges = h.BinEdges;
+
+    cdf = cumsum(counts)/total;
+
+    l = find(cdf &lt; lowClip);
+
+    h = find(cdf &gt; (1 - highClip));
+
+     <span class="keyword">if</span> ~isempty(l)
+        l = edges(l(end) + 1);
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> ~isempty(h)
+        h = edges(h(1)-1);
+    <span class="keyword">end</span>
+<span class="comment">%------For 3-band image-------------------</span>
+    <span class="keyword">if</span> size(im,3)==3
+        y1=im(:,:,1);
+        y2=im(:,:,2);
+        y3=im(:,:,3);
+        <span class="keyword">if</span> ~isempty(l)
+            y1(im(:,:,1) &lt; l) = l;
+            y2(im(:,:,2) &lt; l) = l;
+            y3(im(:,:,3) &lt; l) = l;
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> ~isempty(h)
+            y1(im(:,:,1) &gt; h) = h;
+            y2(im(:,:,2) &gt; h) = h;
+            y3(im(:,:,3) &gt; h) = h;
+        <span class="keyword">end</span>
+        Z(:,:,1) = y1;
+        Z(:,:,2) = y2;
+        Z(:,:,3) = y3;
+<span class="comment">%-------For single band image----------------</span>
+    <span class="keyword">else</span>
+        Z=im;
+        <span class="keyword">if</span> ~isempty(l)
+            Z(im &lt; l) = l;
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> ~isempty(h)
+            Z(im &gt; h) = h;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    close(fig);
+<span class="comment">%--------Histogram stretch Logic-----------</span>
+    Min=min(Z(:));
+    Max=max(Z(:));
+    output = (((Z-Min)/(Max-Min))*(high-low))+low;
+</pre><pre class="codeoutput error">Error using hist_stretch_cvip (line 76)
+Too few arguments for histogram stretch operation
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function output = hist_stretch_cvip(im,low,high, lowClip, highClip)
+% HIST_STRETCH_CVIP - This function stretches a histogram.
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% outputImage = hist_stretch_cvip(inputImage, low, high, lowClip, highClip);
+% 
+% Description :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+% This function stretches a histogram of an input image.This histogram 
+% stretch technique can be used to improve the contrast of an image.
+% By clipping a small percentage at the ends,you can avoid the possibility 
+% of a few high or low pixel values compromising the stretch effect.
+% The mapping function for a histogram stretch can be 
+% found in the function documentation page.
+%
+% Input Parameters Include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+%  'inputImage'    - input image.
+%  'low'           - lower limit for stretch.
+%  'high'          - higher limit for stretch.
+%  'lowClip'       - percentage of low values to clip before stretching.
+%  'highClip'      - percentage of high values to clip before stretching.
+%
+% Output Parameter Include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+%  'Output Image'    Output hist stretch image.
+%
+% Example 1 :              
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%   Stretches the histogram of the input grayscale image
+% 
+%                    X = imread('Cam.bmp');
+%                    low = 0;
+%                    high = 255;
+%                    lowClip = 0.025;
+%                    highClip = 0.025;
+%                    S = hist_stretch_cvip(X,low,high,lowClip,highClip);
+%                    figure;imshow(X);title('Input Image');
+%                    figure;imshow(S,[]);title('Output Hist stretch Image');
+%
+% Example 2 :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%   Stretches the histogram of the input color image:
+%                    X = imread('Car.bmp');
+%                    low = 0;
+%                    high = 255;
+%                    lowClip = 0.025;
+%                    highClip = 0.025;
+%                    S = hist_stretch_cvip(X,low,high,lowClip,highClip);
+%                    figure;imshow(X);title('Input Image');
+%                    figure;imshow(S,[]);title('Output Hist stretch Image');
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%  1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Deependra Mishra
+%           Initial coding date:    03/17/2017
+%           Latest update date:     03/17/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2017 Scott Umbaugh and SIUE
+%
+%==========================================================================
+%% RETURN Values
+% A stretched image.
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH Argument Check REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    if nargin<5
+        error('Too few arguments for histogram stretch operation');
+    elseif nargin>5
+        error('Too many arguments for histogram stretch operation');
+    end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- Data Type Check and Conversion REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-    
+    if ~isa(im,'double')
+        im=im2double(im);
+    end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Logic to clip high end and low end pixelsREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+    total = length(im(:));
+    fig=figure;
+    
+    h = histogram(im,'visible','off');
+    
+    counts = h.Values;
+    edges = h.BinEdges;
+
+    cdf = cumsum(counts)/total;
+    
+    l = find(cdf < lowClip);
+    
+    h = find(cdf > (1 - highClip));
+    
+     if ~isempty(l)
+        l = edges(l(end) + 1);
+    end
+    if ~isempty(h)
+        h = edges(h(1)-1);
+    end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHFor 3-band imageREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-    
+    if size(im,3)==3
+        y1=im(:,:,1);
+        y2=im(:,:,2);
+        y3=im(:,:,3);
+        if ~isempty(l)
+            y1(im(:,:,1) < l) = l;
+            y2(im(:,:,2) < l) = l;
+            y3(im(:,:,3) < l) = l;
+        end
+        if ~isempty(h)
+            y1(im(:,:,1) > h) = h;
+            y2(im(:,:,2) > h) = h;
+            y3(im(:,:,3) > h) = h;
+        end
+        Z(:,:,1) = y1;
+        Z(:,:,2) = y2;
+        Z(:,:,3) = y3;
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-For single band imageREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+    else       
+        Z=im;
+        if ~isempty(l)
+            Z(im < l) = l;
+        end
+        if ~isempty(h)
+            Z(im > h) = h;
+        end
+    end
+    close(fig);
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHHistogram stretch LogicREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-    
+    Min=min(Z(:));
+    Max=max(Z(:));
+    output = (((Z-Min)/(Max-Min))*(high-low))+low;
+end
+##### SOURCE END #####
+--></body></html>

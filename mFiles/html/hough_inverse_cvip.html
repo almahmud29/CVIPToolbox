@@ -1,0 +1,530 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>hough_inverse_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="hough_inverse_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [OutIma] = hough_inverse_cvip(Hough_Image,RC_cell,LP)
+<span class="comment">% HOUGH_INVERSE_CVIP - returns the inverse hough image based on the input</span>
+<span class="comment">%                      parameters</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% --------</span>
+<span class="comment">% [OutIma] = hough_inverse_cvip(Hough_Image,RC_cell,LP)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% --------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%  'Hough_Image'    The output image from the hough transform</span>
+<span class="comment">%</span>
+<span class="comment">%  'RC_cell'        The output cell from the hough transform containing the</span>
+<span class="comment">%                   RC coordinates of each pixel in a specific rho-theta</span>
+<span class="comment">%                   box</span>
+<span class="comment">%</span>
+<span class="comment">%  'LP'         	A single value determining the amount of pixels needed</span>
+<span class="comment">%                   in each rho-theta box to constitute a line</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter include :</span>
+<span class="comment">% --------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%   'OutIma'        The outputted inverse hough image</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                   [Hough_Image,RC_cell] =</span>
+<span class="comment">%                   hough_transform_cvip(imread('cameraman.tif',[0 1</span>
+<span class="comment">%                   45],1);</span>
+<span class="comment">%                   LP = 20;</span>
+<span class="comment">%                   [OutIma] = hough_inverse_cvip(Hough_Image,RC_cell,LP);</span>
+<span class="comment">%                   figure;imshow(OutIma);</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Joey Olden</span>
+<span class="comment">%           Initial coding date:    05/13/2020</span>
+<span class="comment">%           Latest update date:     06/08/2020</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">%THIS FUNCTION PRODUCES THE INVERSE HOUGH IMAGE</span>
+<span class="comment">%removing the theta_range header of the input cells</span>
+theta_range = RC_cell{1,1,1};
+ImageSize = RC_cell{2,1,1};
+RC_cell(1:2,:,:) = [];
+xI = ImageSize(1);  yI = ImageSize(2);
+
+<span class="comment">%findin the size of the Hough Image and RC_cell</span>
+[xH,yH,zH] = size(Hough_Image);
+
+<span class="comment">%filtering the Hough_Image based on the Line_Pixels user input</span>
+Hough_Image(Hough_Image &lt; LP) = 0;
+
+<span class="comment">%filtering the RC coordinates based on the Line_Pixels user input</span>
+<span class="comment">%I def copied this, dont be impressed</span>
+Valid_RC = cellfun(@times,RC_cell,num2cell(double(logical(Hough_Image))),<span class="string">'UniformOutput'</span>, false);
+
+<span class="comment">%removing the zero portions of the cell for the line drawing process</span>
+<span class="keyword">for</span> zz = 1:zH
+    <span class="keyword">for</span> xx = xH:-1:1
+        <span class="keyword">for</span> yy = 1:yH
+            <span class="keyword">if</span> ~isempty(Valid_RC{xx,yy,zz}) &amp;&amp; ~any(any(Valid_RC{xx,yy,zz}))
+                Valid_RC{xx,yy,zz} = [];
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">%determining the end points used to draw the lines</span>
+<span class="keyword">for</span> zz = 1:zH
+    <span class="keyword">for</span> yy = 1:yH
+
+        slope = tan(theta_range(1,yy));
+
+        <span class="keyword">for</span> xx = 1:xH
+
+            <span class="keyword">if</span> ~isempty(Valid_RC{xx,yy,zz})
+                Coordinates = Valid_RC{xx,yy,zz};
+                [xC,~,~] = size(Coordinates);
+
+                <span class="comment">%determining rows based on end col and first col</span>
+                row_R = round(-slope.*(yI - Coordinates(:,2)) + Coordinates(:,1));
+                row_R = cat(2,row_R,yI.*ones(xC,1));
+                row_L = round(-slope.*(1 - Coordinates(:,2)) + Coordinates(:,1));
+                row_L = cat(2,row_L,ones(xC,1));
+                row = cat(1,row_L,row_L,row_R,row_R);
+                row(row &gt; xI) = 0;
+                <span class="comment">%determining columns based on end row and first row</span>
+                col_B = round(((xI - Coordinates(:,1))/-slope) + Coordinates(:,2));
+                col_B = cat(2,xI.*ones(xC,1),col_B);
+                col_T = round(((1 - Coordinates(:,1))/-slope) + Coordinates(:,2));
+                col_T = cat(2,ones(xC,1),col_T);
+                col = cat(1,col_T,col_B,col_T,col_B);
+                col(col &gt; yI) = 0;
+
+                <span class="comment">%creating the same type pair cases to add</span>
+                extra_row = cat(2,row_L,row_R);
+                extra_row(extra_row &gt; xI) = 0;
+                extra_col = cat(2,col_T,col_B);
+                extra_col(extra_col &gt; yI) = 0;
+
+                <span class="comment">%creating the final array of all possible pair combos</span>
+                Point = cat(1,cat(2,row,col),extra_row,extra_col);
+                Point(Point &lt; 0) = 0;
+                Point(isnan(Point)) = 0;
+                <span class="comment">%removing duplicate points</span>
+                <span class="keyword">for</span> dd = 1:xC*5
+                    <span class="keyword">if</span> isequal(Point(dd,1:2),Point(dd,3:4))
+                        Point(dd,1) = 0;
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+                Point = Point(all(Point,2),:);
+                Point = unique(Point,<span class="string">'rows'</span>);
+
+                Valid_RC{xx,yy,zz} = Point;
+
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">%drawing the lines based on the determined endpoints</span>
+OutIma = zeros(xI,yI,zH);
+<span class="keyword">for</span> zz = 1:zH
+    <span class="keyword">for</span> yy = 1:yH
+        <span class="keyword">for</span> xx = 1:xH
+
+            <span class="comment">%checking to see if the cell has valid endpoints</span>
+            <span class="keyword">if</span> ~isempty(Valid_RC{xx,yy,zz})
+                End_Points = Valid_RC{xx,yy,zz};
+                [xE,~,~] = size(End_Points);
+
+                <span class="comment">%last minute fail safe to remove bad points</span>
+                test_slope = (End_Points(:,3) - End_Points(:,1)) ./ (End_Points(:,4) - End_Points(:,2));
+                non_outlier = rmoutliers(test_slope);
+                non_mean = mean(non_outlier);
+                non_STD = std(non_outlier);
+
+                <span class="comment">%removing points based on non-outlier std</span>
+                <span class="keyword">for</span> bad = xE:-1:1
+                    <span class="keyword">if</span> abs(test_slope(bad,1)-non_mean) &gt; non_STD
+                        End_Points(bad,:) = [];
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+
+                [xE,~,~] = size(End_Points);
+                <span class="comment">%looping through each pair of points in the extracted array</span>
+                <span class="keyword">for</span> ee = 1:xE
+
+                    <span class="comment">%extracting the end points for the line</span>
+                    r1 = End_Points(ee,1);
+                        <span class="keyword">if</span> r1 == xI
+                            r1 = xI - 1;
+                        <span class="keyword">end</span>
+                    r2 = End_Points(ee,3);
+                        <span class="keyword">if</span> r2 == xI
+                            r2 = xI - 1;
+                        <span class="keyword">end</span>
+                    c1 = End_Points(ee,2);
+                    c2 = End_Points(ee,4);
+
+                    <span class="comment">%slope and y intercept</span>
+                    slope = (r2-r1)/(c2-c1);
+                    b = r1 - slope*c1;
+
+                    <span class="comment">%Determining the direction of the row loop</span>
+                    <span class="keyword">if</span> (r1-r2) &lt; 0
+                        r_step = 1;
+                    <span class="keyword">else</span>
+                        r_step = -1;
+                    <span class="keyword">end</span>
+
+                    <span class="comment">%Determining the direction of the column loop</span>
+                    <span class="keyword">if</span> (c1-c2) &lt; 0
+                        c_step = 1;
+                    <span class="keyword">else</span>
+                        c_step = -1;
+                    <span class="keyword">end</span>
+
+                    <span class="comment">%Creating the pixels along the line of the edge of the polygon</span>
+                    <span class="comment">%handling the case of no slope</span>
+                    <span class="keyword">if</span> slope == 0
+                        OutIma(xI-r1,c1:c_step:c2,zz) = 1;
+                    <span class="comment">%handling the case of undefined slope</span>
+                    <span class="keyword">elseif</span> slope == -Inf || slope == Inf
+                        OutIma(xI-r1:-r_step:xI-r2,c1,zz) = 1;
+                    <span class="comment">%handling regular slope</span>
+                    <span class="keyword">else</span>
+                        R = (r1:r_step:r2)';
+                        R(R == xI) = xI-1;
+                        C = (c1:c_step:c2)';
+                        new_r = xI - round(slope*C + b);
+                        new_r(new_r &lt;= 0) = 1;
+                        new_r(new_r &gt; xI) = xI;
+                        new_c = round((R-b)/slope);
+                        new_c(new_c &lt;= 0) = 1;
+                        new_c(new_c &gt; yI) = yI;
+
+                        new = cat(1,cat(2,new_r,C),cat(2,xI-R,new_c));
+
+                        <span class="keyword">for</span> oo = 1:size(new,1)
+                            OutIma(new(oo,1),new(oo,2),zz) = 1;
+                        <span class="keyword">end</span>
+                    <span class="keyword">end</span>
+
+                <span class="keyword">end</span>
+
+            <span class="keyword">end</span>
+
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">%flipping the output image to be oriented correctly</span>
+OutIma = flipud(OutIma);
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in hough_inverse_cvip (line 52)
+theta_range = RC_cell{1,1,1};
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [OutIma] = hough_inverse_cvip(Hough_Image,RC_cell,LP)
+% HOUGH_INVERSE_CVIP - returns the inverse hough image based on the input
+%                      parameters
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% [OutIma] = hough_inverse_cvip(Hough_Image,RC_cell,LP)
+%   
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%  'Hough_Image'    The output image from the hough transform
+%                  
+%  'RC_cell'        The output cell from the hough transform containing the 
+%                   RC coordinates of each pixel in a specific rho-theta
+%                   box
+%
+%  'LP'         	A single value determining the amount of pixels needed
+%                   in each rho-theta box to constitute a line
+%
+% Output Parameter include :  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%   'OutIma'        The outputted inverse hough image 
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                   [Hough_Image,RC_cell] =
+%                   hough_transform_cvip(imread('cameraman.tif',[0 1
+%                   45],1);
+%                   LP = 20;
+%                   [OutIma] = hough_inverse_cvip(Hough_Image,RC_cell,LP);
+%                   figure;imshow(OutIma);
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Joey Olden
+%           Initial coding date:    05/13/2020
+%           Latest update date:     06/08/2020
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+%THIS FUNCTION PRODUCES THE INVERSE HOUGH IMAGE
+%removing the theta_range header of the input cells
+theta_range = RC_cell{1,1,1};
+ImageSize = RC_cell{2,1,1};
+RC_cell(1:2,:,:) = [];
+xI = ImageSize(1);  yI = ImageSize(2);
+
+%findin the size of the Hough Image and RC_cell
+[xH,yH,zH] = size(Hough_Image);
+
+%filtering the Hough_Image based on the Line_Pixels user input
+Hough_Image(Hough_Image < LP) = 0;
+
+%filtering the RC coordinates based on the Line_Pixels user input
+%I def copied this, dont be impressed
+Valid_RC = cellfun(@times,RC_cell,num2cell(double(logical(Hough_Image))),'UniformOutput', false);
+
+%removing the zero portions of the cell for the line drawing process
+for zz = 1:zH
+    for xx = xH:-1:1
+        for yy = 1:yH
+            if ~isempty(Valid_RC{xx,yy,zz}) && ~any(any(Valid_RC{xx,yy,zz}))
+                Valid_RC{xx,yy,zz} = [];
+            end
+        end
+    end
+end
+
+%determining the end points used to draw the lines
+for zz = 1:zH
+    for yy = 1:yH
+        
+        slope = tan(theta_range(1,yy));
+
+        for xx = 1:xH
+            
+            if ~isempty(Valid_RC{xx,yy,zz})
+                Coordinates = Valid_RC{xx,yy,zz};
+                [xC,~,~] = size(Coordinates);
+                
+                %determining rows based on end col and first col
+                row_R = round(-slope.*(yI - Coordinates(:,2)) + Coordinates(:,1));
+                row_R = cat(2,row_R,yI.*ones(xC,1));
+                row_L = round(-slope.*(1 - Coordinates(:,2)) + Coordinates(:,1));
+                row_L = cat(2,row_L,ones(xC,1));
+                row = cat(1,row_L,row_L,row_R,row_R);
+                row(row > xI) = 0;
+                %determining columns based on end row and first row
+                col_B = round(((xI - Coordinates(:,1))/-slope) + Coordinates(:,2));
+                col_B = cat(2,xI.*ones(xC,1),col_B);
+                col_T = round(((1 - Coordinates(:,1))/-slope) + Coordinates(:,2));
+                col_T = cat(2,ones(xC,1),col_T);
+                col = cat(1,col_T,col_B,col_T,col_B);
+                col(col > yI) = 0;
+                
+                %creating the same type pair cases to add
+                extra_row = cat(2,row_L,row_R);
+                extra_row(extra_row > xI) = 0;
+                extra_col = cat(2,col_T,col_B);
+                extra_col(extra_col > yI) = 0;
+                                
+                %creating the final array of all possible pair combos
+                Point = cat(1,cat(2,row,col),extra_row,extra_col);
+                Point(Point < 0) = 0;
+                Point(isnan(Point)) = 0;
+                %removing duplicate points
+                for dd = 1:xC*5
+                    if isequal(Point(dd,1:2),Point(dd,3:4))
+                        Point(dd,1) = 0;
+                    end
+                end
+                Point = Point(all(Point,2),:);
+                Point = unique(Point,'rows');
+                                
+                Valid_RC{xx,yy,zz} = Point;
+                
+            end
+        end 
+    end
+end
+
+%drawing the lines based on the determined endpoints
+OutIma = zeros(xI,yI,zH);
+for zz = 1:zH
+    for yy = 1:yH
+        for xx = 1:xH
+            
+            %checking to see if the cell has valid endpoints
+            if ~isempty(Valid_RC{xx,yy,zz})
+                End_Points = Valid_RC{xx,yy,zz};
+                [xE,~,~] = size(End_Points);
+
+                %last minute fail safe to remove bad points
+                test_slope = (End_Points(:,3) - End_Points(:,1)) ./ (End_Points(:,4) - End_Points(:,2));
+                non_outlier = rmoutliers(test_slope);
+                non_mean = mean(non_outlier);
+                non_STD = std(non_outlier);
+                
+                %removing points based on non-outlier std
+                for bad = xE:-1:1
+                    if abs(test_slope(bad,1)-non_mean) > non_STD
+                        End_Points(bad,:) = [];
+                    end
+                end
+                
+                [xE,~,~] = size(End_Points);
+                %looping through each pair of points in the extracted array
+                for ee = 1:xE
+                    
+                    %extracting the end points for the line
+                    r1 = End_Points(ee,1);
+                        if r1 == xI
+                            r1 = xI - 1;
+                        end
+                    r2 = End_Points(ee,3);
+                        if r2 == xI
+                            r2 = xI - 1;
+                        end
+                    c1 = End_Points(ee,2);
+                    c2 = End_Points(ee,4);
+                    
+                    %slope and y intercept
+                    slope = (r2-r1)/(c2-c1);
+                    b = r1 - slope*c1;
+                                    
+                    %Determining the direction of the row loop
+                    if (r1-r2) < 0
+                        r_step = 1;
+                    else
+                        r_step = -1;
+                    end
+
+                    %Determining the direction of the column loop
+                    if (c1-c2) < 0
+                        c_step = 1;
+                    else
+                        c_step = -1;
+                    end
+
+                    %Creating the pixels along the line of the edge of the polygon
+                    %handling the case of no slope
+                    if slope == 0 
+                        OutIma(xI-r1,c1:c_step:c2,zz) = 1;
+                    %handling the case of undefined slope
+                    elseif slope == -Inf || slope == Inf
+                        OutIma(xI-r1:-r_step:xI-r2,c1,zz) = 1;
+                    %handling regular slope
+                    else
+                        R = (r1:r_step:r2)';
+                        R(R == xI) = xI-1;
+                        C = (c1:c_step:c2)';
+                        new_r = xI - round(slope*C + b);
+                        new_r(new_r <= 0) = 1;
+                        new_r(new_r > xI) = xI;
+                        new_c = round((R-b)/slope);
+                        new_c(new_c <= 0) = 1;
+                        new_c(new_c > yI) = yI;
+                        
+                        new = cat(1,cat(2,new_r,C),cat(2,xI-R,new_c));
+                        
+                        for oo = 1:size(new,1)
+                            OutIma(new(oo,1),new(oo,2),zz) = 1;
+                        end
+                    end
+                    
+                end
+                
+            end
+            
+        end
+    end
+end
+
+%flipping the output image to be oriented correctly
+OutIma = flipud(OutIma);
+
+end
+
+
+##### SOURCE END #####
+--></body></html>

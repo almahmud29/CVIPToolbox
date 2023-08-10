@@ -1,0 +1,236 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>euler_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="euler_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> e = euler_cvip( labeledImage, objLabel)
+<span class="comment">% EULER_CVIP - finds the Euler number of a binary object.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% ------</span>
+<span class="comment">% e = euler_cvip(labeledImage,[r,c])</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%  'labelImage'      Label image of MxN size with single object or multiple objects.</span>
+<span class="comment">%                    Each object has unique gray value.</span>
+<span class="comment">%</span>
+<span class="comment">%   'r'              The row number of a pixel on the object.</span>
+<span class="comment">%                    positive integer.</span>
+<span class="comment">%</span>
+<span class="comment">%   'c'              The column number of a pixel on the object.</span>
+<span class="comment">%                    positive integer.</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%    'e'             The Euler number of the object.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                 input_img = imread('Shapes.bmp');</span>
+<span class="comment">%                 lab_image = label_cvip(input_img);</span>
+<span class="comment">%                 figure; imshow(input_img,[]);</span>
+<span class="comment">%                 e = euler_cvip(lab_image, [115,359])</span>
+<span class="comment">%                 e = euler_cvip(lab_image, [422,418])</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    12/27/2016</span>
+<span class="comment">%           Latest update date:     3/19/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+[x, objdim] = size(objLabel);
+<span class="keyword">if</span> x ~= 1
+    error(<span class="string">'objLabel is the information on one object, so the size of objLabel should be either 1x2 or 1x1'</span>);
+<span class="keyword">end</span>
+<span class="keyword">if</span> objdim== 2
+    gray_level = labeledImage(objLabel(1,1),objLabel(1,2));
+<span class="keyword">else</span>
+    gray_level = objLabel;
+<span class="keyword">end</span>
+
+
+    s = (labeledImage == gray_level);
+    [r,c] = find (s == 1);
+    obj = s(min(r):max(r),min(c):max(c));
+    [m,n] = size(obj);
+    new_obj = zeros(m+2,n+2);
+    new_obj(2:(end-1),2:(end-1)) = obj;
+    e = 0;
+    <span class="keyword">for</span> i=2:m
+        <span class="keyword">for</span> j=2:n
+            <span class="keyword">if</span> new_obj(i,j) == 1 &amp;&amp; new_obj(i-1,j-1) == 0
+                <span class="keyword">if</span> new_obj(i-1,j) == 0 &amp;&amp; new_obj(i,j-1) == 0
+                    <span class="comment">%it is a convexity</span>
+                    e = e+1;
+                <span class="keyword">elseif</span> new_obj(i-1,j) == 1 &amp;&amp; new_obj(i,j-1) == 1
+                    <span class="comment">%it is a concavity</span>
+                    e = e-1;
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in euler_cvip (line 49)
+[x, objdim] = size(objLabel);
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function e = euler_cvip( labeledImage, objLabel)
+% EULER_CVIP - finds the Euler number of a binary object.
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% e = euler_cvip(labeledImage,[r,c])
+%   
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%  'labelImage'      Label image of MxN size with single object or multiple objects.  
+%                    Each object has unique gray value.
+%
+%   'r'              The row number of a pixel on the object.
+%                    positive integer.
+%
+%   'c'              The column number of a pixel on the object.
+%                    positive integer.
+%                 
+% Output Parameter include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH  
+%
+%    'e'             The Euler number of the object.
+%                    
+%
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                 input_img = imread('Shapes.bmp');
+%                 lab_image = label_cvip(input_img);
+%                 figure; imshow(input_img,[]);  
+%                 e = euler_cvip(lab_image, [115,359])   
+%                 e = euler_cvip(lab_image, [422,418])
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Mehrdad Alvandipour
+%           Initial coding date:    12/27/2016
+%           Latest update date:     3/19/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+[x, objdim] = size(objLabel);
+if x ~= 1
+    error('objLabel is the information on one object, so the size of objLabel should be either 1x2 or 1x1');
+end
+if objdim== 2
+    gray_level = labeledImage(objLabel(1,1),objLabel(1,2)); 
+else
+    gray_level = objLabel;
+end
+
+
+    s = (labeledImage == gray_level);
+    [r,c] = find (s == 1);
+    obj = s(min(r):max(r),min(c):max(c));
+    [m,n] = size(obj);
+    new_obj = zeros(m+2,n+2);
+    new_obj(2:(end-1),2:(end-1)) = obj;
+    e = 0;
+    for i=2:m
+        for j=2:n
+            if new_obj(i,j) == 1 && new_obj(i-1,j-1) == 0
+                if new_obj(i-1,j) == 0 && new_obj(i,j-1) == 0
+                    %it is a convexity
+                    e = e+1;
+                elseif new_obj(i-1,j) == 1 && new_obj(i,j-1) == 1
+                    %it is a concavity
+                    e = e-1;
+                end
+            end
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>

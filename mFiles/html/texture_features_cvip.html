@@ -1,0 +1,269 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>TEXTURE_FEATURES_CVIP</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-01-29"><meta name="DC.source" content="texture_features_cvip_test.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1><b>TEXTURE_FEATURES_CVIP</b></h1><!--introduction--><p><b>texture_features_cvip()</b> - Image texture features computation using GLCM method.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">SYNTAX</a></li><li><a href="#2">DESCRIPTION</a></li><li><a href="#3">REFERENCE</a></li><li><a href="#4">EXAMPLE</a></li><li><a href="#5">CREDITS</a></li></ul></div><h2>SYNTAX<a name="1"></a></h2><pre class="language-matlab">texfeats = texture_features_cvip(inputImage, labelImage, textDist, quantLvl, objLabel, featSelect, statsType, className)
+</pre><p>Input Parameters include :</p><div><ul><li>inImage     -    Input image can be gray image or rgb image of MxN size.                   If rgb image,the image is converted to gray image.</li><li>labelImage  -    Label image of MxN size with single object or multiple objects.                   Each object has unique gray value.</li><li>texDist     -    Texture distance (1,2,... and so on). The textDist is                   positive integer.</li><li>quantLvl    -    Number of gray-levels to quantize GLCM. GLCM will be of                   quantLvl X quantLvl size. The quantLvl is of integer                   class. If -1,no quantization in GLCM computation.</li><li>objLabel    -    Labels of the objects. Column vector (Yx1) or Yx2 matrix.                   If row vector, objLabel must be unique gray value                   corresponding to each object. If Yx2 matrix, objLabel                   must have row index in first column and col index in                   second column for each object.</li><li>featSelect   -   Empty matrix '[ ]'or Row vector of size 1x20 with                   values 1 or 0(1-&gt;Select or 0-&gt;No Select).If [ ],then                   all 20 features are selected.Refer*List of Feature Names                   in next section for indexing of feat_select.</li><li>statsType    -   Statistics type([Avg Range Var]) of the feature values.                   A row vector of 1x3 size with each element either 0 or                   1.If particular element is '1',then corresponding                   statistics is selected.</li><li>className   -    Class name of each labeled object.Row vector or column                   vector of string or cell class.</li></ul></div><p>Output Parameter includes :</p><div><ul><li>texfeats    -    Cell array containing object name,object label,r                   feature data for selected features,and class name.</li></ul></div><pre>SN      Name                                   Abbreviated Name    Index in featSelect</pre><pre>  1.  Angular Second Moment                    ASM                  1</pre><pre>  2.  Contrast                                 Contr                2</pre><pre>  3.  Correlation                              Corr                 3</pre><pre>  4.  Variance                                 Var                  4</pre><pre>  5.  Inverse Difference Moment                IDM                  5</pre><pre>  6.  Sum Average                              SumAvg               6</pre><pre>  7.  Sum Entropy                              SumEnt               7</pre><pre>  8.  Sum Variance                             SumVar               8</pre><pre>  9.  Entropy                                  Entr                 9</pre><pre>10.  Difference Variance                      DiffVar              10</pre><pre>11.  Difference Entropy                       DiffEnt              11</pre><pre>12.  Auto Correlation                         AuCorr               12</pre><pre>13.  Dissimilarity                            Dismlr               13</pre><pre>14.  Cluster Shade                            CShad                14</pre><pre>15.  Cluster Prominence                       CProm                15</pre><pre>16.  Maximum Probability                      MaxPr                16</pre><pre>17.  Inverse Difference Normalized            IDNorm               17</pre><pre>18.  Inverse Differemce Moment Normalized     IDMNorm              18</pre><pre>19.  Information Measure of Correlation 1     InfoMC1              19</pre><pre>20.  Information Measure of Correlation 2     InfoMC2              20</pre><h2>DESCRIPTION<a name="2"></a></h2><p>This function calculates the Gray level co-occurence matrix based texture features of the input image given by the user. The texture of an image is related to the smoothness, coarseness, roughness and regular patterns in the image. GLCM is a method to measure the texture of the image using second order histogram methods. These features are based on distance between the pixels and angle between the pixel pairs. The function calculates the GLCM for the features selcted by the user uot of the 20 given features using the <i>textDist</i> as the distance between the textures. The function output a cell array that contains information on the object's textures and the class name of the object.</p><h2>REFERENCE<a name="3"></a></h2><p>1.Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</p><h2>EXAMPLE<a name="4"></a></h2><p>Read image</p><pre class="codeinput"> I = imread(<span class="string">'acl.tif'</span>);
+
+<span class="comment">% mask image</span>
+
+ M = imread(<span class="string">'acl_mask.tif'</span>);
+
+<span class="comment">% texture distance</span>
+
+ td = 3;
+
+<span class="comment">% selects 4 features among the first five in the list</span>
+
+ featsel = [1 1 1 0 1];
+
+<span class="comment">% number of quantization levels</span>
+
+ qL = 100;
+
+<span class="comment">% object label, only one object</span>
+
+ olevel = 255;
+
+<span class="comment">% statistics type</span>
+
+ stats = [1 0 1];
+
+<span class="comment">%class of the single object</span>
+
+ cN = <span class="string">'abnormal'</span>;
+
+<span class="comment">% Texture features</span>
+
+ featurevalue = texture_features_cvip(I,M,td,featsel,olevel,qL,stats,cN)
+</pre><pre class="codeoutput">
+featurevalue = 
+
+  Columns 1 through 5
+
+    'obj_id'    'ASM_Avg'    'ASM_Var'       'Contr_Avg'    'Contr_Var'
+    [   255]    [ 0.0190]    [2.8228e-05]    [  13.2278]    [  50.3138]
+
+  Columns 6 through 10
+
+    'Corr_Avg'    'Corr_Var'      'IDM_Avg'    'IDM_Var'    'ClassName'
+    [  0.0151]    [2.3494e-07]    [ 0.6218]    [ 0.0131]    'abnormal' 
+
+</pre><h2>CREDITS<a name="5"></a></h2><p>
+Author:  Norsang Lama, February 2017<br>
+Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+E Umbaugh</a><br>
+For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% *TEXTURE_FEATURES_CVIP*
+% *texture_features_cvip()* - Image texture features computation using GLCM
+% method.
+%% SYNTAX
+% 
+%   texfeats = texture_features_cvip(inputImage, labelImage, textDist, quantLvl, objLabel, featSelect, statsType, className)  
+%
+% Input Parameters include :
+%  
+% * inImage     -    Input image can be gray image or rgb image of MxN size. 
+%                   If rgb image,the image is converted to gray image.
+% * labelImage  -    Label image of MxN size with single object or multiple objects.  
+%                   Each object has unique gray value.
+% * texDist     -    Texture distance (1,2,... and so on). The textDist is
+%                   positive integer.
+% * quantLvl    -    Number of gray-levels to quantize GLCM. GLCM will be of
+%                   quantLvl X quantLvl size. The quantLvl is of integer 
+%                   class. If -1,no quantization in GLCM computation.
+% * objLabel    -    Labels of the objects. Column vector (Yx1) or Yx2 matrix.
+%                   If row vector, objLabel must be unique gray value
+%                   corresponding to each object. If Yx2 matrix, objLabel
+%                   must have row index in first column and col index in
+%                   second column for each object.
+% * featSelect   -   Empty matrix '[ ]'or Row vector of size 1x20 with 
+%                   values 1 or 0(1->Select or 0->No Select).If [ ],then
+%                   all 20 features are selected.Refer*List of Feature Names 
+%                   in next section for indexing of feat_select.
+% * statsType    -   Statistics type([Avg Range Var]) of the feature values.   
+%                   A row vector of 1x3 size with each element either 0 or
+%                   1.If particular element is '1',then corresponding 
+%                   statistics is selected. 
+% * className   -    Class name of each labeled object.Row vector or column
+%                   vector of string or cell class.
+%
+%
+% Output Parameter includes :  
+%  
+% * texfeats    -    Cell array containing object name,object label,r
+%                   feature data for selected features,and class name. 
+%                                      
+%    
+%  SN      Name                                   Abbreviated Name    Index in featSelect
+%   
+%    1.  Angular Second Moment                    ASM                  1
+%
+%    2.  Contrast                                 Contr                2
+%
+%    3.  Correlation                              Corr                 3
+%
+%    4.  Variance                                 Var                  4
+%
+%    5.  Inverse Difference Moment                IDM                  5
+%
+%    6.  Sum Average                              SumAvg               6
+%
+%    7.  Sum Entropy                              SumEnt               7
+%
+%    8.  Sum Variance                             SumVar               8
+%
+%    9.  Entropy                                  Entr                 9
+%
+%  10.  Difference Variance                      DiffVar              10
+%
+%  11.  Difference Entropy                       DiffEnt              11
+%
+%  12.  Auto Correlation                         AuCorr               12
+%
+%  13.  Dissimilarity                            Dismlr               13
+%
+%  14.  Cluster Shade                            CShad                14
+%
+%  15.  Cluster Prominence                       CProm                15
+%
+%  16.  Maximum Probability                      MaxPr                16
+%
+%  17.  Inverse Difference Normalized            IDNorm               17
+%
+%  18.  Inverse Differemce Moment Normalized     IDMNorm              18
+%
+%  19.  Information Measure of Correlation 1     InfoMC1              19
+%
+%  20.  Information Measure of Correlation 2     InfoMC2              20
+%
+%
+%% DESCRIPTION
+% This function calculates the Gray level co-occurence matrix based texture
+% features of the input image given by the user. The texture of an image is  
+% related to the smoothness, coarseness, roughness and regular patterns in
+% the image. GLCM is a method to measure the texture of the image using
+% second order histogram methods. These features are based on distance
+% between the pixels and angle between the pixel pairs. The function
+% calculates the GLCM for the features selcted by the user uot of the 20
+% given features using the _textDist_ as the distance between the textures.
+% The function output a cell array that contains information on the
+% object's textures and the class name of the object.
+%% REFERENCE
+%  
+% 1.Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition. 
+%
+%% EXAMPLE
+% Read image
+
+ I = imread('acl.tif');  
+ 
+% mask image  
+
+ M = imread('acl_mask.tif'); 
+ 
+% texture distance 
+
+ td = 3;   
+ 
+% selects 4 features among the first five in the list 
+                   
+ featsel = [1 1 1 0 1]; 
+ 
+% number of quantization levels 
+                    
+ qL = 100; 
+ 
+% object label, only one object 
+                    
+ olevel = 255; 
+ 
+% statistics type 
+                    
+ stats = [1 0 1]; 
+ 
+%class of the single object 
+                    
+ cN = 'abnormal';             
+                    
+% Texture features
+
+ featurevalue = texture_features_cvip(I,M,td,featsel,olevel,qL,stats,cN)
+           
+%% CREDITS
+%
+% <html>
+% Author:  Norsang Lama, February 2017<br>
+% Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+% E Umbaugh</a><br>
+% For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+% </html>
+%
+##### SOURCE END #####
+--></body></html>

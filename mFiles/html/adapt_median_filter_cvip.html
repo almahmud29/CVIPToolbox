@@ -1,0 +1,262 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>adapt_median_filter_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="adapt_median_filter_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> new_image = adapt_median_filter_cvip(imageP,wmax)
+<span class="comment">% ADAPT_MEDIAN_FILTER_CVIP - a ranked-order based adaptive median filter.</span>
+<span class="comment">% The primary strength of the adaptive median filter is the removal of salt</span>
+<span class="comment">% and pepper noise but also attempts to smooth other types of noise and to</span>
+<span class="comment">% avoid the distortion of small image structures seen with the standard</span>
+<span class="comment">% median filter.This filter is algorithmic in nature and has a variable</span>
+<span class="comment">% block size that increases until a certain criterion is met.we start by</span>
+<span class="comment">% considering only immediate neighbors of the current pixel,a block size of</span>
+<span class="comment">% 3*3.The purpose of this is to determine if the standard median filter</span>
+<span class="comment">% output is impulse noise for this initial block size.If it equals the max</span>
+<span class="comment">% or min it might be impulse noise,so we increase the block size and try</span>
+<span class="comment">% again.If it is not we go to next lvel and test to see if the current</span>
+<span class="comment">% pixel is impulse noise.If it is we output the median value,if not we</span>
+<span class="comment">% output the current value.This will tend to preserve edges.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% -------</span>
+<span class="comment">% new_image = adapt_median_filter_cvip( imageP,wmax)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters Include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">% 'imageP'        Input image can be gray image or rgb image of MxN size.</span>
+<span class="comment">%</span>
+<span class="comment">% 'wmax'          The maximum value for filter block size.</span>
+<span class="comment">%                 An odd integer between 3-11.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter Include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">% 'new_image'     The output image after adaptive contrast filtering</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                   imageP = imread('Flowerspepper.bmp'); % inputImage with pepper noise</span>
+<span class="comment">%                   wmax = 11;</span>
+<span class="comment">%                   new_image = adapt_median_filter_cvip( imageP,wmax);</span>
+<span class="comment">%                   figure; imshow(hist_stretch_cvip(new_image,0,1,0,0));</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    3/13/2017</span>
+<span class="comment">%           Latest update date:     3/19/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+
+<span class="keyword">if</span> (rem(wmax,2) &lt; 1) || (wmax &gt; 11 &amp;&amp; wmax &lt;3)
+    error(<span class="string">'mask_size should be an odd number between 3 and 11'</span>);
+<span class="keyword">end</span>
+[m,n,o] = size(imageP);
+
+<span class="comment">% c = (3+1)/2; % coordinate of the center pixel of the window</span>
+W = 3;
+c = (W+1)/2;
+new_image = double(imageP);
+
+<span class="keyword">for</span> i= 2: (m-1)
+  <span class="keyword">for</span> j=2:(n-1)
+    <span class="keyword">for</span> k = 1:o
+        <span class="keyword">while</span> (W &lt;= wmax) &amp;&amp; ( i - (c-1) &gt;= 1 ) &amp;&amp; ( i+ (c-1) &lt;= m ) &amp;&amp; ( j - (c-1) &gt;= 1 ) &amp;&amp; ( j+ (c-1) &lt;= n )
+            block = double( imageP( i - (c-1): i+ (c-1) , j - (c-1): j+ (c-1), k ) ) ; <span class="comment">% W-block of the image. Only one band.</span>
+            gmax = max(block(:));
+            gmed = median(block(:));
+            gmin = min(block(:)) ;
+            <span class="keyword">if</span> ( gmin &lt; gmed) &amp;&amp; (gmed &lt; gmax ) <span class="comment">%go to level 2</span>
+                <span class="keyword">if</span> ~ ( ( gmin &lt; new_image(i,j,k)) &amp;&amp; ( gmax &gt; new_image(i,j,k)) )
+                    new_image(i,j,k) = gmed;
+                <span class="keyword">end</span>
+                <span class="keyword">break</span>;
+            <span class="keyword">else</span>
+                W = W + 2;
+                c = (W+1)/2;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        W = 3;
+        c = 2;
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in adapt_median_filter_cvip (line 57)
+if (rem(wmax,2) &lt; 1) || (wmax &gt; 11 &amp;&amp; wmax &lt;3)
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function new_image = adapt_median_filter_cvip(imageP,wmax)
+% ADAPT_MEDIAN_FILTER_CVIP - a ranked-order based adaptive median filter.
+% The primary strength of the adaptive median filter is the removal of salt
+% and pepper noise but also attempts to smooth other types of noise and to
+% avoid the distortion of small image structures seen with the standard
+% median filter.This filter is algorithmic in nature and has a variable
+% block size that increases until a certain criterion is met.we start by
+% considering only immediate neighbors of the current pixel,a block size of
+% 3*3.The purpose of this is to determine if the standard median filter
+% output is impulse noise for this initial block size.If it equals the max
+% or min it might be impulse noise,so we increase the block size and try
+% again.If it is not we go to next lvel and test to see if the current
+% pixel is impulse noise.If it is we output the median value,if not we
+% output the current value.This will tend to preserve edges.
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% new_image = adapt_median_filter_cvip( imageP,wmax)
+%   
+% Input Parameters Include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% 'imageP'        Input image can be gray image or rgb image of MxN size. 
+%                   
+% 'wmax'          The maximum value for filter block size.
+%                 An odd integer between 3-11.
+%
+%                      
+% Output Parameter Include :  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% 'new_image'     The output image after adaptive contrast filtering
+%                 
+%
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                   imageP = imread('Flowerspepper.bmp'); % inputImage with pepper noise                   
+%                   wmax = 11;
+%                   new_image = adapt_median_filter_cvip( imageP,wmax);
+%                   figure; imshow(hist_stretch_cvip(new_image,0,1,0,0));
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Mehrdad Alvandipour
+%           Initial coding date:    3/13/2017
+%           Latest update date:     3/19/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+      
+
+if (rem(wmax,2) < 1) || (wmax > 11 && wmax <3)
+    error('mask_size should be an odd number between 3 and 11');
+end
+[m,n,o] = size(imageP);
+
+% c = (3+1)/2; % coordinate of the center pixel of the window
+W = 3;
+c = (W+1)/2;
+new_image = double(imageP);
+
+for i= 2: (m-1)
+  for j=2:(n-1) 
+    for k = 1:o
+        while (W <= wmax) && ( i - (c-1) >= 1 ) && ( i+ (c-1) <= m ) && ( j - (c-1) >= 1 ) && ( j+ (c-1) <= n )
+            block = double( imageP( i - (c-1): i+ (c-1) , j - (c-1): j+ (c-1), k ) ) ; % W-block of the image. Only one band.
+            gmax = max(block(:));
+            gmed = median(block(:));
+            gmin = min(block(:)) ;
+            if ( gmin < gmed) && (gmed < gmax ) %go to level 2
+                if ~ ( ( gmin < new_image(i,j,k)) && ( gmax > new_image(i,j,k)) )
+                    new_image(i,j,k) = gmed;
+                end
+                break;
+            else
+                W = W + 2;
+                c = (W+1)/2;
+            end
+        end
+        
+        W = 3;
+        c = 2;
+    end
+  end
+end
+
+end
+
+
+##### SOURCE END #####
+--></body></html>

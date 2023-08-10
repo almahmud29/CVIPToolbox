@@ -1,0 +1,638 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>hist_thresh_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="hist_thresh_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> outImage = hist_thresh_cvip(inImage, pct,lum)
+<span class="comment">% HIST_THRESH_CVIP -Performs adaptive thresholding segmentation.</span>
+<span class="comment">%  The function performs adaptive thresholding segmentation. First, the</span>
+<span class="comment">%  function automatically finds the number of thresholds by finding peaks</span>
+<span class="comment">%  and valleys in an image histogram.To find the most important peaks, the</span>
+<span class="comment">%  histogram is smoothened using an average filter of length 7</span>
+<span class="comment">%  (experimentally selected).The peaks lower than 20% of maximum peak value</span>
+<span class="comment">%  or not 10% higher than their valleys are discarded (experimentally</span>
+<span class="comment">%  choosen; it may not be optimal on all applications, change</span>
+<span class="comment">%  maxpeak3peak_ratio and peak2val_ratio in peak_valley_find function if</span>
+<span class="comment">%  needed).And, the valleys are only considered in between two peaks.The</span>
+<span class="comment">%  number of thresholds is equal to number of valleys.Once the peaks are</span>
+<span class="comment">%  found, the thresholds in between two peaks are found using Otsu method.</span>
+<span class="comment">%  After all threshold values are determined, the pixels values are</span>
+<span class="comment">%  substituted by weihgted-mean gray value of its own range.If input image</span>
+<span class="comment">%  is multiband image, the image is converted into single band image.The</span>
+<span class="comment">%  user can specify either PCT method or rgb to gray conversion method.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax:</span>
+<span class="comment">% -------</span>
+<span class="comment">%  outImage = hist_thresh_cvip(inImage, pct)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include:</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%  'inImage'       1-band input image of MxN size or 3-band input image of</span>
+<span class="comment">%                  MxNx3 size. The input image can be of uint8 or uint16</span>
+<span class="comment">%                  or double class.</span>
+<span class="comment">%  'pct'           Selects principal component transform (PCT) to convert</span>
+<span class="comment">%                  multiband image to one band. (Only if inImage has more</span>
+<span class="comment">%                  than one band)</span>
+<span class="comment">%                      pct = 1        [PCT method]</span>
+<span class="comment">%                      pct = 0        [RGB to gray conversion]</span>
+<span class="comment">%  'lum'           Select luminance</span>
+<span class="comment">%                   lum=1,lum=0</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%  'outImage'      Segmented image.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                   I = imread('butterfly.tif');    %original image</span>
+<span class="comment">%                   O = hist_thresh_cvip(I, 1,0);</span>
+<span class="comment">%                   figure; imshow(O);  %function returns as double</span>
+<span class="comment">%                                              %type (range = 0-255)</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Norsang Lama</span>
+<span class="comment">%           Initial coding date:    4/14/2017</span>
+<span class="comment">%           Latest update date:     10/18/2020</span>
+<span class="comment">%           Updated by:             Hridoy Biswas</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2017 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+<span class="comment">%Revision: 2 option has been added,pct and Lum</span>
+
+<span class="comment">%if input image is multiband image, select principal component  using</span>
+<span class="comment">%principal component transform or perform rgb to gray conversion</span>
+[~,~,B] = size(inImage);
+<span class="keyword">if</span> B &gt; 1
+    <span class="keyword">if</span> pct==1
+        [pctImage,~] = pct_cvip(inImage);
+        inImage = uint8(remap_cvip(pctImage(:,:,1), [0 255]));
+    <span class="keyword">elseif</span> lum==1
+<span class="comment">%           inImage= rgb2hsl_cvip(inImage);</span>
+<span class="comment">%           inImage=inImage(:,:,3)</span>
+<span class="comment">%           imshow(uint8(inImage))</span>
+
+        inImage = uint8(0.3*inImage(:,:,1)+0.6*inImage(:,:,2)+0.1*inImage(:,:,3));
+    <span class="keyword">else</span>
+       inImage = uint8(0.3*inImage(:,:,1)+0.6*inImage(:,:,2)+0.1*inImage(:,:,3));<span class="comment">%by default</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% end</span>
+<span class="comment">% inImage = uint8(inImage(:,:,B));</span>
+<span class="comment">%Total number of gray levels (Considering 8-bit image)</span>
+T = 256;
+
+<span class="comment">%compute the histogram of an input image</span>
+edges = 0:T;
+hist = histcounts(inImage, edges);
+
+<span class="comment">%find the peaks from the histogram</span>
+<span class="comment">%using second argument, the user can view the peaks and valleys</span>
+<span class="comment">%the view option is turned of in default case</span>
+[N_peaks, peak_gl] = peak_valley_find(hist,0);
+
+<span class="comment">%Number of thresholds = Number of peaks - 1</span>
+N_thresh = N_peaks - 1;
+
+thresh_level = zeros(1, N_thresh);
+
+<span class="comment">%find the threshold levels inbetween two peaks</span>
+<span class="keyword">for</span> i = 2:N_peaks
+    temp_hist = zeros(1, T);
+    temp_hist(peak_gl(i-1):peak_gl(i)) = hist(peak_gl(i-1):peak_gl(i));
+    thresh_level(i-1) = thresval_histogram(temp_hist);
+<span class="keyword">end</span>
+
+
+<span class="comment">%applying mulitlevel thresholding</span>
+<span class="comment">%pixel values are replaced by weighted mean of that range</span>
+outImage = inImage;
+<span class="keyword">for</span> i =1: N_thresh + 1
+    temp_hist = hist;
+    <span class="keyword">if</span> i == 1
+        temp_hist(thresh_level(i)+1:end) = 0;
+        weighted_mean = floor(sum(temp_hist.*edges(1:end-1))/sum(temp_hist));
+        outImage(outImage &lt; thresh_level(i)) = weighted_mean;
+    <span class="keyword">elseif</span> i == N_thresh + 1
+        temp_hist(1:thresh_level(i-1)) = 0;
+        weighted_mean = floor(sum(temp_hist.*edges(1:end-1))/sum(temp_hist));
+        outImage(outImage &gt;= thresh_level(i-1)) = weighted_mean;
+    <span class="keyword">else</span>
+        temp_hist(1:thresh_level(i-1)) = 0;
+        temp_hist(thresh_level(i)+1:end) = 0;
+        weighted_mean = floor(sum(temp_hist.*edges(1:end-1))/sum(temp_hist));
+        outImage(outImage &gt;= thresh_level(i-1) &amp; outImage &lt; thresh_level(i)) = weighted_mean;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+
+<span class="comment">%Function to find number of peaks in histogram of image</span>
+<span class="keyword">function</span> [num_peaks, peak_gLvl] = peak_valley_find(hist, viewPeakValley)
+<span class="comment">% Input Parameter:</span>
+<span class="comment">%   hist              Histogram. Considers 256 levels from 0 to 255.</span>
+<span class="comment">%   viewPeakValley    Display peaks and valleys if set ON (1).</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter:</span>
+<span class="comment">%   num_peaks         Number of peaks in histogram of image</span>
+<span class="comment">%   peak_gLvl         Graylevel values corresponding to the peaks</span>
+
+
+<span class="comment">%Total number of gray levels (Considering 8-bit image)</span>
+T = 256;
+
+<span class="comment">%smoothing the histogram using average filter</span>
+avg_filtSize = 7;
+hist = filter(ones(1,avg_filtSize), 1, hist);
+
+<span class="comment">%maximum peak value</span>
+max_peak = max(hist);
+
+<span class="comment">%considering peak or valley if it is maximum or minimum in neighborhood of</span>
+<span class="comment">%7</span>
+neighbor = [3 5 7];
+
+<span class="comment">%create peak and valley arrays</span>
+peak = ones(1,T);
+valley = peak;
+
+
+<span class="comment">%finding the peaks or valleys that are maximum or minimum respectively in</span>
+<span class="comment">%its neighborhood</span>
+<span class="keyword">for</span> i = 1:length(neighbor)
+    t = floor(neighbor(i)/2);
+    histL = [zeros(1, t)  hist(1:end-t)];
+    histR = [hist(t+1:end) zeros(1,t)];
+
+    peak = peak &amp; (hist &gt; histL &amp; hist &gt; histR);
+    valley = valley &amp; (hist &lt; histL &amp; hist &lt; histR);
+<span class="keyword">end</span>
+
+<span class="comment">%eliminating peaks that is smaller than 20% of maximum peak value</span>
+maxpeak2peak_ratio = 0.2;
+peak(hist &lt; maxpeak2peak_ratio*max_peak) = 0;
+
+
+<span class="comment">%find peak and valley indices</span>
+peakInd = find(peak == 1);
+
+<span class="comment">%now find single valley between peaks; choose valley with minimum value if</span>
+<span class="comment">%multiple valleys inbetween two peaks</span>
+k =1;
+<span class="keyword">for</span> i = 1:length(peakInd)-1
+    minm = max_peak;
+    local_val_count = 0;
+    <span class="keyword">for</span> j=peakInd(i)+1:peakInd(i+1)-1
+        <span class="keyword">if</span> valley(j)
+            <span class="keyword">if</span> hist(j) &lt; minm
+                minm = hist(j);
+                valInd(k) = j;
+            <span class="keyword">end</span>
+            local_val_count = local_val_count + 1;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> local_val_count &lt; 1
+        peak(peakInd(i))= 0;  <span class="comment">%drop the peak because no valley was detected</span>
+        <span class="comment">%next to this peak by our valley-peak detecting algorithm</span>
+    <span class="keyword">else</span>
+        k = k+1;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">%find new peak indices as some of the peaks are dropped</span>
+peakInd = find(peak == 1);
+
+valley = 0*valley;
+ valley(valInd) = 1;
+
+<span class="comment">%drop a peak P that is not 0.1*P (5 percent of its magnitude) greater than</span>
+<span class="comment">%its valleys on bothsides</span>
+peak2val_ratio = 0.1;
+<span class="keyword">for</span> i =1:length(peakInd)
+    <span class="keyword">if</span> i == 1  <span class="comment">%checking right side for first peak</span>
+        <span class="keyword">if</span> hist(peakInd(i))-hist(valInd(i)) &lt; peak2val_ratio *hist(peakInd(i))
+            peak(peakInd(i)) = 0;  <span class="comment">%drop the peak</span>
+            valley(valInd(i)) = 0; <span class="comment">%drop the valley</span>
+        <span class="keyword">end</span>
+    <span class="keyword">elseif</span> i == length(peakInd) <span class="comment">%checking left side for last peak</span>
+        <span class="keyword">if</span> hist(peakInd(i))-hist(valInd(i-1)) &lt; peak2val_ratio *hist(peakInd(i))
+            peak(peakInd(i)) = 0;  <span class="comment">%drop the peak</span>
+            valley(valInd(i-1)) = 0;  <span class="comment">%drop the valley</span>
+        <span class="keyword">end</span>
+    <span class="keyword">else</span>
+        <span class="keyword">if</span> (hist(peakInd(i))-hist(valInd(i-1))) &lt; peak2val_ratio *hist(peakInd(i))
+            peak(peakInd(i)) = 0;  <span class="comment">%drop the peak</span>
+            valley(valInd(i-1)) = 0; <span class="comment">%drop the valley</span>
+            <span class="keyword">continue</span>;
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> (hist(peakInd(i))-hist(valInd(i))) &lt; peak2val_ratio *hist(peakInd(i))
+            peak(peakInd(i)) = 0;  <span class="comment">%drop the peak</span>
+            valley(valInd(i)) = 0; <span class="comment">%drop the valley</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> viewPeakValley
+    figure; plot(hist)
+    hold <span class="string">on</span>
+    stem(valley.*hist)
+    stem(peak.*hist)
+    hold <span class="string">off</span>
+    title(<span class="string">'Peaks and Valleys'</span>)
+<span class="keyword">end</span>
+
+<span class="comment">%total number of peaks</span>
+num_peaks = sum(peak);
+peak_gLvl = find(peak == 1);
+
+<span class="keyword">end</span>
+
+<span class="comment">%find the threshold between two peak using Otsu method</span>
+<span class="keyword">function</span> threshval = thresval_histogram(hist)
+
+<span class="comment">%probability of each gray level</span>
+hist_prob = hist/sum(hist);
+
+<span class="comment">%find the otsu threshold for each band and perform thresholding</span>
+tmp = 0;
+<span class="keyword">for</span> t=1:256
+    w0t = sum(hist_prob(1:t));
+    w1t = sum(hist_prob(t+1:end));
+    a=1:t;
+    b=t+1:256;
+    mean0t = sum(a.*hist_prob(1:t))/w0t;
+    mean1t = sum(b.*hist_prob(t+1:end))/w1t;
+    sigma(t) = w0t*w1t*(mean0t-mean1t)^2;
+    <span class="comment">%update the otsu_threshold, until the maximum variance is not</span>
+    <span class="comment">%achieved</span>
+    <span class="keyword">if</span> (sigma(t)&gt;tmp)
+        threshval = t-1;
+        tmp = sigma(t);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in hist_thresh_cvip (line 69)
+[~,~,B] = size(inImage);
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function outImage = hist_thresh_cvip(inImage, pct,lum)
+% HIST_THRESH_CVIP -Performs adaptive thresholding segmentation.
+%  The function performs adaptive thresholding segmentation. First, the
+%  function automatically finds the number of thresholds by finding peaks
+%  and valleys in an image histogram.To find the most important peaks, the
+%  histogram is smoothened using an average filter of length 7 
+%  (experimentally selected).The peaks lower than 20% of maximum peak value 
+%  or not 10% higher than their valleys are discarded (experimentally 
+%  choosen; it may not be optimal on all applications, change 
+%  maxpeak3peak_ratio and peak2val_ratio in peak_valley_find function if  
+%  needed).And, the valleys are only considered in between two peaks.The   
+%  number of thresholds is equal to number of valleys.Once the peaks are
+%  found, the thresholds in between two peaks are found using Otsu method.
+%  After all threshold values are determined, the pixels values are
+%  substituted by weihgted-mean gray value of its own range.If input image
+%  is multiband image, the image is converted into single band image.The
+%  user can specify either PCT method or rgb to gray conversion method.
+%
+% Syntax:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%  outImage = hist_thresh_cvip(inImage, pct)
+%   
+% 
+% Input Parameters include:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%  'inImage'       1-band input image of MxN size or 3-band input image of   
+%                  MxNx3 size. The input image can be of uint8 or uint16 
+%                  or double class. 
+%  'pct'           Selects principal component transform (PCT) to convert
+%                  multiband image to one band. (Only if inImage has more
+%                  than one band)
+%                      pct = 1        [PCT method]
+%                      pct = 0        [RGB to gray conversion]
+%  'lum'           Select luminance 
+%                   lum=1,lum=0
+%
+%
+% Output Parameter include :  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%  'outImage'      Segmented image.
+%                                         
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                   I = imread('butterfly.tif');    %original image
+%                   O = hist_thresh_cvip(I, 1,0);
+%                   figure; imshow(O);  %function returns as double
+%                                              %type (range = 0-255) 
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Norsang Lama
+%           Initial coding date:    4/14/2017
+%           Latest update date:     10/18/2020
+%           Updated by:             Hridoy Biswas
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2017 Scott Umbaugh and SIUE
+%
+%==========================================================================
+%Revision: 2 option has been added,pct and Lum
+
+%if input image is multiband image, select principal component  using 
+%principal component transform or perform rgb to gray conversion
+[~,~,B] = size(inImage);
+if B > 1
+    if pct==1
+        [pctImage,~] = pct_cvip(inImage); 
+        inImage = uint8(remap_cvip(pctImage(:,:,1), [0 255]));
+    elseif lum==1
+%           inImage= rgb2hsl_cvip(inImage);
+%           inImage=inImage(:,:,3)
+%           imshow(uint8(inImage))
+
+        inImage = uint8(0.3*inImage(:,:,1)+0.6*inImage(:,:,2)+0.1*inImage(:,:,3));
+    else 
+       inImage = uint8(0.3*inImage(:,:,1)+0.6*inImage(:,:,2)+0.1*inImage(:,:,3));%by default
+    end
+end
+
+% end
+% inImage = uint8(inImage(:,:,B));
+%Total number of gray levels (Considering 8-bit image)
+T = 256;  
+
+%compute the histogram of an input image
+edges = 0:T;
+hist = histcounts(inImage, edges);
+
+%find the peaks from the histogram
+%using second argument, the user can view the peaks and valleys
+%the view option is turned of in default case 
+[N_peaks, peak_gl] = peak_valley_find(hist,0);
+
+%Number of thresholds = Number of peaks - 1
+N_thresh = N_peaks - 1;
+
+thresh_level = zeros(1, N_thresh);
+
+%find the threshold levels inbetween two peaks
+for i = 2:N_peaks
+    temp_hist = zeros(1, T);
+    temp_hist(peak_gl(i-1):peak_gl(i)) = hist(peak_gl(i-1):peak_gl(i));
+    thresh_level(i-1) = thresval_histogram(temp_hist);
+end
+
+
+%applying mulitlevel thresholding
+%pixel values are replaced by weighted mean of that range
+outImage = inImage;
+for i =1: N_thresh + 1
+    temp_hist = hist;
+    if i == 1
+        temp_hist(thresh_level(i)+1:end) = 0;
+        weighted_mean = floor(sum(temp_hist.*edges(1:end-1))/sum(temp_hist));
+        outImage(outImage < thresh_level(i)) = weighted_mean;
+    elseif i == N_thresh + 1
+        temp_hist(1:thresh_level(i-1)) = 0;
+        weighted_mean = floor(sum(temp_hist.*edges(1:end-1))/sum(temp_hist));
+        outImage(outImage >= thresh_level(i-1)) = weighted_mean;
+    else
+        temp_hist(1:thresh_level(i-1)) = 0;
+        temp_hist(thresh_level(i)+1:end) = 0;
+        weighted_mean = floor(sum(temp_hist.*edges(1:end-1))/sum(temp_hist));
+        outImage(outImage >= thresh_level(i-1) & outImage < thresh_level(i)) = weighted_mean;
+    end          
+end
+
+end
+
+
+%Function to find number of peaks in histogram of image
+function [num_peaks, peak_gLvl] = peak_valley_find(hist, viewPeakValley)
+% Input Parameter:
+%   hist              Histogram. Considers 256 levels from 0 to 255.
+%   viewPeakValley    Display peaks and valleys if set ON (1).
+%
+%
+% Output Parameter:
+%   num_peaks         Number of peaks in histogram of image
+%   peak_gLvl         Graylevel values corresponding to the peaks
+
+
+%Total number of gray levels (Considering 8-bit image)
+T = 256;  
+
+%smoothing the histogram using average filter
+avg_filtSize = 7;
+hist = filter(ones(1,avg_filtSize), 1, hist);
+
+%maximum peak value
+max_peak = max(hist);
+
+%considering peak or valley if it is maximum or minimum in neighborhood of 
+%7
+neighbor = [3 5 7];
+
+%create peak and valley arrays
+peak = ones(1,T);
+valley = peak;
+
+
+%finding the peaks or valleys that are maximum or minimum respectively in 
+%its neighborhood
+for i = 1:length(neighbor)
+    t = floor(neighbor(i)/2);
+    histL = [zeros(1, t)  hist(1:end-t)];
+    histR = [hist(t+1:end) zeros(1,t)];
+    
+    peak = peak & (hist > histL & hist > histR);
+    valley = valley & (hist < histL & hist < histR);    
+end
+
+%eliminating peaks that is smaller than 20% of maximum peak value 
+maxpeak2peak_ratio = 0.2;
+peak(hist < maxpeak2peak_ratio*max_peak) = 0;
+
+
+%find peak and valley indices 
+peakInd = find(peak == 1);
+
+%now find single valley between peaks; choose valley with minimum value if
+%multiple valleys inbetween two peaks
+k =1;
+for i = 1:length(peakInd)-1
+    minm = max_peak;
+    local_val_count = 0;  
+    for j=peakInd(i)+1:peakInd(i+1)-1
+        if valley(j) 
+            if hist(j) < minm
+                minm = hist(j);
+                valInd(k) = j;                
+            end
+            local_val_count = local_val_count + 1; 
+        end
+    end  
+    if local_val_count < 1
+        peak(peakInd(i))= 0;  %drop the peak because no valley was detected
+        %next to this peak by our valley-peak detecting algorithm
+    else
+        k = k+1;
+    end
+end
+
+%find new peak indices as some of the peaks are dropped 
+peakInd = find(peak == 1);
+
+valley = 0*valley;
+ valley(valInd) = 1;
+
+%drop a peak P that is not 0.1*P (5 percent of its magnitude) greater than 
+%its valleys on bothsides
+peak2val_ratio = 0.1;
+for i =1:length(peakInd)
+    if i == 1  %checking right side for first peak
+        if hist(peakInd(i))-hist(valInd(i)) < peak2val_ratio *hist(peakInd(i))
+            peak(peakInd(i)) = 0;  %drop the peak
+            valley(valInd(i)) = 0; %drop the valley 
+        end
+    elseif i == length(peakInd) %checking left side for last peak
+        if hist(peakInd(i))-hist(valInd(i-1)) < peak2val_ratio *hist(peakInd(i))
+            peak(peakInd(i)) = 0;  %drop the peak
+            valley(valInd(i-1)) = 0;  %drop the valley
+        end
+    else
+        if (hist(peakInd(i))-hist(valInd(i-1))) < peak2val_ratio *hist(peakInd(i))
+            peak(peakInd(i)) = 0;  %drop the peak
+            valley(valInd(i-1)) = 0; %drop the valley
+            continue;
+        end
+        if (hist(peakInd(i))-hist(valInd(i))) < peak2val_ratio *hist(peakInd(i))
+            peak(peakInd(i)) = 0;  %drop the peak
+            valley(valInd(i)) = 0; %drop the valley 
+        end
+    end        
+end
+
+if viewPeakValley
+    figure; plot(hist)
+    hold on
+    stem(valley.*hist)
+    stem(peak.*hist)
+    hold off
+    title('Peaks and Valleys')
+end
+
+%total number of peaks
+num_peaks = sum(peak);
+peak_gLvl = find(peak == 1);
+
+end
+
+%find the threshold between two peak using Otsu method
+function threshval = thresval_histogram(hist)
+
+%probability of each gray level
+hist_prob = hist/sum(hist); 
+    
+%find the otsu threshold for each band and perform thresholding
+tmp = 0;
+for t=1:256
+    w0t = sum(hist_prob(1:t));
+    w1t = sum(hist_prob(t+1:end));
+    a=1:t;
+    b=t+1:256;
+    mean0t = sum(a.*hist_prob(1:t))/w0t;
+    mean1t = sum(b.*hist_prob(t+1:end))/w1t;
+    sigma(t) = w0t*w1t*(mean0t-mean1t)^2;    
+    %update the otsu_threshold, until the maximum variance is not
+    %achieved
+    if (sigma(t)>tmp)
+        threshval = t-1;
+        tmp = sigma(t);
+    end
+end
+
+end
+##### SOURCE END #####
+--></body></html>

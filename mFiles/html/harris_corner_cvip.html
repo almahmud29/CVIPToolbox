@@ -1,0 +1,382 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>harris_corner_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="harris_corner_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Blur input image --- Gaussian</a></li><li><a href="#4">User Prewit or Sobel to find s1,s2</a></li><li><a href="#5">Blur s1,s2 with Gaussian</a></li><li><a href="#6">compute CRF</a></li><li><a href="#7">Threshold CRF and apply nonmaxima suppression</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [ CRF ] = harris_corner_cvip( input_img , threshold, std, alfa, maxsupress)
+</pre><pre class="codeinput"><span class="comment">% HARRIS_CORNER_CVIP - a spatial edge detecting filter.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% -------</span>
+<span class="comment">% [ CRF ] = harris_corner_cvip( input_img , threshold, std, alfa, maxsupress)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% --------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%  'input_img'   The input image.Can be multiband</span>
+<span class="comment">%</span>
+<span class="comment">%  'threshold'   A rational value in the interval [0,1].</span>
+<span class="comment">%                It is used in the thresholding step as a coefficeient</span>
+<span class="comment">%                multiplied to the maximum gray level in the input  image.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%       'std'    The Standard Deviation of the Gaussian blur kernel.</span>
+<span class="comment">%                the size of the gaussian is related to std by:</span>
+<span class="comment">%                size = 4*std Thus we have 2 standard deviation of the gaussian</span>
+<span class="comment">%                inside the kernel.</span>
+<span class="comment">%</span>
+<span class="comment">%      'alfa'    Sensitivity value.</span>
+<span class="comment">%</span>
+<span class="comment">% 'maxsupress'   Option to supress non-maxima either in a neighbourhood</span>
+<span class="comment">%                or based on direction. It is either '1' or '2'.</span>
+<span class="comment">%                Default: 2.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter include :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%  'CRF'       Corner response function.</span>
+<span class="comment">%</span>
+<span class="comment">% Example:</span>
+<span class="comment">% -------</span>
+<span class="comment">%        I = imread('Shapes.bmp');</span>
+<span class="comment">%        threshold = 0.2;</span>
+<span class="comment">%        std = 4;</span>
+<span class="comment">%        alfa = 0.5;</span>
+<span class="comment">%        maxsupress = 2;</span>
+<span class="comment">%        [ CRF ] = harris_corner_cvip( I, threshold, std,alfa, maxsupress);</span>
+<span class="comment">%        figure;imshow(I);title('Input Image');</span>
+<span class="comment">%        figure; imshow(CRF);title('Resultant Image from corner response function');</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    7/11/2017</span>
+<span class="comment">%           Latest update date:     7/14/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+
+<span class="comment">%fprintf('The size of the gaussian is: %d \n', floor(4*std));</span>
+<span class="keyword">if</span> isempty(maxsupress)
+    maxsupress = 2;
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in harris_corner_cvip (line 62)
+if isempty(maxsupress)
+</pre><h2 id="3">Blur input image --- Gaussian</h2><pre class="codeinput">input_img = blur_gauss(input_img, std);
+</pre><h2 id="4">User Prewit or Sobel to find s1,s2</h2><pre class="codeinput">hor = [-1 0 1; -1 0 1; -1 0 1];
+ver = [-1 -1 -1; 0 0 0; 1 1 1];
+[m,n,o] = size(input_img);
+s1 = zeros(m,n,o);
+s2 = zeros(m,n,o);
+<span class="keyword">for</span> i=1:o
+    s1(:,:,i) = conv2(input_img(:,:,i), hor,<span class="string">'same'</span>);
+    s2(:,:,i) = conv2(input_img(:,:,i), ver,<span class="string">'same'</span>);
+
+<span class="keyword">end</span>
+edge_dir = atan2(s1,s2);
+</pre><h2 id="5">Blur s1,s2 with Gaussian</h2><pre class="codeinput">    s1 = blur_gauss(s1, std);
+    s2 = blur_gauss(s2, std);
+    s1_2 =  blur_gauss(s1.*s1, std);
+    s2_2 =  blur_gauss(s2.*s2, std);
+
+    s1_s2 = blur_gauss(s1.*s2, std);
+</pre><h2 id="6">compute CRF</h2><pre class="codeinput">    CRF = ((s1_2).*(s2_2) - (s1_s2.^2)) - ( alfa*( (s1 + s2).^2 ) );
+</pre><h2 id="7">Threshold CRF and apply nonmaxima suppression</h2><pre class="codeinput">x = threshold*max(CRF(:));
+<span class="comment">%fprintf('The threshold value is: %f \n', x);</span>
+new_edge_mag = CRF;
+directions = [0 pi/4 pi/2 3*pi/4 pi -pi -3*pi/4 -pi/2 -pi/4];
+<span class="keyword">switch</span> maxsupress
+    <span class="keyword">case</span> 1
+        <span class="comment">% non-maxima supression in a eight different directions</span>
+        <span class="keyword">for</span> k=1:o
+            <span class="keyword">for</span> i=2:(m-1)
+                <span class="keyword">for</span> j=2:(n-1)
+                    [~,dir] = min(abs(edge_dir(i,j,k) -  directions));
+                    <span class="keyword">if</span> dir ==5 || dir == 6 || dir ==1
+                        <span class="keyword">if</span> CRF(i,j,k) &lt; CRF(i+1,j,k) || CRF(i,j,k) &lt; CRF(i-1,j,k)
+                            new_edge_mag(i,j,k) = 0;
+                        <span class="keyword">end</span>
+                    <span class="keyword">elseif</span> dir == 3 || dir == 8
+                        <span class="keyword">if</span> CRF(i,j,k) &lt; CRF(i,j+1,k) || CRF(i,j,k) &lt; CRF(i,j-1,k)
+                            new_edge_mag(i,j,k) = 0;
+                        <span class="keyword">end</span>
+                    <span class="keyword">elseif</span> dir == 4 || dir ==9
+                        <span class="keyword">if</span> CRF(i,j,k) &lt; CRF(i-1,j+1,k) || CRF(i,j,k) &lt; CRF(i+1,j-1,k)
+                            new_edge_mag(i,j,k) = 0;
+                        <span class="keyword">end</span>
+                    <span class="keyword">elseif</span> dir == 2 || dir == 7
+                        <span class="keyword">if</span> CRF(i,j,k) &lt; CRF(i+1,j+1,k) || CRF(i,j,k) &lt; CRF(i-1,j-1,k)
+                            new_edge_mag(i,j,k) = 0;
+                        <span class="keyword">end</span>
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+    <span class="keyword">case</span> 2
+        <span class="comment">% non-maxima supression in a 3x3 neighbourhood</span>
+        <span class="keyword">for</span> k=1:o
+            <span class="keyword">for</span> i=2:(m-1)
+                <span class="keyword">for</span> j=2:(n-1)
+                    <span class="keyword">if</span> (CRF(i,j,k) &lt; CRF(i-1,j-1,k))  || (CRF(i,j,k) &lt; CRF(i-1,j,k)) || (CRF(i,j,k) &lt; CRF(i-1,j+1,k))<span class="keyword">...</span>
+                            || (CRF(i,j,k) &lt; CRF(i,j-1,k)) || (CRF(i,j,k) &lt; CRF(i,j+1,k)) || (CRF(i,j,k) &lt; CRF(i+1,j-1,k))<span class="keyword">...</span>
+                            || (CRF(i,j,k) &lt; CRF(i+1,j,k)) || (CRF(i,j,k) &lt; CRF(i+1,j+1,k))
+                        new_edge_mag(i,j,k) = 0;
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+CRF = new_edge_mag;
+CRF(CRF &lt; x) = 0;
+CRF(CRF &gt; x) = 1;
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">function</span> I_blured = blur_gauss(I,std)
+I = double(I);
+I_blured = zeros(size(I));
+    height = floor(4*std);
+    width = height;
+    <span class="comment">%std = min([width,height])/4;</span>
+    h = h_image_cvip( 3,   height, width);
+    <span class="keyword">for</span> i=1:size(I,3)
+        I_blured(:,:,i) = conv2(I(:,:,i),h,<span class="string">'same'</span>);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [ CRF ] = harris_corner_cvip( input_img , threshold, std, alfa, maxsupress)
+% HARRIS_CORNER_CVIP - a spatial edge detecting filter.
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% [ CRF ] = harris_corner_cvip( input_img , threshold, std, alfa, maxsupress)
+%
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%  'input_img'   The input image.Can be multiband
+%
+%  'threshold'   A rational value in the interval [0,1].
+%                It is used in the thresholding step as a coefficeient
+%                multiplied to the maximum gray level in the input  image.
+%                   
+%
+%       'std'    The Standard Deviation of the Gaussian blur kernel.
+%                the size of the gaussian is related to std by:
+%                size = 4*std Thus we have 2 standard deviation of the gaussian
+%                inside the kernel.
+% 
+%      'alfa'    Sensitivity value.
+%         
+% 'maxsupress'   Option to supress non-maxima either in a neighbourhood
+%                or based on direction. It is either '1' or '2'.
+%                Default: 2.
+%                     
+%
+% Output Parameter include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%  'CRF'       Corner response function.
+%
+% Example:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- 
+%        I = imread('Shapes.bmp');
+%        threshold = 0.2;
+%        std = 4;
+%        alfa = 0.5;
+%        maxsupress = 2;
+%        [ CRF ] = harris_corner_cvip( I, threshold, std,alfa, maxsupress);
+%        figure;imshow(I);title('Input Image');
+%        figure; imshow(CRF);title('Resultant Image from corner response function');
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Mehrdad Alvandipour
+%           Initial coding date:    7/11/2017
+%           Latest update date:     7/14/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+
+%fprintf('The size of the gaussian is: %d \n', floor(4*std));
+if isempty(maxsupress)
+    maxsupress = 2;
+end
+%% Blur input image REPLACE_WITH_DASH_DASH- Gaussian
+input_img = blur_gauss(input_img, std);
+
+%% User Prewit or Sobel to find s1,s2
+hor = [-1 0 1; -1 0 1; -1 0 1];
+ver = [-1 -1 -1; 0 0 0; 1 1 1];
+[m,n,o] = size(input_img);
+s1 = zeros(m,n,o);
+s2 = zeros(m,n,o);
+for i=1:o
+    s1(:,:,i) = conv2(input_img(:,:,i), hor,'same');
+    s2(:,:,i) = conv2(input_img(:,:,i), ver,'same');
+    
+end
+edge_dir = atan2(s1,s2);
+
+%% Blur s1,s2 with Gaussian
+    s1 = blur_gauss(s1, std);
+    s2 = blur_gauss(s2, std);
+    s1_2 =  blur_gauss(s1.*s1, std);
+    s2_2 =  blur_gauss(s2.*s2, std);
+    
+    s1_s2 = blur_gauss(s1.*s2, std);
+
+%% compute CRF
+    CRF = ((s1_2).*(s2_2) - (s1_s2.^2)) - ( alfa*( (s1 + s2).^2 ) );
+
+%% Threshold CRF and apply nonmaxima suppression
+x = threshold*max(CRF(:));
+%fprintf('The threshold value is: %f \n', x);
+new_edge_mag = CRF;
+directions = [0 pi/4 pi/2 3*pi/4 pi -pi -3*pi/4 -pi/2 -pi/4];
+switch maxsupress
+    case 1
+        % non-maxima supression in a eight different directions
+        for k=1:o
+            for i=2:(m-1)
+                for j=2:(n-1)
+                    [~,dir] = min(abs(edge_dir(i,j,k) -  directions));
+                    if dir ==5 || dir == 6 || dir ==1
+                        if CRF(i,j,k) < CRF(i+1,j,k) || CRF(i,j,k) < CRF(i-1,j,k)
+                            new_edge_mag(i,j,k) = 0;
+                        end
+                    elseif dir == 3 || dir == 8
+                        if CRF(i,j,k) < CRF(i,j+1,k) || CRF(i,j,k) < CRF(i,j-1,k)
+                            new_edge_mag(i,j,k) = 0;
+                        end
+                    elseif dir == 4 || dir ==9
+                        if CRF(i,j,k) < CRF(i-1,j+1,k) || CRF(i,j,k) < CRF(i+1,j-1,k)
+                            new_edge_mag(i,j,k) = 0;
+                        end
+                    elseif dir == 2 || dir == 7
+                        if CRF(i,j,k) < CRF(i+1,j+1,k) || CRF(i,j,k) < CRF(i-1,j-1,k)
+                            new_edge_mag(i,j,k) = 0;
+                        end
+                    end
+                end
+            end
+        end
+        
+    case 2
+        % non-maxima supression in a 3x3 neighbourhood
+        for k=1:o
+            for i=2:(m-1)
+                for j=2:(n-1)
+                    if (CRF(i,j,k) < CRF(i-1,j-1,k))  || (CRF(i,j,k) < CRF(i-1,j,k)) || (CRF(i,j,k) < CRF(i-1,j+1,k))...
+                            || (CRF(i,j,k) < CRF(i,j-1,k)) || (CRF(i,j,k) < CRF(i,j+1,k)) || (CRF(i,j,k) < CRF(i+1,j-1,k))...
+                            || (CRF(i,j,k) < CRF(i+1,j,k)) || (CRF(i,j,k) < CRF(i+1,j+1,k))
+                        new_edge_mag(i,j,k) = 0;
+                    end
+                end
+            end
+        end
+end
+                    
+CRF = new_edge_mag;
+CRF(CRF < x) = 0;
+CRF(CRF > x) = 1;
+
+
+
+
+
+end
+
+function I_blured = blur_gauss(I,std)
+I = double(I);
+I_blured = zeros(size(I));
+    height = floor(4*std);
+    width = height;
+    %std = min([width,height])/4;
+    h = h_image_cvip( 3,   height, width);
+    for i=1:size(I,3)
+        I_blured(:,:,i) = conv2(I(:,:,i),h,'same');
+    end
+end
+##### SOURCE END #####
+--></body></html>

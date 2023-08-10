@@ -1,0 +1,402 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>hough_transform_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="hough_transform_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [OutIma,RC_cell] = hough_transform_cvip(InIma,theta,rho)
+<span class="comment">% HOUGH_TRANSFORM_CVIP - returns the hough image based on the input parameters</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% --------</span>
+<span class="comment">% [OutIma,RC_cell] = hough_transform_cvip(InIma,theta,rho)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% --------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%  'InIma'          This should be a binary edge detected image</span>
+<span class="comment">%</span>
+<span class="comment">%  'theta'          A single value or range of values in degrees,</span>
+<span class="comment">%                   indicating the size of the theta dimension</span>
+<span class="comment">%</span>
+<span class="comment">%  'rho'         	A single value indicating the size of the rho dimension</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter include :</span>
+<span class="comment">% --------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%   'OutIma'        The outputted Hough Image with dimensions based on</span>
+<span class="comment">%                   theta and rho</span>
+<span class="comment">%</span>
+<span class="comment">%   'RC_cell'       A cell containing the RC coordinates for each pixel in</span>
+<span class="comment">%                   a specific rho-theta box</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                   InIma = imread('cameraman.tif');</span>
+<span class="comment">%                   theta = [0 1 45];</span>
+<span class="comment">%                   rho = 1;</span>
+<span class="comment">%                   [OutIma,RC_cell] =</span>
+<span class="comment">%                   hough_transform_cvip(InIma,theta,rho);</span>
+<span class="comment">%                   figure;imshow(remap_cvip(out_img));</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Joey Olden</span>
+<span class="comment">%           Initial coding date:    03/13/2020</span>
+<span class="comment">%           Latest update date:     06/08/2020</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">% THIS FUNCTION PRODUCES THE HOUGH IMAGE</span>
+<span class="comment">%taking the size of the input image</span>
+[xI,yI,zI] = size(InIma);
+Diagonal = sqrt(xI^2 + yI^2);
+
+<span class="comment">%checking to make sure the input is a binary image</span>
+<span class="keyword">if</span> size(unique(InIma(:)),1) ~= 2
+    msgbox(<span class="string">'Please use a binary image as the input'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">%formatting the theta range based on the user input</span>
+<span class="keyword">if</span> size(theta,2) == 1
+    theta_range = theta;
+<span class="keyword">elseif</span> size(theta,2) == 2
+    theta_range = theta(1):1:theta(2);
+<span class="keyword">elseif</span> size(theta,2) == 3
+    theta_range = theta(1):theta(2):theta(3);
+<span class="keyword">end</span>
+
+<span class="comment">%checking to see how the image was thresholded</span>
+<span class="comment">%also changing the image to a 0 1 double image</span>
+<span class="keyword">if</span> zI == 3 &amp;&amp; isequal(InIma(:,:,1),InIma(:,:,2),InIma(:,:,3))
+    zMax = 1;
+    InIma = double(InIma(:,:,1) &gt; min(min(InIma(:,:,1))));
+    InIma = InIma(:,:,1);
+    count_max = sum(InIma(:));
+<span class="keyword">elseif</span> zI == 3 &amp;&amp; ~isequal(InIma(:,:,1),InIma(:,:,2),InIma(:,:,3))
+    zMax = 3;
+    InIma(:,:,1) = double(InIma(:,:,1) &gt; min(min(InIma(:,:,1))));
+    InIma(:,:,2) = double(InIma(:,:,2) &gt; min(min(InIma(:,:,2))));
+    InIma(:,:,3) = double(InIma(:,:,3) &gt; min(min(InIma(:,:,3))));
+    InIma = double(InIma);
+    count_max = [sum(sum(InIma(:,:,1))) sum(sum(InIma(:,:,2))) sum(sum(InIma(:,:,3)))];
+<span class="keyword">else</span>
+    zMax = 1;
+    InIma = double(InIma &gt; min(InIma(:)));
+    count_max = sum(InIma(:));
+<span class="keyword">end</span>
+
+<span class="comment">%converting to radians</span>
+theta_range = theta_range.*(pi/180);
+
+<span class="comment">%taking the size of theta_range</span>
+[~,yT,~] = size(theta_range);
+
+<span class="comment">%making sure the delta rho is not larger than the max of the image</span>
+<span class="keyword">if</span> rho &gt; Diagonal
+    error(<span class="string">'Please select a delta row that is less than the image diagonal'</span>);
+<span class="keyword">else</span>
+    rho_range = 0:rho:ceil(Diagonal);
+<span class="keyword">end</span>
+
+<span class="comment">%taking the size of rho_range</span>
+[~,yR,~] = size(rho_range);
+
+<span class="comment">%creating a lower and higher shifted range of rho for thresholding</span>
+low_rho = rho_range;
+high_rho = cat(2,rho_range(2:end),ceil(Diagonal));
+
+<span class="comment">%preallocating</span>
+OutIma = zeros(yR,yT,zMax);
+RC_cell = cell(yR+1,yT,zMax);
+RC_cell{1,1,1} = theta_range;
+RC_cell{2,1,1} = [xI yI];
+
+<span class="comment">%Alternative way to calculate rho per hit in image</span>
+R_OG = repmat(rot90(1:xI,3),[1 yI]);
+R_OG = R_OG(:);
+C_OG = repmat(1:yI,[xI 1]);
+C_OG = C_OG(:);
+
+<span class="keyword">for</span> zz = 1:zMax
+    <span class="comment">%Removing non hits from the Image</span>
+    InLine = InIma(:,:,zz);
+    InLine = InLine(:);
+    R = InLine.*R_OG;
+    C = InLine.*C_OG;
+    R(R == 0) = [];
+    C(C == 0) = [];
+
+    <span class="comment">%threshold size based on the array</span>
+    L = repmat(reshape(low_rho,[1 1 yR]),[count_max(zz),yT,1]);
+    H = repmat(reshape(high_rho,[1 1 yR]),[count_max(zz),yT,1]);
+
+    <span class="comment">%Thresholding all rho distances based on user input threshold</span>
+    Distance = repmat(R.*cos(theta_range) + C.*sin(theta_range),[1 1 yR]);
+    D = double(Distance.*(Distance &gt;= L));
+    D = double(logical(D.*(D &lt; H)));
+
+    <span class="keyword">for</span> rr = 1:yR
+        <span class="keyword">for</span> tt = 1:yT
+
+            <span class="comment">%selecting the current column of rho calculations</span>
+            Current_Rho = D(:,tt,rr);
+            rt_R = Current_Rho.*R;
+            rt_R(rt_R == 0) = [];
+            rt_C = Current_Rho.*C;
+            rt_C(rt_C == 0) = [];
+
+            <span class="comment">%summing the hits for each rho/theta box</span>
+            <span class="comment">%creating the cells with coordinates for each hit</span>
+            OutIma(rr,tt,zz) = sum(Current_Rho);
+            RC_cell{rr+2,tt,zz} = cat(2,rt_R,rt_C);
+
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">%flipping the output image to be oriented correctly</span>
+OutIma = fliplr(OutIma);
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in hough_transform_cvip (line 53)
+[xI,yI,zI] = size(InIma);
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [OutIma,RC_cell] = hough_transform_cvip(InIma,theta,rho)
+% HOUGH_TRANSFORM_CVIP - returns the hough image based on the input parameters
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% [OutIma,RC_cell] = hough_transform_cvip(InIma,theta,rho)
+%   
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%  'InIma'          This should be a binary edge detected image
+%                  
+%  'theta'          A single value or range of values in degrees,
+%                   indicating the size of the theta dimension
+%
+%  'rho'         	A single value indicating the size of the rho dimension
+%
+% Output Parameter include :  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%   'OutIma'        The outputted Hough Image with dimensions based on
+%                   theta and rho
+%
+%   'RC_cell'       A cell containing the RC coordinates for each pixel in 
+%                   a specific rho-theta box
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                   InIma = imread('cameraman.tif');
+%                   theta = [0 1 45];
+%                   rho = 1;
+%                   [OutIma,RC_cell] =
+%                   hough_transform_cvip(InIma,theta,rho);
+%                   figure;imshow(remap_cvip(out_img));
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Joey Olden
+%           Initial coding date:    03/13/2020
+%           Latest update date:     06/08/2020
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+% THIS FUNCTION PRODUCES THE HOUGH IMAGE
+%taking the size of the input image
+[xI,yI,zI] = size(InIma);
+Diagonal = sqrt(xI^2 + yI^2);
+
+%checking to make sure the input is a binary image
+if size(unique(InIma(:)),1) ~= 2
+    msgbox('Please use a binary image as the input');
+end
+
+%formatting the theta range based on the user input
+if size(theta,2) == 1
+    theta_range = theta;
+elseif size(theta,2) == 2
+    theta_range = theta(1):1:theta(2);
+elseif size(theta,2) == 3
+    theta_range = theta(1):theta(2):theta(3);
+end
+
+%checking to see how the image was thresholded
+%also changing the image to a 0 1 double image
+if zI == 3 && isequal(InIma(:,:,1),InIma(:,:,2),InIma(:,:,3))
+    zMax = 1;
+    InIma = double(InIma(:,:,1) > min(min(InIma(:,:,1))));
+    InIma = InIma(:,:,1);
+    count_max = sum(InIma(:));
+elseif zI == 3 && ~isequal(InIma(:,:,1),InIma(:,:,2),InIma(:,:,3))
+    zMax = 3;
+    InIma(:,:,1) = double(InIma(:,:,1) > min(min(InIma(:,:,1))));
+    InIma(:,:,2) = double(InIma(:,:,2) > min(min(InIma(:,:,2))));
+    InIma(:,:,3) = double(InIma(:,:,3) > min(min(InIma(:,:,3))));
+    InIma = double(InIma);
+    count_max = [sum(sum(InIma(:,:,1))) sum(sum(InIma(:,:,2))) sum(sum(InIma(:,:,3)))];
+else
+    zMax = 1;
+    InIma = double(InIma > min(InIma(:)));
+    count_max = sum(InIma(:));
+end
+
+%converting to radians
+theta_range = theta_range.*(pi/180);
+
+%taking the size of theta_range
+[~,yT,~] = size(theta_range);
+
+%making sure the delta rho is not larger than the max of the image
+if rho > Diagonal
+    error('Please select a delta row that is less than the image diagonal');
+else
+    rho_range = 0:rho:ceil(Diagonal);
+end
+
+%taking the size of rho_range
+[~,yR,~] = size(rho_range);
+
+%creating a lower and higher shifted range of rho for thresholding
+low_rho = rho_range;
+high_rho = cat(2,rho_range(2:end),ceil(Diagonal));
+
+%preallocating
+OutIma = zeros(yR,yT,zMax);
+RC_cell = cell(yR+1,yT,zMax);
+RC_cell{1,1,1} = theta_range;
+RC_cell{2,1,1} = [xI yI];
+
+%Alternative way to calculate rho per hit in image
+R_OG = repmat(rot90(1:xI,3),[1 yI]);
+R_OG = R_OG(:);
+C_OG = repmat(1:yI,[xI 1]);
+C_OG = C_OG(:);
+
+for zz = 1:zMax
+    %Removing non hits from the Image
+    InLine = InIma(:,:,zz);
+    InLine = InLine(:);
+    R = InLine.*R_OG;
+    C = InLine.*C_OG;
+    R(R == 0) = [];
+    C(C == 0) = [];
+    
+    %threshold size based on the array
+    L = repmat(reshape(low_rho,[1 1 yR]),[count_max(zz),yT,1]);
+    H = repmat(reshape(high_rho,[1 1 yR]),[count_max(zz),yT,1]);
+
+    %Thresholding all rho distances based on user input threshold 
+    Distance = repmat(R.*cos(theta_range) + C.*sin(theta_range),[1 1 yR]);      
+    D = double(Distance.*(Distance >= L));
+    D = double(logical(D.*(D < H)));
+
+    for rr = 1:yR
+        for tt = 1:yT
+            
+            %selecting the current column of rho calculations
+            Current_Rho = D(:,tt,rr);
+            rt_R = Current_Rho.*R;
+            rt_R(rt_R == 0) = [];
+            rt_C = Current_Rho.*C;
+            rt_C(rt_C == 0) = [];
+            
+            %summing the hits for each rho/theta box
+            %creating the cells with coordinates for each hit
+            OutIma(rr,tt,zz) = sum(Current_Rho);
+            RC_cell{rr+2,tt,zz} = cat(2,rt_R,rt_C);
+
+        end
+    end
+end
+
+%flipping the output image to be oriented correctly
+OutIma = fliplr(OutIma);
+       
+end
+
+
+##### SOURCE END #####
+--></body></html>

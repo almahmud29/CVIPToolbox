@@ -1,0 +1,672 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Contents</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-07-22"><meta name="DC.source" content="Contents.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><p>
+<head>
+<style type="text/css">
+a {text-decoration:none;}
+</style>
+</head>
+<center>
+<h1 style="color: ##000000;"><i><b>MATLAB CVIP
+Toolbox Functions</b></i></h1>
+<img width=180 height=72 id="_x0000_i1029" src="Images/CVIP-toolbox-logo.png" alt="CVIPtools Home">
+</center>
+<br>
+The following functions are in MATLAB CVIP Toolbox organized into categories
+based on the type of operation. This list contains a brief description of
+the functions. For more details, including examples and syntax for exact
+function, see the individual MATLAB Help pages.<br><br>
+<h2 style="color: #2e6c80;">Arithmetic and Logic:</h2>
+<ul>
+    <li><strong><a href="add_cvip.html">add_cvip</a></strong> - add two images, or add a constant to an image</li>
+    <li><strong><a href="and_cvip.html">and_cvip</a></strong> - perform a logical AND on two images</li>
+    <li><strong><a href="divide_cvip.html">divide_cvip</a></strong> - divide one image by another, or divide an image by a constant</li>
+    <li><strong><a href="multiply_cvip.html">multiply_cvip</a></strong> - multiply two images, or multiply an image by a constant</li>
+    <li><strong><a href="not_cvip.html">not_cvip</a></strong> - perform a logical NOT on an image</li>
+    <li><strong><a href="or_cvip.html">or_cvip</a></strong> - perform a logical OR on two images</li>
+    <li><strong><a href="subtract_cvip.html">subtract_cvip</a></strong> - subtract one image from another, or subtract a constant from an image</li>
+    <li><strong><a href="xor_cvip.html">xor_cvip</a></strong> - perform a logical XOR on two images</li>
+</ul>
+<h2 style="color: #2e6c80;">Band</h2>
+<ul>
+    <li><strong><a href="assemble_bands_cvip.html">assemble_bands_cvip</a></strong> - add two images, or add a constant to an image</li>
+    <li><strong><a href="extract_band_cvip.html">extract_band_cvip</a></strong> - perform a logical AND on two images</li>
+</ul>
+<h2 style="color: #2e6c80;">Color</h2>
+<ul>
+    <li><strong><a href="ccenhance_cvip.html">ccenhance_cvip</a></strong> - color contrast enhancement algorithm</li>
+    <li><strong><a href="cct2rgb_cvip.html">cct2rgb_cvip</a></strong> - converts a color image from cylindrical coordinate to RGB color space</li>
+    <li><strong><a href="hsl2rgb_cvip.html">hsl2rgb_cvip</a></strong> - converts a color image from hsl color space back to RGB color space</li>
+    <li><strong><a href="hsv2rgb_cvip.html">hsv2rgb_cvip</a></strong> - converts a color image from hsv color space back to RGB color space</li>
+    <li><strong><a href="ipct_cvip.html">ipct_cvip</a></strong> - performs the inverse principal components transform in RGB-space</li>
+    <li><strong><a href="lab2rgb_cvip.html">lab2rgb_cvip</a></strong> - converts a color image from CIE L*a*b* to RGB color space</li>
+    <li><strong><a href="luminance_cvip.html">luminance_cvip</a></strong> - performs color to luminance transform</li>
+    <li><strong><a href="lum_average_cvip.html">lum_average_cvip</a></strong> - performs color to monchrome transform using average of all bands</li>
+    <li><strong><a href="luv2rgb_cvip.html">luv2rgb_cvip</a></strong> - converts a color image from CIE L*u*v* to RGB color space</li>
+    <li><strong><a href="pct_cvip.html">pct_cvip</a></strong> -  performs the principal components transform in RGB-space</li>
+    <li><strong><a href="rgb2cct_cvip.html">rgb2cct_cvip</a></strong> - converts a color image from RGB to cylindrical coordinate space</li>
+    <li><strong><a href="rgb2hsl_cvip.html">rgb2hsl_cvip</a></strong> - converts a color image from RGB to Hue/Saturation/Lightness color space</li>
+    <li><strong><a href="rgb2hsv_cvip.html">rgb2hsv_cvip</a></strong> - converts a color image from RGB to Hue/Saturation/Value color space</li>
+    <li><strong><a href="rgb2lab_cvip.html">rgb2lab_cvip</a></strong> - converts a color image from RGB to CIE L*a*b* color space</li>
+    <li><strong><a href="rgb2luv_cvip.html">rgb2luv_cvip</a></strong> - converts a color image from RGB to CIE L*u*v* space</li>
+    <li><strong><a href="rgb2sct_cvip.html">rgb2sct_cvip</a></strong> - converts a color image from RGB to spherical coordinate space</li>
+    <li><strong><a href="rgb2xyz_cvip.html">rgb2xyz_cvip</a></strong> - converts a color image from RGB to CIE XYZ color space</li>
+    <li><strong><a href="sct2rgb_cvip.html">sct2rgb_cvip</a></strong> - converts a color image from spherical coordinate space to RGB color space</li>
+</ul>
+<h2 style="color: #2e6c80;">Conversion of Image Files</h2>
+<ul>
+    <li><strong><a href="bin2graycode_cvip.html">bin2graycode_cvip</a></strong> - converts natural binary code to gray code</li>
+    <li><strong><a href="graycode2bin_cvip.html">graycode2bin_cvip</a></strong> - converts gray code to natural binary</li>
+    <li><strong><a href="halftone_cvip.html">halftone_cvip</a></strong> - convert image to binary with halftone technique</li>
+    <li><strong><a href="vipmread_cvip.html">vipmread_cvip</a></strong> - read a CVIPtools vipm image file into MATLAB</li>
+    <li><strong><a href="vipmwrite_cvip.html">vipmwrite_cvip</a></strong> - write a CVIPtools vipm image file to disk</li>
+</ul>
+<h2 style="color: #2e6c80;">Edge/Line Detection</h2>
+<ul>
+    <li><strong><a href="boiecox_ed_cvip.html">boiecox_ed_cvip</a></strong> - perform a Boie-Cox edge detection on the image</li>
+    <li><strong><a href="canny_ed_cvip.html">canny_ed_cvip</a></strong> - perform a Canny edge detection on the image</li>
+    <li><strong><a href="cerchar_ed_cvip.html">cerchar_ed_cvip</a></strong> - a spatial-multi spectral image edge detection filter</li>
+    <li><strong><a href="edge_link_cvip.html">edge_link_cvip</a></strong> - links edge points into lines</li>
+    <li><strong><a href="frei_chen_ed_cvip.html">frei_chen_ed_cvip</a></strong> - frei-chen filter, 9 basis image masks, edge/line subspace</li>
+    <li><strong><a href="harris_corner_cvip.html">harris_corner_cvip</a></strong> - a spatial (corner detection) filter</li>
+    <li><strong><a href="hough_transform_cvip.html">hough_transform_cvip</a></strong> - performs hough transformation in line detection</li>
+    <li><strong><a href="hough_line_cvip.html">hough_line_cvip</a></strong> - performs an hough transform, links specified lines</li>
+    <li><strong><a href="kirsch_ed_cvip.html">kirsch_ed_cvip</a></strong> - perform kirsch edge detection</li>
+    <li><strong><a href="laplacian_ed_cvip.html">laplacian_ed_cvip</a></strong> - performs a Laplacian edge detection</li>
+    <li><strong><a href="laplacian_gauss_ed_cvip.html">laplacian_gauss_ed_cvip</a></strong> - computes the Laplacian of a Gaussian edge detector</li>
+    <li><strong><a href="marr_hildreth_ed_cvip.html">marr_hildreth_ed_cvip</a></strong> -  performs a Marr Hildreth edge detection on the image</li>
+    <li><strong><a href="moravec_corner_cvip.html">moravec_corner_cvip</a></strong> - a spatial corner detecting filter</li>
+    <li><strong><a href="pratt_merit_cvip.html">pratt_merit_cvip</a></strong> - calculates the Pratt Figure-of-Merit (FOM) for two binary images</li>
+    <li><strong><a href="prewitt_ed_cvip.html">prewitt_ed_cvip</a></strong> - perform prewitt edge detection</li>
+    <li><strong><a href="pyramid_ed_cvip.html">pyramid_ed_cvip</a></strong> - perform a pyramid edge detection</li>
+    <li><strong><a href="roberts_ed_cvip.html">roberts_ed_cvip</a></strong> - performs a Roberts edge detection</li>
+    <li><strong><a href="robinson_ed_cvip.html">robinson_ed_cvip</a></strong> - perform a Robinson edge detection</li>
+    <li><strong><a href="shen_casten_ed_cvip.html">shen_casten_ed_cvip</a></strong> - perform a Shen-Castan edge detection on the image</li>
+    <li><strong><a href="sobel_ed_cvip.html">sobel_ed_cvip</a></strong> - perform sobel edge detection</li>
+</ul>
+<h2 style="color: #2e6c80;">Geometry</h2>
+<ul>
+    <li><strong><a href="copy_paste_cvip.html">copy_paste_cvip</a></strong> - copies a subimage from one image and pastes it to another image</li>
+    <li><strong><a href="crop_cvip.html">crop_cvip</a></strong> - crop a subimage from an image</li>
+    <li><strong><a href="enlarge_cvip.html">enlarge_cvip</a></strong> - enlarges image to a user-specified size</li>
+    <li><strong><a href="fast_doublesize_cvip.html">fast_doublesize_cvip</a></strong> - enlarge image to its double size</li>
+    <li><strong><a href="rotate_cvip.html">rotate_cvip</a></strong> - rotate the given image by an angle specified by the user (Range 1 ~ 360 degrees</li>
+    <li><strong><a href="shrink_cvip.html">shrink_cvip</a></strong> - shrinks the given image by a factor specified by the user (Range 0.1 ~ 1)</li>
+    <li><strong><a href="spatial_quant_cvip.html">spatial_quant_cvip</a></strong> - quantize an image by one of the following methods: average, median, or decimation</li>
+    <li><strong><a href="translate_cvip.html">translate_cvip</a></strong> - move the entire image horizontally and/or vertically; also used for cut-and-paste of subimage</li>
+    <li><strong><a href="zoom_cvip.html">zoom_cvip</a></strong> - zoom the given image by a factor specified by the user (Range 1 ~ 10)</li>
+    <li><strong><a href="polygon_cvip.html">polygon_cvip</a></strong> - create polygon image</li>
+</ul>
+<h2 style="color: #2e6c80;">Histogram</h2>
+<ul>
+    <li><strong><a href="get_hist_image_cvip.html">get_hist_image_cvip</a></strong> - generates a histogram Image from an imagee</li>
+    <li><strong><a href="gray_linear_cvip.html">gray_linear_cvip</a></strong> - graylevel linear modification</li>
+    <li><strong><a href="histeq_cvip.html">histeq_cvip</a></strong> - histogram equalizatione</li>
+    <li><strong><a href="hist_create_cvip.html">hist_create_cvip</a></strong> - creates histogram as an array</li>
+    <li><strong><a href="hist_spec_cvip.html">hist_spec_cvip</a></strong> - perform histogram manipulation using formula specified in by character string(s) for the equation(s)</li>
+    <li><strong><a href="hist_shrink_cvip.html">hist_shrink_cvip</a></strong> - shrink image data to specified range</li>
+    <li><strong><a href="hist_slide_cvip.html">hist_slide_cvip</a></strong> - histogram slide</li>
+    <li><strong><a href="hist_stretch_cvip.html">hist_stretch_cvip</a></strong> - histogram stretch, specify range and percent clip both ends</li>
+    <li><strong><a href="local_histeq_cvip.html">local_histeq_cvip</a></strong> - local histogram equalization</li>
+    <li><strong><a href="unsharp_cvip.html">unsharp_cvip</a></strong> - performs unsharp masking algorithm</li>
+</ul>
+<h2 style="color: #2e6c80;">Mapping</h2>
+<ul>
+    <li><strong><a href="condremap_cvip.html">condremap_cvip</a></strong> - performs conditional remapping, user specified range and data type</li>
+    <li><strong><a href="logremap_cvip.html">logremap_cvip</a></strong> - performs a log remapping, as in Equation 5.2-25</li>
+    <li><strong><a href="relative_remap_cvip.html">relative_remap_cvip</a></strong> - remaps an image maintaining the relative range of each data band</li>
+    <li><strong><a href="remap_cvip.html">remap_cvip</a></strong> - map image data into a specified range</li>
+</ul>
+<h2 style="color: #2e6c80;">Morphological</h2>
+<ul>
+    <li><strong><a href="morphclose_cvip.html">morphclose_cvip</a></strong> - perform grayscale morphological closing</li>
+    <li><strong><a href="morphdilate_cvip.html">morphdilate_cvip</a></strong> - perform grayscale morphological dilation</li>
+    <li><strong><a href="morpherode_cvip.html">morpherode_cvip</a></strong> - perform grayscale morphological erosion</li>
+    <li><strong><a href="morphitermod_cvip.html">morphitermod_cvip</a></strong> - performs morphological iterative based modification as defined a set of surrounds, a logical operation and the number of iterations</li>
+    <li><strong><a href="morphopen_cvip.html">morphopen_cvip</a></strong> - perform grayscale morphological opening</li>
+    <li><strong><a href="morph_hitmiss_cvip.html">morph_hitmiss_cvip</a></strong> - perform hitmiss operation</li>
+    <li><strong><a href="morph_skeleton_cvip.html">morph_skeleton_cvip</a></strong> - perform skeletonization operation</li>
+    <li><strong><a href="morph_thinning_cvip.html">morph_thinning_cvip</a></strong> - performs thinning operation</li>
+</ul>
+<h2 style="color: #2e6c80;">Noise</h2>
+<ul>
+    <li><strong><a href="gamma_noise_cvip.html">gamma_noise_cvip</a></strong> - add gamma noise to an image</li>
+    <li><strong><a href="gaussian_noise_cvip.html">gaussian_noise_cvip</a></strong> - add gaussian noise</li>
+    <li><strong><a href="neg_exp_noise_cvip.html">neg_exp_noise_cvip</a></strong> - add negative-exponential noise</li>
+    <li><strong><a href="rayleigh_noise_cvip.html">rayleigh_noise_cvip</a></strong> - add Rayleigh noise</li>
+    <li><strong><a href="salt_pepper_noise_cvip.html">salt_pepper_noise_cvip</a></strong> - add speckle (salt-and-pepper) noise</li>
+    <li><strong><a href="uniform_noise_cvip.html">uniform_noise_cvip</a></strong> - add uniform noise</li>
+</ul>
+<h2 style="color: #2e6c80;">Compression</h2>
+<ul>
+    <li><strong><a href="kmeans_cvip.html">kmeans_cvip</a></strong> -do k-means compression</li>
+    <li><strong><a href="k_meanplus_cvip.html">kmean_plus_Cvip</a></strong> -do k-means++ compression</li>
+    
+</ul>
+<ul>
+    <li><strong><a href="peak_snr_cvip.html">peak_snr_cvip</a></strong> - computes the peak signal-to-noise ratio between two images</li>
+    <li><strong><a href="rms_error_cvip.html">rms_error_cvip</a></strong> - calculates the root-mean-squared-error between two images</li>
+    <li><strong><a href="snr_cvip.html">snr_cvip</a></strong> - calculates the signal-to-noise ratio between two images</li>
+</ul>
+<h2 style="color: #2e6c80;">Pattern Classification: Algorithm Testing</h2>
+<ul>
+    <li><strong><a href="train_test_cvip.html">train_test_cvip_cvip</a></strong> - reads test and training files of feature vectors and performs a classification using the specified normalization method, distance/similarity measure and classification algorithm</li>
+    <li><strong><a href="leave_one_out_cvip.html">leave_one_out_cvip</a></strong> - reads a feature vectors and creates train/test feature vector sets to perform a classification using the specified normalization method, distance/similarity measure and classification algorithm</li>
+</ul>
+<h2 style="color: #2e6c80;">Pattern Classification: Classification Algorithms</h2>
+<ul>
+    <li><strong><a href="k_nearest_neighbor_cvip.html">k_nearest_neighbor_cvip</a></strong> - reads test and training files of feature vectors and creates output file for classification using k-nearest neighbor classification method</li>
+    <li><strong><a href="nearest_centroid_cvip.html">nearest_centroid_cvip</a></strong> - reads test and training files of feature vectors and creates output file for classification using nearest centroid classification method</li>
+    <li><strong><a href="nearest_centroid_set_cvip.html">nearest_centroid_set_cvip</a></strong> - reads test and training files of feature vectors and calculates centroids for each class</li>
+    <li><strong><a href="nearest_neighbor_cvip.html">nearest_neighbor_cvip</a></strong> - reads test and training files of feature vectors and creates output file for classification using nearest neighbor classification method</li>
+</ul>
+<h2 style="color: #2e6c80;">Pattern Classification: Distance/Similarity Metrics</h2>
+<ul>
+    <li><strong><a href="city_block_cvip.html">city_block_cvip</a></strong> - calculates the city block distance between two feature vectors</li>
+    <li><strong><a href="euclidean_distance_cvip.html">euclidean_distance_cvip</a></strong> - calculates the Euclidean distance between two feature vectors</li>
+    <li><strong><a href="maximum_value_metric_cvip.html">maximum_value_metric_cvip</a></strong> - calculates the maximum value distance between two feature vectors</li>
+    <li><strong><a href="minkowsi_distance_cvip.html">minkowsi_distance_cvip</a></strong> - calculates the Minkowski distance between two feature vectors</li>
+    <li><strong><a href="pattern_city_block_cvip.html">pattern_city_block_cvip</a></strong> - takes two csv files as input, test and training set, then calculates the city block distance metric by comparing each vector in the test set to each in the training set</li>
+    <li><strong><a href="pattern_euclidean_cvip.html">pattern_euclidean_cvip</a></strong> - takes two csv files as input, test and training set, then calculates the Euclidean distance metric by comparing each vector in the test set to each in the training set</li>
+    <li><strong><a href="pattern_maximum_cvip.html">pattern_maximum_cvip</a></strong> - takes two csv files as input, test and training set, then calculates the maximum value distance metric by comparing each vector in the test set to each in the training set</li>
+    <li><strong><a href="pattern_minkowski_cvip.html">pattern_minkowski_cvip</a></strong> - takes two csv files as input, test and training set, then calculates the minkowski distance metric by comparing each vector in the test set to each in the training set</li>
+    <li><strong><a href="pattern_tanimoto_cvip.html">pattern_tanimoto_cvip</a></strong> - takes two csv files as input, test and training set, then calculates the Tanimoto similarity metric by comparing each vector in the test set to each in the training set</li>
+    <li><strong><a href="pattern_vector_inner_product_cvip.html">pattern_vector_inner_product_cvip</a></strong> - takes two csv files as input, test and training set, then calculates the normalized vector inner product metric by comparing each vector in the test set to each in the training set</li>
+    <li><strong><a href="tanimoto_metric_cvip.html">tanimoto_metric_cvip</a></strong> - calculates the Tanimoto similarity metric between two feature vectors</li>
+    <li><strong><a href="vector_inner_product_cvip.html">vector_inner_product_cvip</a></strong> - calculates the normalized vector inner product similarity metric between two feature vectors</li>
+</ul>
+<h2 style="color: #2e6c80;">Pattern Classification: Feature Extraction</h2>
+<ul>
+    <li><strong><a href="area_cvip.html">area_cvip</a></strong> - calculates the area in pixels of a binary object</li>
+    <li><strong><a href="aspect_cvip.html">aspect_cvip</a></strong> - finds the aspect ratio of a binary object</li>
+    <li><strong><a href="central_moments_cvip.html">central_moments_cvip</a></strong> - returns the central moment of the order p and q for an object on the labeled image</li>
+    <li><strong><a href="centroid_cvip.html">centroid_cvip</a></strong> - finds the centroid of a binary object</li>
+    <li><strong><a href="cooccurence_cvip.html">cooccurence_cvip</a></strong> - calculates the co-occurrence matrix for an object</li>
+    <li><strong><a href="euler_cvip.html">euler_cvip</a></strong> - finds the Euler number of a binary object</li>
+    <li><strong><a href="feature_images_cvip.html">feature_images_cvip</a></strong> - extracts features from a group of images, where each image contains one object of interest, and uses corresponding mask images, output is a csv file</li>
+    <li><strong><a href="feature_objects_cvip.html">feature_objects_cvip</a></strong> - extracts features from a group of objects in a single image and a single image mask for the objects, output is a csv file</li>
+    <li><strong><a href="hist_feature_cvip.html">hist_feature_cvip</a></strong> - calculates the 5 first order histogram features for an object</li>
+    <li><strong><a href="irregular_cvip.html">irregular_cvip</a></strong> - calculates the irregularity ratio of a binary object</li>
+    <li><strong><a href="label_cvip.html">label_cvip</a></strong> - labels objects based on 6-connectivity, NW/SE diagonal</li>
+    <li><strong><a href="orientation_cvip.html">orientation_cvip</a></strong> - calculates the axis of least second moment for a binary object</li>
+    <li><strong><a href="perimeter_cvip.html">perimeter_cvip</a></strong> - calculates perimeter of a binary object</li>
+    <li><strong><a href="projection_cvip.html">projection_cvip</a></strong> - extracts horizontal and vertical projections of a binary object</li>
+    <li><strong><a href="rst_invariant_cvip.html">rst_invariant_cvip</a></strong> - calculates the 7 RST-invariant features defined in Table 6.1</li>
+    <li><strong><a href="spectral_features_cvip.html">spectral_features_cvip</a></strong> - extracts spectral features based on Fourier transform and ring and sector power</li>
+    <li><strong><a href="texture_features_cvip.html">texture_features_cvip</a></strong> - extracts 2nd-order histogram based texture features</li>
+    <li><strong><a href="thinness_cvip.html">thinness_cvip</a></strong> - calculate the thinness ratio of an object on the labeled image</li>
+</ul>
+<h2 style="color: #2e6c80;">Pattern Classification: Normalization Methods</h2>
+<ul>
+    <li><strong><a href="min_max_norm_cvip.html">min_max_norm_cvip</a></strong> - applies min-max normalization to set of feature vectors in a matrix</li>
+    <li><strong><a href="pattern_min_max_norm_cvip.html">pattern_min_max_norm_cvip</a></strong> - two csv files are input, training and test sets, and returns new csv files with the feature vectors normalized with min-max normalization</li>
+    <li><strong><a href="pattern_range_norm_cvip.html">pattern_range_norm_cvip</a></strong> - two csv files are input, training and test sets, and returns new csv files with the feature vectors normalized with range normalization</li>
+    <li><strong><a href="pattern_snd_norm_cvip.html">pattern_snd_norm_cvip</a></strong> - two csv files are input, training and test sets, and returns new csv files with the feature vectors normalized with standard normal density (snd) normalization</li>
+    <li><strong><a href="pattern_softmax_norm_cvip.html">pattern_softmax_norm_cvip</a></strong> - two csv files are input, training and test sets, and returns new csv files with the feature vectors normalized with softmax scaling normalization</li>
+    <li><strong><a href="pattern_unit_vector_norm_cvip.html">pattern_unit_vector_norm_cvip</a></strong> - two csv files are input, training and test sets, and returns new csv files with the feature vectors normalized with unit vector normalization</li>
+    <li><strong><a href="range_norm_cvip.html">range_norm_cvip</a></strong> - normalizes a set of feature vector values in a matrix based on the range of each feature</li>
+    <li><strong><a href="softmax_cvip.html">softmax_cvip</a></strong> - applies softmax normalization to set of feature vectors in a matrix</li>
+    <li><strong><a href="snd_norm_cvip.html">snd_norm_cvip</a></strong> - applies standard normal density normalization to a set of feature vectors in a matrix</li>
+    <li><strong><a href="unit_vector_norm_cvip.html">unit_vector_norm_cvip</a></strong> - applies unit vector normalization to set of feature vectors in a matrix</li>
+</ul>
+<h2 style="color: #2e6c80;">Segmentation</h2>
+<ul>
+    <li><strong><a href="autothreshold_cvip.html">autothreshold_cvip</a></strong> - perform auto single thresholding segmentation</li>
+    <li><strong><a href="fuzzyc_cvip.html">fuzzyc_cvip</a></strong> - perform Fuzzy c-Means color segmentation</li>
+    <li><strong><a href="gray_quant_cvip.html">gray_quant_cvip</a></strong> - perform gray level quantization</li>
+    <li><strong><a href="hist_thresh_cvip.html">hist_thresh_cvip</a></strong> - perform adaptive thresholding segmentation</li>
+    <li><strong><a href="igs_cvip.html">igs_cvip</a></strong> - perform improved gray scale (IGS) quantization</li>
+    <li><strong><a href="median_cut_cvip.html">median_cut_cvip</a></strong> - perform median cut segmentation</li>
+    <li><strong><a href="otsu_cvip.html">otsu_cvip</a></strong> - perform Otsu thresholding segmentation</li>
+    <li><strong><a href="pct_median_cvip.html">pct_median_cvip</a></strong> - perform PCT/median cut segmentation</li>
+    <li><strong><a href="sct_split_cvip.html">sct_split_cvip</a></strong> - perform SCT/Center Split segmentation</li>
+    <li><strong><a href="threshold_cvip.html">threshold_cvip</a></strong> - perform binary threshold on an image</li>
+    <li><strong><a href="watershed_cvip.html">watershed_cvip</a></strong> - perform watershed segmentation</li>
+</ul>
+<h2 style="color: #2e6c80;">Spatial Filters: Adaptive Filters</h2>
+<ul>
+    <li><strong><a href="ace2_filter_cvip.html">ace2_filter_cvip</a></strong> - adaptive contrast and enhancement filter</li>
+    <li><strong><a href="adaptive_contrast_cvip.html">adaptive_contrast_cvip</a></strong> - adaptive contrast filter, adapts to local gray level statistics</li>
+    <li><strong><a href="adapt_median_filter_cvip.html">adapt_median_filter_cvip</a></strong> - a ranked-order based adaptive median filter</li>
+    <li><strong><a href="ad_filter_cvip.html">ad_filter_cvip</a></strong> - anisotropic diffusion filter</li>
+    <li><strong><a href="exp_ace_filter_cvip.html">exp_ace_filter_cvip</a></strong> - performs an exponential ACE filter</li>
+    <li><strong><a href="improved_mmse_filter_cvip.html">improved_mmse_filter_cvip</a></strong> - perform improved adaptive minimum mean squared error filter</li>
+    <li><strong><a href="kuwahara_filter_cvip.html">kuwahara_filter_cvip</a></strong> - an edge preserving, smoothing filter</li>
+    <li><strong><a href="log_ace_filter_cvip.html">log_ace_filter_cvip</a></strong> - performs a log ACE filter operation</li>
+    <li><strong><a href="mmse_filter_cvip.html">mmse_filter_cvip</a></strong> - minimum mean squared error restoration filter</li>
+    <li><strong><a href="param_ad_filter_cvip.html">param_ad_filter_cvip</a></strong> - parametric anisotropic diffusion</li>
+</ul>
+<h2 style="color: #2e6c80;">Spatial Filters: Mean Filters</h2>
+<ul>
+    <li><strong><a href="arithmetic_mean_cvip.html">arithmetic_mean_cvip</a></strong> - perform an arithmetic mean averaging filter</li>
+    <li><strong><a href="contra_mean_cvip.html">contra_mean_cvip</a></strong> - perform a contra-harmonic mean filter</li>
+    <li><strong><a href="geometric_mean_cvip.html">geometric_mean_cvip</a></strong> - performs a geometric mean filter</li>
+    <li><strong><a href="harmonic_mean_cvip.html">harmonic_mean_cvip</a></strong> - performs a harmonic mean filter</li>
+    <li><strong><a href="raster_deblur_mean_cvip.html">raster_deblur_mean_cvip</a></strong> - raster deblurring filter</li>
+    <li><strong><a href="yp_mean_cvip.html">yp_mean_cvip</a></strong> - performs a Yp mean filter</li>
+</ul>
+<h2 style="color: #2e6c80;">Spatial Filters: Miscellaneous</h2>
+<ul>
+    <li><strong><a href="convolve_filter_cvip.html">convolve_filter_cvip</a></strong> - convolves an image with a user specified convolution mask</li>
+    <li><strong><a href="difference_filter_cvip.html">difference_filter_cvip</a></strong> - performs a difference/emboss filter</li>
+</ul>
+<h2 style="color: #2e6c80;">Spatial Filters: Order Filters</h2>
+<ul>
+    <li><strong><a href="alpha_filter_cvip.html">alpha_filter_cvip</a></strong> - perform an alpha-trimmed mean filter</li>
+    <li><strong><a href="maximum_filter_cvip.html">maximum_filter_cvip</a></strong> - performs a maximum filter</li>
+    <li><strong><a href="median_filter_cvip.html">median_filter_cvip</a></strong> - performs a fast histogram-method median filter</li>
+    <li><strong><a href="midpoint_filter_cvip.html">midpoint_filter_cvip</a></strong> - performs a midpoint filter</li>
+    <li><strong><a href="minimum_filter_cvip.html">minimum_filter_cvip</a></strong> - performs a minimum filter on an image</li>
+</ul>
+<h2 style="color: #2e6c80;">Transform</h2>
+<ul>
+    <li><strong><a href="dct_cvip.html">dct_cvip</a></strong> - perform block-wise discrete cosine transform</li>
+    <li><strong><a href="fft_cvip.html">fft_cvip</a></strong> - performs fast Fourier transform</li>
+    <li><strong><a href="fft_mag_cvip.html">fft_mag_cvip</a></strong> - extract magnitude of Fourier spectrum</li>
+    <li><strong><a href="fft_phase_cvip.html">fft_phase_cvip</a></strong> - extract phase of Fourier spectrum</li>
+    <li><strong><a href="haar_cvip.html">haar_cvip</a></strong> - perform forward Haar transform</li>
+    <li><strong><a href="idct_cvip.html">idct_cvip</a></strong> - inverse discrete cosine transform</li>
+    <li><strong><a href="ifft_cvip.html">ifft_cvip</a></strong> - performs inverse Fourier transform</li>
+    <li><strong><a href="ihaar_cvip.html">ihaar_cvip</a></strong> - perform inverse Haar transform</li>
+    <li><strong><a href="iwalhad_cvip.html">iwalhad_cvip</a></strong> - perform inverse Walsh/Hadamard transform</li>
+    <li><strong><a href="iwavdaub4_cvip.html">iwavdaub4_cvip</a></strong> - perform inverse wavelet transform based on Daubechies wavelet</li>
+    <li><strong><a href="iwavhaar_cvip.html">iwavhaar_cvip</a></strong> - perform inverse wavelet transform based on Haar wavelet</li>
+    <li><strong><a href="wavdaub4_cvip.html">wavdaub4_cvip</a></strong> - perform forward wavelet transform based on Daubechies wavelet</li>
+    <li><strong><a href="wavhaar_cvip.html">wavhaar_cvip</a></strong> - perform forward wavelet transform based on Haar wavelet</li>
+    <li><strong><a href="walhad_cvip.html">walhad_cvip</a></strong> - perform forward Walsh/Hadamard transform</li>
+</ul>
+<h2 style="color: #2e6c80;">Transform Filters: Standard</h2>
+<ul>
+    <li><strong><a href="butterworth_bandpass_cvip.html">butterworth_bandpass_cvip</a></strong> - perform Butterworth bandpass filter</li>
+    <li><strong><a href="butterworth_bandreject_cvip.html">butterworth_bandreject_cvip</a></strong> - perform Butterworth bandreject filter</li>
+    <li><strong><a href="butterworth_high_cvip.html">butterworth_high_cvip</a></strong> - perform Butterworth highpass filter</li>
+    <li><strong><a href="butterworth_low_cvip.html">butterworth_low_cvip</a></strong> - perform Butterworth lowpass filter</li>
+    <li><strong><a href="highfreqemphasis_cvip.html">highfreqemphasis_cvip</a></strong> - perform high frequency emphasis filter</li>
+    <li><strong><a href="homomorphic_cvip.html">homomorphic_cvip</a></strong> - performs homomorphic filtering on an input</li>
+    <li><strong><a href="h_image_cvip.html">h_image_cvip</a></strong> - create a mask image according to the size and type</li>
+    <li><strong><a href="ideal_bandpass_cvip.html">ideal_bandpass_cvip</a></strong> - perform ideal bandpass filter</li>
+    <li><strong><a href="ideal_bandreject_cvip.html">ideal_bandreject_cvip</a></strong> - perform ideal bandreject filter</li>
+    <li><strong><a href="ideal_high_cvip.html">ideal_high_cvip</a></strong> - perform ideal highpass filter</li>
+    <li><strong><a href="ideal_low_cvip.html">ideal_low_cvip</a></strong> - perform ideal lowpass filter</li>
+</ul>
+<h2 style="color: #2e6c80;">Transform Filters: Restoration</h2>
+<ul>
+    <li><strong><a href="geometric_mean_xformfilter_cvip.html">geometric_mean_xformfilter_cvip</a></strong> - performs the geometric mean restoration filter</li>
+    <li><strong><a href="inverse_xformfilter_cvip.html">inverse_xformfilter_cvip</a></strong> - performs the inverse restoration frequency domain filter</li>
+    <li><strong><a href="least_squares_filter_cvip.html">least_squares_filter_cvip</a></strong> - performs the least squares restoration filter</li>
+    <li><strong><a href="notch_filter_cvip.html">notch_filter_cvip</a></strong> - performs the notch frequency domain filter</li>
+    <li><strong><a href="parametric_wiener_filter_cvip.html">parametric_wiener_filter_cvip</a></strong> - performs the parameter Wiener restoration filter</li>
+    <li><strong><a href="power_spect_eq_filter_cvip.html">power_spect_eq_filter_cvip</a></strong> - power spectrum equalization frequency domain restoration filter</li>
+    <li><strong><a href="simple_wiener_filter_cvip.html">simple_wiener_filter_cvip</a></strong> - performs the simple Wiener restoration filter</li>
+    <li><strong><a href="wiener_filter_cvip.html">wiener_filter_cvip</a></strong> - performs the Wiener restoration filter</li>
+</ul>
+<br>
+<div class="footer">&#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/"> Scott E Umbaugh</a>, CVIP Toolbox Development Team, CVIP Lab<brl> <a href="http://www.siue.edu/index.shtml">Southern Illinois University Edwardsville</a>, Edwardsville, IL 62026
+</div>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%
+% <html>
+% <head>
+% <style type="text/css">
+% a {text-decoration:none;}
+% </style>
+% </head>
+% <center>
+% <h1 style="color: ##000000;"><i><b>MATLAB CVIP
+% Toolbox Functions</b></i></h1>
+% <img width=180 height=72 id="_x0000_i1029" src="Images/CVIP-toolbox-logo.png" alt="CVIPtools Home">
+% </center>
+% <br>
+% The following functions are in MATLAB CVIP Toolbox organized into categories
+% based on the type of operation. This list contains a brief description of 
+% the functions. For more details, including examples and syntax for exact
+% function, see the individual MATLAB Help pages.<br><br>
+% <h2 style="color: #2e6c80;">Arithmetic and Logic:</h2>
+% <ul>
+%     <li><strong><a href="add_cvip.html">add_cvip</a></strong> - add two images, or add a constant to an image</li>
+%     <li><strong><a href="and_cvip.html">and_cvip</a></strong> - perform a logical AND on two images</li>
+%     <li><strong><a href="divide_cvip.html">divide_cvip</a></strong> - divide one image by another, or divide an image by a constant</li>
+%     <li><strong><a href="multiply_cvip.html">multiply_cvip</a></strong> - multiply two images, or multiply an image by a constant</li>
+%     <li><strong><a href="not_cvip.html">not_cvip</a></strong> - perform a logical NOT on an image</li>
+%     <li><strong><a href="or_cvip.html">or_cvip</a></strong> - perform a logical OR on two images</li>
+%     <li><strong><a href="subtract_cvip.html">subtract_cvip</a></strong> - subtract one image from another, or subtract a constant from an image</li>
+%     <li><strong><a href="xor_cvip.html">xor_cvip</a></strong> - perform a logical XOR on two images</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Band</h2>
+% <ul>
+%     <li><strong><a href="assemble_bands_cvip.html">assemble_bands_cvip</a></strong> - add two images, or add a constant to an image</li>
+%     <li><strong><a href="extract_band_cvip.html">extract_band_cvip</a></strong> - perform a logical AND on two images</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Color</h2>
+% <ul>
+%     <li><strong><a href="ccenhance_cvip.html">ccenhance_cvip</a></strong> - color contrast enhancement algorithm</li>
+%     <li><strong><a href="cct2rgb_cvip.html">cct2rgb_cvip</a></strong> - converts a color image from cylindrical coordinate to RGB color space</li>
+%     <li><strong><a href="hsl2rgb_cvip.html">hsl2rgb_cvip</a></strong> - converts a color image from hsl color space back to RGB color space</li>
+%     <li><strong><a href="hsv2rgb_cvip.html">hsv2rgb_cvip</a></strong> - converts a color image from hsv color space back to RGB color space</li>
+%     <li><strong><a href="ipct_cvip.html">ipct_cvip</a></strong> - performs the inverse principal components transform in RGB-space</li>
+%     <li><strong><a href="lab2rgb_cvip.html">lab2rgb_cvip</a></strong> - converts a color image from CIE L*a*b* to RGB color space</li>
+%     <li><strong><a href="luminance_cvip.html">luminance_cvip</a></strong> - performs color to luminance transform</li>
+%     <li><strong><a href="lum_average_cvip.html">lum_average_cvip</a></strong> - performs color to monchrome transform using average of all bands</li>
+%     <li><strong><a href="luv2rgb_cvip.html">luv2rgb_cvip</a></strong> - converts a color image from CIE L*u*v* to RGB color space</li>
+%     <li><strong><a href="pct_cvip.html">pct_cvip</a></strong> -  performs the principal components transform in RGB-space</li>
+%     <li><strong><a href="rgb2cct_cvip.html">rgb2cct_cvip</a></strong> - converts a color image from RGB to cylindrical coordinate space</li>
+%     <li><strong><a href="rgb2hsl_cvip.html">rgb2hsl_cvip</a></strong> - converts a color image from RGB to Hue/Saturation/Lightness color space</li>
+%     <li><strong><a href="rgb2hsv_cvip.html">rgb2hsv_cvip</a></strong> - converts a color image from RGB to Hue/Saturation/Value color space</li>
+%     <li><strong><a href="rgb2lab_cvip.html">rgb2lab_cvip</a></strong> - converts a color image from RGB to CIE L*a*b* color space</li>
+%     <li><strong><a href="rgb2luv_cvip.html">rgb2luv_cvip</a></strong> - converts a color image from RGB to CIE L*u*v* space</li>
+%     <li><strong><a href="rgb2sct_cvip.html">rgb2sct_cvip</a></strong> - converts a color image from RGB to spherical coordinate space</li>
+%     <li><strong><a href="rgb2xyz_cvip.html">rgb2xyz_cvip</a></strong> - converts a color image from RGB to CIE XYZ color space</li>
+%     <li><strong><a href="sct2rgb_cvip.html">sct2rgb_cvip</a></strong> - converts a color image from spherical coordinate space to RGB color space</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Conversion of Image Files</h2>
+% <ul>
+%     <li><strong><a href="bin2graycode_cvip.html">bin2graycode_cvip</a></strong> - converts natural binary code to gray code</li>
+%     <li><strong><a href="graycode2bin_cvip.html">graycode2bin_cvip</a></strong> - converts gray code to natural binary</li>
+%     <li><strong><a href="halftone_cvip.html">halftone_cvip</a></strong> - convert image to binary with halftone technique</li>
+%     <li><strong><a href="vipmread_cvip.html">vipmread_cvip</a></strong> - read a CVIPtools vipm image file into MATLAB</li>
+%     <li><strong><a href="vipmwrite_cvip.html">vipmwrite_cvip</a></strong> - write a CVIPtools vipm image file to disk</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Edge/Line Detection</h2>
+% <ul>
+%     <li><strong><a href="boiecox_ed_cvip.html">boiecox_ed_cvip</a></strong> - perform a Boie-Cox edge detection on the image</li>
+%     <li><strong><a href="canny_ed_cvip.html">canny_ed_cvip</a></strong> - perform a Canny edge detection on the image</li>
+%     <li><strong><a href="cerchar_ed_cvip.html">cerchar_ed_cvip</a></strong> - a spatial-multi spectral image edge detection filter</li>
+%     <li><strong><a href="edge_link_cvip.html">edge_link_cvip</a></strong> - links edge points into lines</li>
+%     <li><strong><a href="frei_chen_ed_cvip.html">frei_chen_ed_cvip</a></strong> - frei-chen filter, 9 basis image masks, edge/line subspace</li>
+%     <li><strong><a href="harris_corner_cvip.html">harris_corner_cvip</a></strong> - a spatial (corner detection) filter</li>
+%     <li><strong><a href="hough_line_cvip.html">hough_line_cvip</a></strong> - performs an hough transform, links specified lines</li>
+%     <li><strong><a href="kirsch_ed_cvip.html">kirsch_ed_cvip</a></strong> - perform kirsch edge detection</li>
+%     <li><strong><a href="laplacian_ed_cvip.html">laplacian_ed_cvip</a></strong> - performs a Laplacian edge detection</li>
+%     <li><strong><a href="laplacian_gauss_ed_cvip.html">laplacian_gauss_ed_cvip</a></strong> - computes the Laplacian of a Gaussian edge detector</li>
+%     <li><strong><a href="marr_hildreth_ed_cvip.html">marr_hildreth_ed_cvip</a></strong> -  performs a Marr Hildreth edge detection on the image</li>
+%     <li><strong><a href="moravec_corner_cvip.html">moravec_corner_cvip</a></strong> - a spatial corner detecting filter</li>
+%     <li><strong><a href="pratt_merit_cvip.html">pratt_merit_cvip</a></strong> - calculates the Pratt Figure-of-Merit (FOM) for two binary images</li>
+%     <li><strong><a href="prewitt_ed_cvip.html">prewitt_ed_cvip</a></strong> - perform prewitt edge detection</li>
+%     <li><strong><a href="pyramid_ed_cvip.html">pyramid_ed_cvip</a></strong> - perform a pyramid edge detection</li>
+%     <li><strong><a href="roberts_ed_cvip.html">roberts_ed_cvip</a></strong> - performs a Roberts edge detection</li>
+%     <li><strong><a href="robinson_ed_cvip.html">robinson_ed_cvip</a></strong> - perform a Robinson edge detection</li>
+%     <li><strong><a href="shen_casten_ed_cvip.html">shen_casten_ed_cvip</a></strong> - perform a Shen-Castan edge detection on the image</li>
+%     <li><strong><a href="sobel_ed_cvip.html">sobel_ed_cvip</a></strong> - perform sobel edge detection</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Geometry</h2>
+% <ul>
+%     <li><strong><a href="copy_paste_cvip.html">copy_paste_cvip</a></strong> - copies a subimage from one image and pastes it to another image</li>
+%     <li><strong><a href="crop_cvip.html">crop_cvip</a></strong> - crop a subimage from an image</li>
+%     <li><strong><a href="enlarge_cvip.html">enlarge_cvip</a></strong> - enlarges image to a user-specified size</li>
+%     <li><strong><a href="rotate_cvip.html">rotate_cvip</a></strong> - rotate the given image by an angle specified by the user (Range 1 ~ 360 degrees</li>
+%     <li><strong><a href="shrink_cvip.html">shrink_cvip</a></strong> - shrinks the given image by a factor specified by the user (Range 0.1 ~ 1)</li>
+%     <li><strong><a href="spatial_quant_cvip.html">spatial_quant_cvip</a></strong> - quantize an image by one of the following methods: average, median, or decimation</li>
+%     <li><strong><a href="translate_cvip.html">translate_cvip</a></strong> - move the entire image horizontally and/or vertically; also used for cut-and-paste of subimage</li>
+%     <li><strong><a href="zoom_cvip.html">zoom_cvip</a></strong> - zoom the given image by a factor specified by the user (Range 1 ~ 10)</li>
+% </ul>    
+% <h2 style="color: #2e6c80;">Histogram</h2>
+% <ul>
+%     <li><strong><a href="get_hist_image_cvip.html">get_hist_image_cvip</a></strong> - generates a histogram Image from an imagee</li>
+%     <li><strong><a href="gray_linear_cvip.html">gray_linear_cvip</a></strong> - graylevel linear modification</li>
+%     <li><strong><a href="histeq_cvip.html">histeq_cvip</a></strong> - histogram equalizatione</li>
+%     <li><strong><a href="hist_create_cvip.html">hist_create_cvip</a></strong> - creates histogram as an array</li>
+%     <li><strong><a href="hist_spec_cvip.html">hist_spec_cvip</a></strong> - perform histogram manipulation using formula specified in by character string(s) for the equation(s)</li>
+%     <li><strong><a href="hist_shrink_cvip.html">hist_shrink_cvip</a></strong> - shrink image data to specified range</li>
+%     <li><strong><a href="hist_slide_cvip.html">hist_slide_cvip</a></strong> - histogram slide</li>
+%     <li><strong><a href="hist_stretch_cvip.html">hist_stretch_cvip</a></strong> - histogram stretch, specify range and percent clip both ends</li>
+%     <li><strong><a href="local_histeq_cvip.html">local_histeq_cvip</a></strong> - local histogram equalization</li>
+%     <li><strong><a href="unsharp_cvip.html">unsharp_cvip</a></strong> - performs unsharp masking algorithm</li>
+% </ul>   
+% <h2 style="color: #2e6c80;">Mapping</h2>
+% <ul>
+%     <li><strong><a href="condremap_cvip.html">condremap_cvip</a></strong> - performs conditional remapping, user specified range and data type</li>
+%     <li><strong><a href="logremap_cvip.html">logremap_cvip</a></strong> - performs a log remapping, as in Equation 5.2-25</li>
+%     <li><strong><a href="relative_remap_cvip.html">relative_remap_cvip</a></strong> - remaps an image maintaining the relative range of each data band</li>
+%     <li><strong><a href="remap_cvip.html">remap_cvip</a></strong> - map image data into a specified range</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Morphological</h2>
+% <ul>
+%     <li><strong><a href="morphclose_cvip.html">morphclose_cvip</a></strong> - perform grayscale morphological closing</li>
+%     <li><strong><a href="morphdilate_cvip.html">morphdilate_cvip</a></strong> - perform grayscale morphological dilation</li>
+%     <li><strong><a href="morpherode_cvip.html">morpherode_cvip</a></strong> - perform grayscale morphological erosion</li>
+%     <li><strong><a href="morphitermod_cvip.html">morphitermod_cvip</a></strong> - performs morphological iterative based modification as defined a set of surrounds, a logical operation and the number of iterations</li>
+%     <li><strong><a href="morphopen_cvip.html">morphopen_cvip</a></strong> - perform grayscale morphological opening</li>
+%     <li><strong><a href="morph_hitmiss_cvip.html">morph_hitmiss_cvip</a></strong> - perform hitmiss operation</li>
+%     <li><strong><a href="morph_skeleton_cvip.html">morph_skeleton_cvip</a></strong> - perform skeletonization operation</li>
+%     <li><strong><a href="morph_thinning_cvip.html">morph_thinning_cvip</a></strong> - performs thinning operation</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Noise</h2>
+% <ul>
+%     <li><strong><a href="gamma_noise_cvip.html">gamma_noise_cvip</a></strong> - add gamma noise to an image</li>
+%     <li><strong><a href="gaussian_noise_cvip.html">gaussian_noise_cvip</a></strong> - add gaussian noise</li>
+%     <li><strong><a href="neg_exp_noise_cvip.html">neg_exp_noise_cvip</a></strong> - add negative-exponential noise</li>
+%     <li><strong><a href="rayleigh_noise_cvip.html">rayleigh_noise_cvip</a></strong> - add Rayleigh noise</li>
+%     <li><strong><a href="salt_pepper_noise_cvip.html">salt_pepper_noise_cvip</a></strong> - add speckle (salt-and-pepper) noise</li>
+%     <li><strong><a href="uniform_noise_cvip.html">uniform_noise_cvip</a></strong> - add uniform noise</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Objective Fidelity Metrics</h2>
+% <ul>
+%     <li><strong><a href="peak_snr_cvip.html">peak_snr_cvip</a></strong> - computes the peak signal-to-noise ratio between two images</li>
+%     <li><strong><a href="rms_error_cvip.html">rms_error_cvip</a></strong> - calculates the root-mean-squared-error between two images</li>
+%     <li><strong><a href="snr_cvip.html">snr_cvip</a></strong> - calculates the signal-to-noise ratio between two images</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Pattern Classification: Algorithm Testing</h2>
+% <ul>
+%     <li><strong><a href="train_test_cvip.html">train_test_cvip_cvip</a></strong> - reads test and training files of feature vectors and performs a classification using the specified normalization method, distance/similarity measure and classification algorithm</li>
+%     <li><strong><a href="leave_one_out_cvip.html">leave_one_out_cvip</a></strong> - reads a feature vectors and creates train/test feature vector sets to perform a classification using the specified normalization method, distance/similarity measure and classification algorithm</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Pattern Classification: Classification Algorithms</h2>
+% <ul>
+%     <li><strong><a href="k_nearest_neighbor_cvip.html">k_nearest_neighbor_cvip</a></strong> - reads test and training files of feature vectors and creates output file for classification using k-nearest neighbor classification method</li>
+%     <li><strong><a href="nearest_centroid_cvip.html">nearest_centroid_cvip</a></strong> - reads test and training files of feature vectors and creates output file for classification using nearest centroid classification method</li>
+%     <li><strong><a href="nearest_centroid_set_cvip.html">nearest_centroid_set_cvip</a></strong> - reads test and training files of feature vectors and calculates centroids for each class</li>
+%     <li><strong><a href="nearest_neighbor_cvip.html">nearest_neighbor_cvip</a></strong> - reads test and training files of feature vectors and creates output file for classification using nearest neighbor classification method</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Pattern Classification: Distance/Similarity Metrics</h2>
+% <ul>
+%     <li><strong><a href="city_block_cvip.html">city_block_cvip</a></strong> - calculates the city block distance between two feature vectors</li>
+%     <li><strong><a href="euclidean_distance_cvip.html">euclidean_distance_cvip</a></strong> - calculates the Euclidean distance between two feature vectors</li>
+%     <li><strong><a href="maximum_value_metric_cvip.html">maximum_value_metric_cvip</a></strong> - calculates the maximum value distance between two feature vectors</li>
+%     <li><strong><a href="minkowsi_distance_cvip.html">minkowsi_distance_cvip</a></strong> - calculates the Minkowski distance between two feature vectors</li>
+%     <li><strong><a href="pattern_city_block_cvip.html">pattern_city_block_cvip</a></strong> - takes two csv files as input, test and training set, then calculates the city block distance metric by comparing each vector in the test set to each in the training set</li>
+%     <li><strong><a href="pattern_euclidean_cvip.html">pattern_euclidean_cvip</a></strong> - takes two csv files as input, test and training set, then calculates the Euclidean distance metric by comparing each vector in the test set to each in the training set</li>
+%     <li><strong><a href="pattern_maximum_cvip.html">pattern_maximum_cvip</a></strong> - takes two csv files as input, test and training set, then calculates the maximum value distance metric by comparing each vector in the test set to each in the training set</li>
+%     <li><strong><a href="pattern_minkowski_cvip.html">pattern_minkowski_cvip</a></strong> - takes two csv files as input, test and training set, then calculates the minkowski distance metric by comparing each vector in the test set to each in the training set</li>
+%     <li><strong><a href="pattern_tanimoto_cvip.html">pattern_tanimoto_cvip</a></strong> - takes two csv files as input, test and training set, then calculates the Tanimoto similarity metric by comparing each vector in the test set to each in the training set</li>
+%     <li><strong><a href="pattern_vector_inner_product_cvip.html">pattern_vector_inner_product_cvip</a></strong> - takes two csv files as input, test and training set, then calculates the normalized vector inner product metric by comparing each vector in the test set to each in the training set</li>
+%     <li><strong><a href="tanimoto_metric_cvip.html">tanimoto_metric_cvip</a></strong> - calculates the Tanimoto similarity metric between two feature vectors</li>
+%     <li><strong><a href="vector_inner_product_cvip.html">vector_inner_product_cvip</a></strong> - calculates the normalized vector inner product similarity metric between two feature vectors</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Pattern Classification: Feature Extraction</h2>
+% <ul>
+%     <li><strong><a href="area_cvip.html">area_cvip</a></strong> - calculates the area in pixels of a binary object</li>
+%     <li><strong><a href="aspect_cvip.html">aspect_cvip</a></strong> - finds the aspect ratio of a binary object</li>
+%     <li><strong><a href="central_moments_cvip.html">central_moments_cvip</a></strong> - returns the central moment of the order p and q for an object on the labeled image</li>
+%     <li><strong><a href="centroid_cvip.html">centroid_cvip</a></strong> - finds the centroid of a binary object</li>
+%     <li><strong><a href="cooccurence_cvip.html">cooccurence_cvip</a></strong> - calculates the co-occurrence matrix for an object</li>
+%     <li><strong><a href="euler_cvip.html">euler_cvip</a></strong> - finds the Euler number of a binary object</li>
+%     <li><strong><a href="feature_images_cvip.html">feature_images_cvip</a></strong> - extracts features from a group of images, where each image contains one object of interest, and uses corresponding mask images, output is a csv file</li>
+%     <li><strong><a href="feature_objects_cvip.html">feature_objects_cvip</a></strong> - extracts features from a group of objects in a single image and a single image mask for the objects, output is a csv file</li>
+%     <li><strong><a href="hist_feature_cvip.html">hist_feature_cvip</a></strong> - calculates the 5 first order histogram features for an object</li>
+%     <li><strong><a href="irregular_cvip.html">irregular_cvip</a></strong> - calculates the irregularity ratio of a binary object</li>
+%     <li><strong><a href="label_cvip.html">label_cvip</a></strong> - labels objects based on 6-connectivity, NW/SE diagonal</li>
+%     <li><strong><a href="orientation_cvip.html">orientation_cvip</a></strong> - calculates the axis of least second moment for a binary object</li>
+%     <li><strong><a href="perimeter_cvip.html">perimeter_cvip</a></strong> - calculates perimeter of a binary object</li>
+%     <li><strong><a href="projection_cvip.html">projection_cvip</a></strong> - extracts horizontal and vertical projections of a binary object</li>
+%     <li><strong><a href="rst_invariant_cvip.html">rst_invariant_cvip</a></strong> - calculates the 7 RST-invariant features defined in Table 6.1</li>
+%     <li><strong><a href="spectral_features_cvip.html">spectral_features_cvip</a></strong> - extracts spectral features based on Fourier transform and ring and sector power</li>
+%     <li><strong><a href="texture_features_cvip.html">texture_features_cvip</a></strong> - extracts 2nd-order histogram based texture features</li>
+%     <li><strong><a href="thinness_cvip.html">thinness_cvip</a></strong> - calculate the thinness ratio of an object on the labeled image</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Pattern Classification: Normalization Methods</h2>
+% <ul>
+%     <li><strong><a href="min_max_norm_cvip.html">min_max_norm_cvip</a></strong> - applies min-max normalization to set of feature vectors in a matrix</li>
+%     <li><strong><a href="pattern_min_max_norm_cvip.html">pattern_min_max_norm_cvip</a></strong> - two csv files are input, training and test sets, and returns new csv files with the feature vectors normalized with min-max normalization</li>
+%     <li><strong><a href="pattern_range_norm_cvip.html">pattern_range_norm_cvip</a></strong> - two csv files are input, training and test sets, and returns new csv files with the feature vectors normalized with range normalization</li>
+%     <li><strong><a href="pattern_snd_norm_cvip.html">pattern_snd_norm_cvip</a></strong> - two csv files are input, training and test sets, and returns new csv files with the feature vectors normalized with standard normal density (snd) normalization</li>
+%     <li><strong><a href="pattern_softmax_norm_cvip.html">pattern_softmax_norm_cvip</a></strong> - two csv files are input, training and test sets, and returns new csv files with the feature vectors normalized with softmax scaling normalization</li>
+%     <li><strong><a href="pattern_unit_vector_norm_cvip.html">pattern_unit_vector_norm_cvip</a></strong> - two csv files are input, training and test sets, and returns new csv files with the feature vectors normalized with unit vector normalization</li>
+%     <li><strong><a href="range_norm_cvip.html">range_norm_cvip</a></strong> - normalizes a set of feature vector values in a matrix based on the range of each feature</li>
+%     <li><strong><a href="softmax_cvip.html">softmax_cvip</a></strong> - applies softmax normalization to set of feature vectors in a matrix</li>
+%     <li><strong><a href="snd_norm_cvip.html">snd_norm_cvip</a></strong> - applies standard normal density normalization to a set of feature vectors in a matrix</li>
+%     <li><strong><a href="unit_vector_norm_cvip.html">unit_vector_norm_cvip</a></strong> - applies unit vector normalization to set of feature vectors in a matrix</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Segmentation</h2>
+% <ul>
+%     <li><strong><a href="autothreshold_cvip.html">autothreshold_cvip</a></strong> - perform auto single thresholding segmentation</li>
+%     <li><strong><a href="fuzzyc_cvip.html">fuzzyc_cvip</a></strong> - perform Fuzzy c-Means color segmentation</li>
+%     <li><strong><a href="gray_quant_cvip.html">gray_quant_cvip</a></strong> - perform gray level quantization</li>
+%     <li><strong><a href="hist_thresh_cvip.html">hist_thresh_cvip</a></strong> - perform adaptive thresholding segmentation</li>
+%     <li><strong><a href="igs_cvip.html">igs_cvip</a></strong> - perform improved gray scale (IGS) quantization</li>
+%     <li><strong><a href="median_cut_cvip.html">median_cut_cvip</a></strong> - perform median cut segmentation</li>
+%     <li><strong><a href="otsu_cvip.html">otsu_cvip</a></strong> - perform Otsu thresholding segmentation</li>
+%     <li><strong><a href="pct_median_cvip.html">pct_median_cvip</a></strong> - perform PCT/median cut segmentation</li>
+%     <li><strong><a href="sct_split_cvip.html">sct_split_cvip</a></strong> - perform SCT/Center Split segmentation</li>
+%     <li><strong><a href="threshold_cvip.html">threshold_cvip</a></strong> - perform binary threshold on an image</li>
+%     <li><strong><a href="watershed_cvip.html">watershed_cvip</a></strong> - perform watershed segmentation</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Spatial Filters: Adaptive Filters</h2>
+% <ul>
+%     <li><strong><a href="ace2_filter_cvip.html">ace2_filter_cvip</a></strong> - adaptive contrast and enhancement filter</li>
+%     <li><strong><a href="adaptive_contrast_cvip.html">adaptive_contrast_cvip</a></strong> - adaptive contrast filter, adapts to local gray level statistics</li>
+%     <li><strong><a href="adapt_median_filter_cvip.html">adapt_median_filter_cvip</a></strong> - a ranked-order based adaptive median filter</li>
+%     <li><strong><a href="ad_filter_cvip.html">ad_filter_cvip</a></strong> - anisotropic diffusion filter</li>
+%     <li><strong><a href="exp_ace_filter_cvip.html">exp_ace_filter_cvip</a></strong> - performs an exponential ACE filter</li>
+%     <li><strong><a href="improved_mmse_filter_cvip.html">improved_mmse_filter_cvip</a></strong> - perform improved adaptive minimum mean squared error filter</li>
+%     <li><strong><a href="kuwahara_filter_cvip.html">kuwahara_filter_cvip</a></strong> - an edge preserving, smoothing filter</li>
+%     <li><strong><a href="log_ace_filter_cvip.html">log_ace_filter_cvip</a></strong> - performs a log ACE filter operation</li>
+%     <li><strong><a href="mmse_filter_cvip.html">mmse_filter_cvip</a></strong> - minimum mean squared error restoration filter</li>
+%     <li><strong><a href="param_ad_filter_cvip.html">param_ad_filter_cvip</a></strong> - parametric anisotropic diffusion</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Spatial Filters: Mean Filters</h2>
+% <ul>
+%     <li><strong><a href="arithmetic_mean_cvip.html">arithmetic_mean_cvip</a></strong> - perform an arithmetic mean averaging filter</li>
+%     <li><strong><a href="contra_mean_cvip.html">contra_mean_cvip</a></strong> - perform a contra-harmonic mean filter</li>
+%     <li><strong><a href="geometric_mean_cvip.html">geometric_mean_cvip</a></strong> - performs a geometric mean filter</li>
+%     <li><strong><a href="harmonic_mean_cvip.html">harmonic_mean_cvip</a></strong> - performs a harmonic mean filter</li>
+%     <li><strong><a href="raster_deblur_mean_cvip.html">raster_deblur_mean_cvip</a></strong> - raster deblurring filter</li>
+%     <li><strong><a href="yp_mean_cvip.html">yp_mean_cvip</a></strong> - performs a Yp mean filter</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Spatial Filters: Miscellaneous</h2>
+% <ul>
+%     <li><strong><a href="convolve_filter_cvip.html">convolve_filter_cvip</a></strong> - convolves an image with a user specified convolution mask</li>
+%     <li><strong><a href="difference_filter_cvip.html">difference_filter_cvip</a></strong> - performs a difference/emboss filter</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Spatial Filters: Order Filters</h2>
+% <ul>
+%     <li><strong><a href="alpha_filter_cvip.html">alpha_filter_cvip</a></strong> - perform an alpha-trimmed mean filter</li>
+%     <li><strong><a href="maximum_filter_cvip.html">maximum_filter_cvip</a></strong> - performs a maximum filter</li>
+%     <li><strong><a href="median_filter_cvip.html">median_filter_cvip</a></strong> - performs a fast histogram-method median filter</li>
+%     <li><strong><a href="midpoint_filter_cvip.html">midpoint_filter_cvip</a></strong> - performs a midpoint filter</li>
+%     <li><strong><a href="minimum_filter_cvip.html">minimum_filter_cvip</a></strong> - performs a minimum filter on an image</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Transform</h2>
+% <ul>
+%     <li><strong><a href="dct_cvip.html">dct_cvip</a></strong> - perform block-wise discrete cosine transform</li>
+%     <li><strong><a href="fft_cvip.html">fft_cvip</a></strong> - performs fast Fourier transform</li>
+%     <li><strong><a href="fft_mag_cvip.html">fft_mag_cvip</a></strong> - extract magnitude of Fourier spectrum</li>
+%     <li><strong><a href="fft_phase_cvip.html">fft_phase_cvip</a></strong> - extract phase of Fourier spectrum</li>
+%     <li><strong><a href="haar_cvip.html">haar_cvip</a></strong> - perform forward Haar transform</li>
+%     <li><strong><a href="idct_cvip.html">idct_cvip</a></strong> - inverse discrete cosine transform</li>
+%     <li><strong><a href="ifft_cvip.html">ifft_cvip</a></strong> - performs inverse Fourier transform</li>
+%     <li><strong><a href="ihaar_cvip.html">ihaar_cvip</a></strong> - perform inverse Haar transform</li>
+%     <li><strong><a href="iwalhad_cvip.html">iwalhad_cvip</a></strong> - perform inverse Walsh/Hadamard transform</li>
+%     <li><strong><a href="iwavdaub4_cvip.html">iwavdaub4_cvip</a></strong> - perform inverse wavelet transform based on Daubechies wavelet</li>
+%     <li><strong><a href="iwavhaar_cvip.html">iwavhaar_cvip</a></strong> - perform inverse wavelet transform based on Haar wavelet</li>
+%     <li><strong><a href="wavdaub4_cvip.html">wavdaub4_cvip</a></strong> - perform forward wavelet transform based on Daubechies wavelet</li>
+%     <li><strong><a href="wavhaar_cvip.html">wavhaar_cvip</a></strong> - perform forward wavelet transform based on Haar wavelet</li>
+%     <li><strong><a href="walhad_cvip.html">walhad_cvip</a></strong> - perform forward Walsh/Hadamard transform</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Transform Filters: Standard</h2>
+% <ul>
+%     <li><strong><a href="butterworth_bandpass_cvip.html">butterworth_bandpass_cvip</a></strong> - perform Butterworth bandpass filter</li>
+%     <li><strong><a href="butterworth_bandreject_cvip.html">butterworth_bandreject_cvip</a></strong> - perform Butterworth bandreject filter</li>
+%     <li><strong><a href="butterworth_high_cvip.html">butterworth_high_cvip</a></strong> - perform Butterworth highpass filter</li>
+%     <li><strong><a href="butterworth_low_cvip.html">butterworth_low_cvip</a></strong> - perform Butterworth lowpass filter</li>
+%     <li><strong><a href="highfreqemphasis_cvip.html">highfreqemphasis_cvip</a></strong> - perform high frequency emphasis filter</li>
+%     <li><strong><a href="homomorphic_cvip.html">homomorphic_cvip</a></strong> - performs homomorphic filtering on an input</li>
+%     <li><strong><a href="h_image_cvip.html">h_image_cvip</a></strong> - create a mask image according to the size and type</li>
+%     <li><strong><a href="ideal_bandpass_cvip.html">ideal_bandpass_cvip</a></strong> - perform ideal bandpass filter</li>
+%     <li><strong><a href="ideal_bandreject_cvip.html">ideal_bandreject_cvip</a></strong> - perform ideal bandreject filter</li>
+%     <li><strong><a href="ideal_high_cvip.html">ideal_high_cvip</a></strong> - perform ideal highpass filter</li>
+%     <li><strong><a href="ideal_low_cvip.html">ideal_low_cvip</a></strong> - perform ideal lowpass filter</li>
+% </ul>
+% <h2 style="color: #2e6c80;">Transform Filters: Restoration</h2>
+% <ul>
+%     <li><strong><a href="geometric_mean_xformfilter_cvip.html">geometric_mean_xformfilter_cvip</a></strong> - performs the geometric mean restoration filter</li>
+%     <li><strong><a href="inverse_xformfilter_cvip.html">inverse_xformfilter_cvip</a></strong> - performs the inverse restoration frequency domain filter</li>
+%     <li><strong><a href="least_squares_filter_cvip.html">least_squares_filter_cvip</a></strong> - performs the least squares restoration filter</li>
+%     <li><strong><a href="notch_filter_cvip.html">notch_filter_cvip</a></strong> - performs the notch frequency domain filter</li>
+%     <li><strong><a href="parametric_wiener_filter_cvip.html">parametric_wiener_filter_cvip</a></strong> - performs the parameter Wiener restoration filter</li>
+%     <li><strong><a href="power_spect_eq_filter_cvip.html">power_spect_eq_filter_cvip</a></strong> - power spectrum equalization frequency domain restoration filter</li>
+%     <li><strong><a href="simple_wiener_filter_cvip.html">simple_wiener_filter_cvip</a></strong> - performs the simple Wiener restoration filter</li>
+%     <li><strong><a href="wiener_filter_cvip.html">wiener_filter_cvip</a></strong> - performs the Wiener restoration filter</li>
+% </ul>
+% <br>
+% <div class="footer">&#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/"> Scott E Umbaugh</a>, CVIP Toolbox Development Team, CVIP Lab<brl> <a href="http://www.siue.edu/index.shtml">Southern Illinois University Edwardsville</a>, Edwardsville, IL 62026 
+% </div>
+% </html>
+##### SOURCE END #####
+--></body></html>

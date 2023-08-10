@@ -1,0 +1,291 @@
+<?xml version='1.0' encoding="utf-8"?>
+<toc version="2.0">
+
+    <tocitem target="welcome.html">Welcome to the CVIP Toolbox 3.7.7
+        <tocitem target="Categories.html">CVIP Functions Categories
+<!--Arithmetic and Logic Functions-->        
+            <tocitem target="Arithmetic_and_Logical.html">Arithmetic and Logic
+                <tocitem target="add_cvip.html">add_cvip</tocitem>
+                <tocitem target="subtract_cvip.html">subtract_cvip</tocitem>
+                <tocitem target="multiply_cvip.html">multiply_cvip</tocitem>
+                <tocitem target="divide_cvip.html">divide_cvip</tocitem>
+                <tocitem target="and_cvip.html">and_cvip</tocitem>
+                <tocitem target="or_cvip.html">or_cvip</tocitem>
+                <tocitem target="xor_cvip.html">xor_cvip</tocitem>
+                <tocitem target="not_cvip.html">not_cvip</tocitem>
+            </tocitem>
+<!--Band Functions-->            
+            <tocitem target="Band.html">Band
+                <tocitem target="assemble_bands_cvip.html">assemble_bands_cvip</tocitem>
+                <tocitem target="extract_band_cvip.html">extract_band_cvip</tocitem>
+            </tocitem>
+<!--Color Functions-->
+             <tocitem target="ColorCategory.html">Color
+                <tocitem target="ccenhance_cvip.html">ccenhance_cvip</tocitem>
+                <tocitem target="cct2rgb_cvip.html">cct2rgb_cvip</tocitem>
+                <tocitem target="ipct_cvip.html">ipct_cvip</tocitem>
+                <tocitem target="hsl2rgb_cvip.html">hsl2rgb_cvip</tocitem>
+                <tocitem target="hsv2rgb_cvip.html">hsv2rgb_cvip</tocitem>
+                <tocitem target="lab2rgb_cvip.html">lab2rgb_cvip</tocitem>
+                <tocitem target="luminance_cvip.html">luminance_cvip</tocitem>
+                <tocitem target="lum_average_cvip.html">lum_average_cvip</tocitem>
+                <tocitem target="luv2rgb_cvip.html">luv2rgb_cvip</tocitem>
+                <tocitem target="pct_cvip.html">pct_cvip</tocitem>
+                <tocitem target="rgb2xyz_cvip.html">rgb2xyz_cvip</tocitem>
+                <tocitem target="rgb2hsl_cvip.html">rgb2hsl_cvip</tocitem>
+                <tocitem target="rgb2hsv_cvip.html">rgb2hsv_cvip</tocitem>
+                <tocitem target="rgb2cct_cvip.html">rgb2cct_cvip</tocitem>
+                <tocitem target="rgb2lab_cvip.html">rgb2lab_cvip</tocitem>
+                <tocitem target="rgb2luv_cvip.html">rgb2luv_cvip</tocitem>
+                <tocitem target="rgb2sct_cvip.html">rgb2sct_cvip</tocitem>
+                <tocitem target="sct2rgb_cvip.html">sct2rgb_cvip</tocitem>
+            </tocitem>
+<!--Conversion of Image Files Functions-->            
+            <tocitem target="ConversionOfImageFiles.html">Conversion of Image Files
+                <tocitem target="bin2graycode_cvip.html">bin2graycode_cvip</tocitem>
+                <tocitem target="halftone_cvip.html">halftone_cvip</tocitem>
+                <tocitem target="graycode2bin_cvip.html">graycode2bin_cvip</tocitem>
+                <tocitem target="vipmread_cvip.html">vipmread_cvip</tocitem>
+                <tocitem target="vipmwrite_cvip.html">vipmwrite_cvip</tocitem>
+                <tocitem target="load_prebuilt_cvip.html">vipmwrite_cvip</tocitem>
+            </tocitem>
+<!--Edge/Line Detection Functions-->
+            <tocitem target="EdgeLineDetection.html">Edge/Line Dectection
+                <tocitem target="boiecox_ed_cvip.html">boiecox_ed_cvip</tocitem>
+                <tocitem target="canny_ed_cvip.html">canny_ed_cvip</tocitem>
+                <tocitem target="cerchar_ed_cvip.html">cerchar_ed_cvip</tocitem>
+                <tocitem target="frei_chen_ed_cvip.html">frei_chen_ed_cvip</tocitem>
+                <tocitem target="harris_corner_cvip.html">harris_corner_cvip</tocitem>
+                <tocitem target="hough_transform_cvip.html">hough_transform_cvip</tocitem>
+                <tocitem target="hough_inverse_cvip.html">hough_inverse_cvip</tocitem>
+                <tocitem target="kirsch_ed_cvip.html">kirsch_ed_cvip</tocitem>
+                <tocitem target="laplacian_ed_cvip.html">laplacian_ed_cvip</tocitem>
+                <tocitem target="laplacian_gauss_ed_cvip.html">laplacian_gauss_ed_cvip</tocitem>
+                <tocitem target="marr_hildreth_ed_cvip.html">marr_hildreth_ed_cvip</tocitem>
+                <tocitem target="moravec_corner_cvip.html">moravec_corner_cvip</tocitem>
+                <tocitem target="pratt_merit_cvip.html">pratt_merit_cvip</tocitem>
+                <tocitem target="prewitt_ed_cvip.html">prewitt_ed_cvip</tocitem>
+                <tocitem target="pyramid_ed_cvip.html">pyramid_ed_cvip</tocitem>
+                <tocitem target="roberts_ed_cvip.html">roberts_ed_cvip</tocitem>
+                <tocitem target="robinson_ed_cvip.html">robinson_ed_cvip</tocitem>
+                <tocitem target="shen_castan_ed_cvip.html">shen_castan_ed_cvip</tocitem>
+                <tocitem target="sobel_ed_cvip.html">sobel_ed_cvip</tocitem>
+            </tocitem>
+<!--Geometry Functions-->            
+			<tocitem target="Geometry.html">Geometry
+                <tocitem target="copy_paste_cvip.html">copy_paste_cvip</tocitem>
+                <tocitem target="crop_cvip.html">crop_cvip</tocitem>
+                <tocitem target="enlarge_cvip.html">enlarge_cvip</tocitem>
+                <tocitem target="fast_doublesize_cvip.html">fast_doublesize_cvip</tocitem>
+                <tocitem target="rotate_cvip.html">rotate_cvip</tocitem>
+                <tocitem target="shrink_cvip.html">shrink_cvip</tocitem>
+                <tocitem target="spatial_quant_cvip.html">spatial_quant_cvip</tocitem>
+                <tocitem target="translate_cvip.html">translate_cvip</tocitem>
+                <tocitem target="zoom_cvip.html">zoom_cvip</tocitem>
+            </tocitem>
+<!--Histogram Functions-->            
+			<tocitem target="HistogramCategory.html">Histogram
+                <tocitem target="get_hist_image_cvip.html">get_hist_image_cvip</tocitem>
+                <tocitem target="gray_linear_cvip.html">gray_linear_cvip</tocitem>
+                <tocitem target="histeq_cvip.html">histeq_cvip</tocitem>
+                <tocitem target="hist_create_cvip.html">hist_create_cvip</tocitem>
+                <tocitem target="hist_spec_cvip.html">hist_spec_cvip</tocitem>
+                <tocitem target="hist_shrink_cvip.html">hist_shrink_cvip</tocitem>
+                <tocitem target="hist_slide_cvip.html">hist_slide_cvip</tocitem>
+                <tocitem target="local_histeq_cvip.html">local_histeq_cvip</tocitem>
+                <tocitem target="hist_stretch_cvip.html">hist_stretch_cvip</tocitem>
+                <tocitem target="unsharp_cvip.html">unsharp_cvip</tocitem>
+            </tocitem>
+<!--Mapping Functions-->            
+			<tocitem target="Mapping.html">Mapping
+                <tocitem target="remap_cvip.html">remap_cvip</tocitem>
+                <tocitem target="condremap_cvip.html">condremap_cvip</tocitem>
+                <tocitem target="logremap_cvip.html">logremap_cvip</tocitem>
+                <tocitem target="relative_remap_cvip.html">relative_remap_cvip</tocitem>
+            </tocitem>
+<!--Morphological Functions-->            
+			<tocitem target="Morphological.html">Morphological
+                <tocitem target="morphclose_cvip.html">morphclose_cvip</tocitem>
+                <tocitem target="morphdilate_cvip.html">morphdilate_cvip</tocitem>
+                <tocitem target="morpherode_cvip.html">morpherode_cvip</tocitem>
+                <tocitem target="morphitermod_cvip.html">morphitermod_cvip</tocitem>
+                <tocitem target="morphopen_cvip.html">morphopen_cvip</tocitem>
+                <tocitem target="morph_thinning_cvip.html">morph_thinning_cvip</tocitem>
+                <tocitem target="morph_skeleton_cvip.html">morph_skeleton_cvip</tocitem>
+                <tocitem target="morph_hitmiss_cvip.html">morph_hitmiss_cvip</tocitem>
+            </tocitem>
+<!--Noise Functions-->            
+			<tocitem target="Noise.html">Noise
+                <tocitem target="gamma_noise_cvip.html">gamma_noise_cvip</tocitem>
+                <tocitem target="gaussian_noise_cvip.html">gaussian_noise_cvip</tocitem>
+                <tocitem target="neg_exp_noise_cvip.html">neg_exp_noise_cvip</tocitem>
+                <tocitem target="rayleigh_noise_cvip.html">rayleigh_noise_cvip</tocitem>
+                <tocitem target="salt_pepper_noise_cvip.html">salt_pepper_noise_cvip</tocitem>
+                <tocitem target="uniform_noise_cvip.html">uniform_noise_cvip</tocitem>
+            </tocitem>
+<!--Objective Fidelity Metrics Functions-->            
+			<tocitem target="ObjectiveFidelityMetrics.html">Objective Fidelity Metrics
+                <tocitem target="rms_error_cvip.html">rms_error_cvip</tocitem>
+                <tocitem target="peak_snr_cvip.html">peak_snr_cvip</tocitem>
+                <tocitem target="snr_cvip.html">snr_cvip</tocitem>
+            </tocitem>
+<!--Pattern Classification: Algorithm Testing Functions-->            
+			<tocitem target="PC_AlgorithmTesting.html">Pattern Classification: Algorithm Testing
+                <tocitem target="train_test_cvip.html">train_test_cvip</tocitem>
+                <tocitem target="leave_one_out_cvip.html">leave_one_out_cvip</tocitem>
+            </tocitem>
+<!--Pattern Classification: Classification Algorithm Functions-->            
+			<tocitem target="PC_ClassificationAlgorithm.html">Pattern Classification: Classification Algorithm
+                <tocitem target="k_nearest_neighbor_cvip.html">k_nearest_neighbor_cvip</tocitem>
+                <tocitem target="nearest_centroid_cvip.html">nearest_centroid_cvip</tocitem>
+                <tocitem target="nearest_centroid_set_cvip.html">nearest_centroid_set_cvip</tocitem>
+                <tocitem target="nearest_neighbor_cvip.html">nearest_neighbor_cvip</tocitem>
+            </tocitem>
+<!--Pattern Classification: Distance/Similarity Metrics Functions-->            
+			<tocitem target="PC_DistanceSimilarityMetrics.html">Pattern Classification: Distance/Similarity Metrics
+				<tocitem target="city_block_cvip.html">city_block_cvip</tocitem>
+                <tocitem target="euclidean_distance_cvip.html">euclidean_distance_cvip</tocitem>
+                <tocitem target="maximum_value_metric_cvip.html">maximum_value_metric_cvip</tocitem>
+                <tocitem target="minkowski_distance_cvip.html">minkowski_distance_cvip</tocitem>
+                <tocitem target="pattern_city_block_cvip.html">pattern_city_block_cvip</tocitem>
+                <tocitem target="pattern_euclidean_cvip.html">pattern_euclidean_cvip</tocitem>
+                <tocitem target="pattern_maximum_cvip.html">pattern_maximum_cvip</tocitem>
+                <tocitem target="pattern_minkowski_cvip.html">pattern_minkowski_cvip</tocitem>
+                <tocitem target="pattern_tanimoto_cvip.html">pattern_tanimoto_cvip</tocitem>
+                <tocitem target="pattern_vector_inner_product_cvip.html">pattern_vector_inner_product_cvip</tocitem>
+                <tocitem target="tanimoto_metric_cvip.html">tanimoto_metric_cvip</tocitem>
+                <tocitem target="vector_inner_product_cvip.html">vector_inner_product_cvip</tocitem>
+            </tocitem>
+<!--Pattern Classification: Feature Extraction Functions-->
+            <tocitem target="PC_FeatureExtraction.html">Pattern Classification: Feature Extraction
+				<tocitem target="area_cvip.html">area_cvip</tocitem>
+                <tocitem target="aspect_cvip.html">aspect_cvip</tocitem>
+                <tocitem target="central_moments_cvip.html">central_moments_cvip</tocitem>
+                <tocitem target="centroid_cvip.html">centroid_cvip</tocitem>
+                <tocitem target="cooccurence_cvip.html">cooccurence_cvip</tocitem>
+                <tocitem target="euler_cvip.html">euler_cvip</tocitem>
+                <tocitem target="feature_objects_cvip.html">feature_objects_cvip</tocitem>
+                <tocitem target="feature_images_cvip.html">feature_images_cvip</tocitem>
+                <tocitem target="hist_feature_cvip.html">hist_feature_cvip</tocitem>
+                <tocitem target="irregular_cvip.html">irregular_cvip</tocitem>
+                <tocitem target="label_cvip.html">label_cvip</tocitem>
+                <tocitem target="orientation_cvip.html">orientation_cvip</tocitem>
+                <tocitem target="perimeter_cvip.html">perimeter_cvip</tocitem>
+                <tocitem target="projection_cvip.html">projection_cvip</tocitem>
+                <tocitem target="rst_invariant_cvip.html">rst_invariant_cvip</tocitem>
+                <tocitem target="texture_features_cvip.html">texture_features_cvip</tocitem>
+                <tocitem target="thinness_cvip.html">thinness_cvip</tocitem>
+                <tocitem target="spectral_features_cvip.html">spectral_features_cvip</tocitem>
+            </tocitem>
+<!--Pattern Classification: Normalization Methods Functions-->
+            <tocitem target="PC_NormalizationMethods.html">Pattern Classification: Normalization Methods
+				<tocitem target="min_max_norm_cvip.html">min_max_norm_cvip</tocitem>
+                <tocitem target="pattern_min_max_norm_cvip.html">pattern_min_max_norm_cvip</tocitem>
+                <tocitem target="pattern_snd_norm_cvip.html">pattern_snd_norm_cvip</tocitem>
+                <tocitem target="pattern_range_norm_cvip.html">pattern_range_norm_cvip</tocitem>
+                <tocitem target="pattern_softmax_norm_cvip.html">pattern_softmax_norm_cvip</tocitem>
+                <tocitem target="pattern_unit_vector_norm_cvip.html">pattern_unit_vector_norm_cvip</tocitem>
+                <tocitem target="range_norm_cvip.html">range_norm_cvip</tocitem>
+                <tocitem target="softmax_cvip.html">softmax_cvip</tocitem>
+                <tocitem target="snd_norm_cvip.html">snd_norm_cvip</tocitem>
+                <tocitem target="unit_vector_norm_cvip.html">unit_vector_norm_cvip</tocitem>
+            </tocitem>
+<!--Pattern Classification: Segmentation Functions-->
+			<tocitem target="Segmentation.html">Segmentation
+				<tocitem target="autothreshold_cvip.html">autothreshold_cvip</tocitem>
+				<tocitem target="fuzzyc_cvip.html">fuzzyc_cvip</tocitem>
+                <tocitem target="gray_quant_cvip.html">gray_quant_cvip</tocitem>
+                <tocitem target="hist_thresh_cvip.html">hist_thresh_cvip</tocitem>
+                <tocitem target="igs_cvip.html">igs_cvip</tocitem>
+                <tocitem target="median_cut_cvip.html">median_cut_cvip</tocitem>
+                <tocitem target="otsu_cvip.html">otsu_cvip</tocitem>
+                <tocitem target="pct_median_cvip.html">pct_median_cvip</tocitem>
+                <tocitem target="sct_split_cvip.html">sct_split_cvip</tocitem>
+                <tocitem target="threshold_cvip.html">threshold_cvip</tocitem>
+            </tocitem>
+<!--Spatial Filters: Adaptive Filters Functions-->            
+            <tocitem target="SF_AdaptiveFilters.html">Spatial Filters: Adaptive Filter
+                <tocitem target="ace2_filter_cvip.html">ace2_filter_cvip</tocitem>
+                <tocitem target="adaptive_contrast_cvip.html">adaptive_contrast_cvip</tocitem>
+                <tocitem target="ad_filter_cvip.html">ad_filter_cvip</tocitem>
+                <tocitem target="adapt_median_filter_cvip.html">adapt_median_filter_cvip</tocitem>
+                <tocitem target="exp_ace_filter_cvip.html">exp_ace_filter_cvip</tocitem>
+                <tocitem target="improved_mmse_filter_cvip.html">improved_mmse_filter_cvip</tocitem>
+                <tocitem target="kuwahara_filter_cvip.html">kuwahara_filter_cvip</tocitem>
+                <tocitem target="log_ace_filter_cvip.html">log_ace_filter_cvip</tocitem>
+                <tocitem target="mmse_filter_cvip.html">mmse_filter_cvip</tocitem>
+            </tocitem>
+<!--Spatial Filters: Mean Filters Functions-->            
+			<tocitem target="SF_MeanFilters.html">Spatial Filters: Mean Filters
+                <tocitem target="arithmetic_mean_cvip.html">arithmetic_mean_cvip</tocitem>
+				<tocitem target="contra_mean_cvip.html">contra_mean_cvip</tocitem>
+                <tocitem target="geometric_mean_cvip.html">geometric_mean_cvip</tocitem>
+                <tocitem target="harmonic_mean_cvip.html">harmonic_mean_cvip</tocitem>
+                <tocitem target="raster_deblur_mean_cvip.html">raster_deblur_mean_cvip</tocitem>
+                <tocitem target="yp_mean_cvip.html">yp_mean_cvip</tocitem>
+            </tocitem>
+<!--Spatial Filters: Miscellaneous Functions-->            
+			<tocitem target="SF_Miscellaneous.html">Spatial Filters: Miscellaneous
+				<tocitem target="convolve_filter_cvip.html">convolve_filter_cvip</tocitem>
+				<tocitem target="difference_filter_cvip.html">difference_filter_cvip</tocitem>
+            </tocitem>
+<!--Spatial Filters: Order Filters Functions-->            
+			<tocitem target="SF_OrderFilters.html">Spatial Filters: Order Filters
+                <tocitem target="alpha_filter_cvip.html">alpha_filter_cvip</tocitem>
+                <tocitem target="maximum_filter_cvip.html">maximum_filter_cvip</tocitem>
+                <tocitem target="median_filter_cvip.html">median_filter_cvip</tocitem>
+                <tocitem target="midpoint_filter_cvip.html">midpoint_filter_cvip</tocitem>
+                <tocitem target="minimum_filter_cvip.html">minimum_filter_cvip</tocitem>
+            </tocitem>
+<!--Transform Functions-->
+            <tocitem target="Transform.html">Transform
+				<tocitem target="dct_cvip.html">dct_cvip</tocitem>
+				<tocitem target="fft_cvip.html">fft_cvip</tocitem>
+                <tocitem target="fft_mag_cvip.html">fft_mag_cvip</tocitem>
+                <tocitem target="fft_phase_cvip.html">fft_phase_cvip</tocitem>
+                <tocitem target="haar_cvip.html">haar_cvip</tocitem>
+                <tocitem target="idct_cvip.html">idct_cvip</tocitem>
+                <tocitem target="ifft_cvip.html">ifft_cvip</tocitem>
+                <tocitem target="ihaar_cvip.html">ihaar_cvip</tocitem>
+                <tocitem target="iwalhad_cvip.html">iwalhad_cvip</tocitem>
+                <tocitem target="iwavdaub4_cvip.html">iwavdaub4_cvip</tocitem>
+                <tocitem target="iwavhaar_cvip.html">iwavhaar_cvip</tocitem>
+                <tocitem target="wavdaub4_cvip.html">wavdaub4_cvip</tocitem>
+                <tocitem target="wavhaar_cvip.html">wavhaar_cvip</tocitem>
+                <tocitem target="walhad_cvip.html">walhad_cvip</tocitem>
+            </tocitem>
+<!--Transform Filters: Standard Functions-->
+            <tocitem target="TF_Standard.html">Transform Filters: Standard
+				<tocitem target="ideal_low_cvip.html">ideal_low_cvip</tocitem>
+				<tocitem target="ideal_high_cvip.html">ideal_high_cvip</tocitem>
+                <tocitem target="ideal_bandpass_cvip.html">ideal_bandpass_cvip</tocitem>
+                <tocitem target="ideal_bandreject_cvip.html">ideal_bandreject_cvip</tocitem>
+                <tocitem target="butterworth_low_cvip.html">butterworth_low_cvip</tocitem>
+                <tocitem target="butterworth_high_cvip.html">butterworth_high_cvip</tocitem>
+                <tocitem target="butterworth_bandpass_cvip.html">butterworth_bandpass_cvip</tocitem>
+                <tocitem target="butterworth_bandreject_cvip.html">butterworth_bandreject_cvip</tocitem>
+                <tocitem target="highfreqemphasis_cvip.html">highfreqemphasis_cvip</tocitem>
+                <tocitem target="homomorphic_cvip.html">homomorphic_cvip</tocitem>
+                <tocitem target="h_image_cvip.html">h_image_cvip</tocitem>
+            </tocitem>
+<!--Transform Filters: Restoration Functions-->
+			<tocitem target="TF_Restoration.html">Transform Filters: Restoration
+				<tocitem target="geometric_mean_xformfilter_cvip.html">geometric_mean_xformfilter_cvip</tocitem>
+				<tocitem target="inverse_xformfilter_cvip.html">inverse_xformfilter_cvip</tocitem>
+                <tocitem target="least_squares_filter_cvip.html">least_squares_filter_cvip</tocitem>
+                <tocitem target="notch_filter_cvip.html">notch_filter_cvip</tocitem>
+                <tocitem target="parametric_wiener_filter_cvip.html">parametric_wiener_filter_cvip</tocitem>
+                <tocitem target="power_spect_eq_filter_cvip.html">power_spect_eq_filter_cvip</tocitem>
+                <tocitem target="simple_wiener_filter_cvip.html">simple_wiener_filter_cvip</tocitem>
+                <tocitem target="wiener_filter_cvip.html">wiener_filter_cvip</tocitem>   
+            </tocitem>
+
+			
+        </tocitem>
+        
+        
+        
+        
+    </tocitem>
+
+</toc>

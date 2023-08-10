@@ -1,0 +1,260 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ad_filter_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="ad_filter_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> out = ad_filter_cvip( I,iter,lambda,K, opt)
+<span class="comment">% AD_FILTER_CVIP - anisotropic diffusion filter.</span>
+<span class="comment">% This is an edge preserving,smoothing filter.The filter is anisotropic</span>
+<span class="comment">% which means it will respond differently in different directions,based on</span>
+<span class="comment">% image characteristics.This will enable the filter to stop the diffusion process</span>
+<span class="comment">% at the edges,while still smoothing in areas of homogeneity.It operates</span>
+<span class="comment">% by a diffusion process that iteratively smoothes the image.At each</span>
+<span class="comment">% iteration of the filter more smoothing is performed and more image</span>
+<span class="comment">% detail is lost.coefficient controls the rate at which the smoothing</span>
+<span class="comment">% takes place and is usually a function of the image gradient so the</span>
+<span class="comment">% details in the image are retained and provides a more natural looking image.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% ------</span>
+<span class="comment">% out = ad_filter_cvip( I,iter,lambda,K, opt)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters Include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">% 'I'             Input image can be gray image or rgb image of MxN size.</span>
+<span class="comment">%</span>
+<span class="comment">% 'iter'          Number of iterations.</span>
+<span class="comment">%</span>
+<span class="comment">% 'lambda'        Smoothing per iteration.</span>
+<span class="comment">%</span>
+<span class="comment">% 'K'             Edge threshold.</span>
+<span class="comment">%</span>
+<span class="comment">% 'opt'           Coefficient functions suggested by Perona &amp; Malik.</span>
+<span class="comment">%                          1 - c(x,y,t) = exp(-(||nablaI||/K).^2),</span>
+<span class="comment">%                          2 - c(x,y,t) = 1./(1 + (||nablaI||/K).^2),</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameters Include :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">% 'out'            The output image after filtering.</span>
+<span class="comment">%                  An image with the same size as the input image.</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                   I = imread('Butterfly.gaussian.tif');</span>
+<span class="comment">%                   iter = 20;</span>
+<span class="comment">%                   sPerIter = 1;</span>
+<span class="comment">%                   K = 6;</span>
+<span class="comment">%                   opt = 2;</span>
+<span class="comment">%                   out = ad_filter_cvip( I,iter,sPerIter,K, opt);</span>
+<span class="comment">%                   figure; imshow(hist_stretch_cvip(out,0,1,0,0),[]);</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">%  1.Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+<span class="comment">%</span>
+<span class="comment">%  2.P.Perona and J. Malik.</span>
+<span class="comment">%   Scale-Space and Edge Detection Using Anisotropic Diffusion.</span>
+<span class="comment">%   IEEE Transactions on Pattern Analysis and Machine Intelligence,</span>
+<span class="comment">%   12(7):629-639, July 1990.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    4/24/2017</span>
+<span class="comment">%           Latest update date:     4/27/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+
+out = double(I);
+
+<span class="keyword">for</span> i=1:iter
+
+[Fx, Fy] = gradient(out);
+
+norm_grad = sqrt(Fx.^2 + Fy.^2);
+var = (norm_grad.^2)/ (K^2);
+
+<span class="keyword">if</span> opt ==1
+    c = exp(-var);
+<span class="keyword">elseif</span> opt ==2
+    c = 1./(1 + var);
+<span class="keyword">end</span>
+
+
+[adx,~] = gradient(c.*Fx);
+[~,ady] = gradient(c.*Fy);
+
+out = out + (lambda)*(adx+ady);
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in ad_filter_cvip (line 69)
+out = double(I);
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function out = ad_filter_cvip( I,iter,lambda,K, opt)
+% AD_FILTER_CVIP - anisotropic diffusion filter.
+% This is an edge preserving,smoothing filter.The filter is anisotropic
+% which means it will respond differently in different directions,based on
+% image characteristics.This will enable the filter to stop the diffusion process
+% at the edges,while still smoothing in areas of homogeneity.It operates
+% by a diffusion process that iteratively smoothes the image.At each
+% iteration of the filter more smoothing is performed and more image
+% detail is lost.coefficient controls the rate at which the smoothing 
+% takes place and is usually a function of the image gradient so the
+% details in the image are retained and provides a more natural looking image.
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% out = ad_filter_cvip( I,iter,lambda,K, opt)
+%   
+% Input Parameters Include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% 'I'             Input image can be gray image or rgb image of MxN size. 
+%                   
+% 'iter'          Number of iterations.  
+%     
+% 'lambda'        Smoothing per iteration.  
+%       
+% 'K'             Edge threshold.  
+%                   
+% 'opt'           Coefficient functions suggested by Perona & Malik. 
+%                          1 - c(x,y,t) = exp(-(||nablaI||/K).^2),    
+%                          2 - c(x,y,t) = 1./(1 + (||nablaI||/K).^2),
+%                              
+%                      
+% Output Parameters Include :  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 'out'            The output image after filtering.
+%                  An image with the same size as the input image.
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                   I = imread('Butterfly.gaussian.tif');
+%                   iter = 20;
+%                   sPerIter = 1;
+%                   K = 6;
+%                   opt = 2;
+%                   out = ad_filter_cvip( I,iter,sPerIter,K, opt);
+%                   figure; imshow(hist_stretch_cvip(out,0,1,0,0),[]);
+%
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%  1.Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+%
+%  2.P.Perona and J. Malik. 
+%   Scale-Space and Edge Detection Using Anisotropic Diffusion.
+%   IEEE Transactions on Pattern Analysis and Machine Intelligence, 
+%   12(7):629-639, July 1990.
+
+%==========================================================================
+%
+%           Author:                 Mehrdad Alvandipour
+%           Initial coding date:    4/24/2017
+%           Latest update date:     4/27/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+
+out = double(I);
+
+for i=1:iter
+    
+[Fx, Fy] = gradient(out);
+
+norm_grad = sqrt(Fx.^2 + Fy.^2);
+var = (norm_grad.^2)/ (K^2);
+
+if opt ==1 
+    c = exp(-var);
+elseif opt ==2
+    c = 1./(1 + var);
+end
+
+
+[adx,~] = gradient(c.*Fx);
+[~,ady] = gradient(c.*Fy);
+
+out = out + (lambda)*(adx+ady);
+end
+
+end
+
+
+##### SOURCE END #####
+--></body></html>

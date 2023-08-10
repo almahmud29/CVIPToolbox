@@ -1,0 +1,181 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>PATTERN_MINKOWSKI_CVIP</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-02"><meta name="DC.source" content="pattern_minkowski_cvip_test.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1><b>PATTERN_MINKOWSKI_CVIP</b></h1><!--introduction--><p><b>pattern_minkowski_cvip()</b> - takes two csv files as input, test and training set, then calculates the minkowski distance metric by comparing each vector in the test set to each in the training set.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">SYNTAX</a></li><li><a href="#2">DESCRIPTION</a></li><li><a href="#3">REFERENCE</a></li><li><a href="#4">EXAMPLE</a></li><li><a href="#5">CREDITS</a></li></ul></div><h2>SYNTAX<a name="1"></a></h2><pre>d = pattern_minkowski_cvip(file_tt, file_tr, r)</pre><p>Input Parameters include :</p><div><ul><li>file_tt   -      Name of the test set file.                   A CSV file with a predefined structure.</li><li>file_tr    -     Name of the training set file.                   A CSV file with a predefined structure.</li><li>r          -     The parameter for mikowski distance metric.                   A real number greater than or equal to 1.</li></ul></div><p>Output Parameters include :</p><div><ul><li>d        -       A matrix containing the distances between each vector                   in the test set to each vector in the training set.                   Each column represents a vector in training set.                   Each row represents a vector in test set.</li></ul></div><h2>DESCRIPTION<a name="2"></a></h2><p>Using minkowski metric, the function calculates the distance between the vectors in training set and the test set.The minkowski metric has an extra argument r which needs to be given as input.The distances are returned in a matrix form whose rows represent the test vectors and columns represent the training vectors.</p><h2>REFERENCE<a name="3"></a></h2><p>1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</p><h2>EXAMPLE<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Test set file</span>
+
+ file_tt = <span class="string">'myTestVectors.CSV'</span>;
+
+<span class="comment">% Training set file</span>
+
+ file_tr = <span class="string">'myTrainingVectors.CSV'</span>;
+
+<span class="comment">% Calling function</span>
+
+ d = pattern_minkowski_cvip(file_tt, file_tr,3)
+</pre><pre class="codeoutput">
+d =
+
+  Columns 1 through 4
+
+  12.5000 -21.6506i  10.0266 -17.3666i  10.6900 -18.5157i   7.4941 -12.9801i
+  12.6047 -21.8320i  11.3742 -19.7007i  12.9219 -22.3813i   7.5471 -13.0720i
+  10.5241 -18.2283i   8.3203 -14.4112i   9.3983 -16.2783i   5.8517 -10.1354i
+  13.0604 -22.6212i  11.7304 -20.3176i  13.2292 -22.9136i   8.0415 -13.9282i
+  10.0518 -17.4103i   8.0052 -13.8654i   9.2312 -15.9888i   5.4104 - 9.3711i
+  11.5003 -19.9191i   9.0638 -15.6990i   9.8253 -17.0179i   6.5343 -11.3178i
+   0.0000 + 0.0000i   3.9365 + 0.0000i   3.8259 - 6.6266i  11.3393 + 0.0000i
+   1.9682 - 3.4091i   0.0000 + 0.0000i   2.0104 - 3.4821i  13.1250 + 0.0000i
+   7.6517 + 0.0000i   4.0207 + 0.0000i   0.0000 + 0.0000i  17.1430 + 0.0000i
+   5.6696 - 9.8201i   6.5625 -11.3666i   8.5715 -14.8462i   0.0000 + 0.0000i
+   7.1047 -12.3057i   5.6696 - 9.8201i   7.3658 -12.7579i   1.9682 - 3.4091i
+   6.5010 -11.2600i   4.3021 - 7.4515i   5.6696 - 9.8201i   7.6517 + 0.0000i
+
+  Columns 5 through 7
+
+   5.3221 - 9.2182i   5.9988 -10.3903i   5.9988 -10.3903i
+   5.7388 - 9.9399i   7.2582 -12.5716i   7.2582 -12.5716i
+   3.4966 - 6.0563i   4.0691 - 7.0479i   4.0691 - 7.0479i
+   6.1303 -10.6179i   7.5595 -13.0935i   7.5595 -13.0935i
+   3.0000 - 5.1962i   3.7054 - 6.4179i   3.7054 - 6.4179i
+   4.3643 - 7.5591i   5.0000 - 8.6603i   5.0000 - 8.6603i
+  14.2094 + 0.0000i  13.0020 + 0.0000i  13.0020 + 0.0000i
+  11.3393 + 0.0000i   8.6043 + 0.0000i   8.6043 + 0.0000i
+  14.7315 + 0.0000i  11.3393 + 0.0000i  11.3393 + 0.0000i
+   3.9365 + 0.0000i   3.8259 - 6.6266i   3.8259 - 6.6266i
+   0.0000 + 0.0000i   2.0104 - 3.4821i   2.0104 - 3.4821i
+   4.0207 + 0.0000i   0.0000 + 0.0000i   0.0000 + 0.0000i
+
+</pre><h2>CREDITS<a name="5"></a></h2><p>
+Author:  Mehrdad Alvandipour, March 2017<br>
+Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+E Umbaugh</a><br>
+For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% *PATTERN_MINKOWSKI_CVIP*
+% *pattern_minkowski_cvip()* - takes two csv files as input, test and training set, then calculates the minkowski distance metric by comparing each vector in the test set to each in the training set.
+%% SYNTAX
+% 
+%  d = pattern_minkowski_cvip(file_tt, file_tr, r)
+%
+% Input Parameters include :
+% 
+% * file_tt   -      Name of the test set file.  
+%                   A CSV file with a predefined structure.
+% * file_tr    -     Name of the training set file. 
+%                   A CSV file with a predefined structure.
+% * r          -     The parameter for mikowski distance metric. 
+%                   A real number greater than or equal to 1.
+%
+% Output Parameters include :  
+%  
+%
+% * d        -       A matrix containing the distances between each vector
+%                   in the test set to each vector in the training set.
+%                   Each column represents a vector in training set.
+%                   Each row represents a vector in test set.
+%
+%% DESCRIPTION
+%
+% Using minkowski metric, the function calculates the distance between the vectors 
+% in training set and the test set.The minkowski metric has an extra argument r
+% which needs to be given as input.The distances are returned in a matrix
+% form whose rows represent the test vectors and columns represent the training
+% vectors.
+% 
+
+%% REFERENCE
+% 
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+%
+%% EXAMPLE
+
+% Test set file
+
+ file_tt = 'myTestVectors.CSV';
+
+% Training set file
+ 
+ file_tr = 'myTrainingVectors.CSV';
+
+% Calling function
+ 
+ d = pattern_minkowski_cvip(file_tt, file_tr,3)
+ 
+
+%% CREDITS
+%
+% <html>
+% Author:  Mehrdad Alvandipour, March 2017<br>
+% Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+% E Umbaugh</a><br>
+% For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+% </html>
+%
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,316 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>fft_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="fft_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> spect = fft_cvip( input_img, block_size )
+<span class="comment">% FFT_CVIP - performs fast Fourier transform.Fourier transform decomposes a</span>
+<span class="comment">% complex signal in to a weighted sum of a zero frequency term and sinusolidal terms,</span>
+<span class="comment">% the basis functions,where each sinusolidal is a harmonic of the fundamental.</span>
+<span class="comment">% The fundamental is the basis or lowest frequency and the harmonics are frequency multiples of the fundamental.</span>
+<span class="comment">% The fundamental is also called first harmonic.Original signal can be recreated by adding fundamental and all harmonics,</span>
+<span class="comment">% with each term weighted by its corresponding transform coefficient.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax:</span>
+<span class="comment">% -------</span>
+<span class="comment">% spect = fft_cvip( input_img, block_size )</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include:</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%   'input_img'       The orignial image which can be grayscale or RGB.</span>
+<span class="comment">%</span>
+<span class="comment">%   'block_size'      Should be a power of 2 or []. if empty, then functions</span>
+<span class="comment">%                     finds the nearest power of 2 and zero pad the image, to</span>
+<span class="comment">%                     that block size. Any other value smaller than image</span>
+<span class="comment">%                     size will partiotion the image to windows of that block</span>
+<span class="comment">%                     size and FT will be calculated separately in each</span>
+<span class="comment">%                     window.</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameters include :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%     'Spect'         The fourier transform of the input image.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                     input_img = input_image();</span>
+<span class="comment">%                     block_size = [];</span>
+<span class="comment">%                     spect = fft_cvip( input_img, block_size );</span>
+<span class="comment">%                     S2 = logremap_cvip(abs(spect)); % use abs to compute the magnitude (handling imaginary) and use log to brighten display</span>
+<span class="comment">%                     figure; imshow(input_img,[]); title('Input Image')</span>
+<span class="comment">%                     figure; imshow(S2,[]); title('FFT Output Image')</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    05/29/2017</span>
+<span class="comment">%           Updated by:             Sujata Bista</span>
+<span class="comment">%                                   Murat Aslan</span>
+<span class="comment">%           Latest update date:     04/23/2019</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">% Revision History</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.2  04/23/2019  16:11:53  sbista, maslan</span>
+ <span class="comment">% Replace the padarray functions that belong to the Image processing toolbox</span>
+ <span class="comment">% for the padarray_cvip CVIP toolbox function</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.1  05/29/2017  16:33:22  malvan</span>
+ <span class="comment">% Initial coding:</span>
+ <span class="comment">% function writting and testing.</span>
+<span class="comment">%</span>
+
+[m,n,~] = size(input_img);
+<span class="keyword">if</span> ~isempty(block_size)     <span class="comment">% block size given by the user. ---&gt; multiple windows for fft computation</span>
+
+    [F,~] = log2(block_size);
+    <span class="keyword">if</span> F~=.5
+        error(<span class="string">'block size should be a power of 2'</span>);
+    <span class="keyword">end</span>
+    siz = padd_siz_cvip([m n],block_size); <span class="comment">% To fit windows of size block_size to input_img, it needs to have the size M,N computed below</span>
+    M = siz(1);
+    N = siz(2);
+<span class="keyword">else</span>    <span class="comment">% block size is determined by size of the image. --&gt; one window to comput fft</span>
+    block_size = 0;
+    siz = 2.^nextpow2([m n]);   <span class="comment">% find the next power of 2 greater than m,n to zeropad the input_img.</span>
+    M = siz(1);
+    N = siz(2);
+<span class="keyword">end</span>
+
+input_img = padarray_cvip(input_img,M,N); <span class="comment">%pad input image with zeros</span>
+
+spect = zeros(size(input_img));
+
+<span class="keyword">if</span> block_size <span class="comment">% if user has given a block size, we need a loop to go through  all the windows</span>
+    [m,n,~] = size(input_img);
+    <span class="keyword">for</span> i=1:(m/block_size)
+        <span class="keyword">for</span> j=1:(n/block_size)
+            is_ind = block_size*(i-1) + 1;
+            ie_ind = block_size*i;
+            js_ind = block_size*(j-1) + 1;
+            je_ind = block_size*j;
+            spect(is_ind:ie_ind,js_ind:je_ind,:) = fftshift(fft2(input_img(is_ind:ie_ind,js_ind:je_ind,:)));
+<span class="comment">%             Y = fftshift(X)</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">else</span>    <span class="comment">%  if block size is 0 at this line, it means block size was give [] or 0 by the user, so there is only one window to comput fft.</span>
+    spect = fftshift(fft2(input_img));
+<span class="keyword">end</span>
+
+<span class="comment">% siz = 2.^nextpow2([m n]);</span>
+
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> Ap = padd_siz_cvip(A,block_size)       <span class="comment">% a helper function to return the desired size of the image for the given block_size.</span>
+    Ap = A;
+    <span class="keyword">for</span> i=1:length(A)
+       x = A(i);
+       <span class="keyword">if</span> mod(x,block_size) ~= 0
+           Ap(i) = ceil(x/block_size)*block_size;
+       <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in fft_cvip (line 70)
+[m,n,~] = size(input_img);
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function spect = fft_cvip( input_img, block_size )
+% FFT_CVIP - performs fast Fourier transform.Fourier transform decomposes a
+% complex signal in to a weighted sum of a zero frequency term and sinusolidal terms,
+% the basis functions,where each sinusolidal is a harmonic of the fundamental.
+% The fundamental is the basis or lowest frequency and the harmonics are frequency multiples of the fundamental.
+% The fundamental is also called first harmonic.Original signal can be recreated by adding fundamental and all harmonics,
+% with each term weighted by its corresponding transform coefficient. 
+%   
+% Syntax:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% spect = fft_cvip( input_img, block_size )
+%   
+% Input Parameters include:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+%   'input_img'       The orignial image which can be grayscale or RGB.
+%
+%   'block_size'      Should be a power of 2 or []. if empty, then functions
+%                     finds the nearest power of 2 and zero pad the image, to
+%                     that block size. Any other value smaller than image
+%                     size will partiotion the image to windows of that block
+%                     size and FT will be calculated separately in each
+%                     window.
+%
+% Output Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+%     'Spect'         The fourier transform of the input image.
+%                   
+%
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                     input_img = input_image();
+%                     block_size = [];
+%                     spect = fft_cvip( input_img, block_size );
+%                     S2 = logremap_cvip(abs(spect)); % use abs to compute the magnitude (handling imaginary) and use log to brighten display                    
+%                     figure; imshow(input_img,[]); title('Input Image')
+%                     figure; imshow(S2,[]); title('FFT Output Image')
+%                  
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Mehrdad Alvandipour
+%           Initial coding date:    05/29/2017
+%           Updated by:             Sujata Bista
+%                                   Murat Aslan
+%           Latest update date:     04/23/2019
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+% Revision History
+%
+ % Revision 1.2  04/23/2019  16:11:53  sbista, maslan
+ % Replace the padarray functions that belong to the Image processing toolbox
+ % for the padarray_cvip CVIP toolbox function
+%
+ % Revision 1.1  05/29/2017  16:33:22  malvan
+ % Initial coding:
+ % function writting and testing.
+%  
+
+[m,n,~] = size(input_img);
+if ~isempty(block_size)     % block size given by the user. REPLACE_WITH_DASH_DASH-> multiple windows for fft computation
+    
+    [F,~] = log2(block_size);
+    if F~=.5
+        error('block size should be a power of 2');
+    end
+    siz = padd_siz_cvip([m n],block_size); % To fit windows of size block_size to input_img, it needs to have the size M,N computed below
+    M = siz(1);
+    N = siz(2);
+else    % block size is determined by size of the image. REPLACE_WITH_DASH_DASH> one window to comput fft
+    block_size = 0;
+    siz = 2.^nextpow2([m n]);   % find the next power of 2 greater than m,n to zeropad the input_img.
+    M = siz(1);
+    N = siz(2);
+end
+
+input_img = padarray_cvip(input_img,M,N); %pad input image with zeros
+
+spect = zeros(size(input_img));
+
+if block_size % if user has given a block size, we need a loop to go through  all the windows
+    [m,n,~] = size(input_img);
+    for i=1:(m/block_size)
+        for j=1:(n/block_size)
+            is_ind = block_size*(i-1) + 1;
+            ie_ind = block_size*i;
+            js_ind = block_size*(j-1) + 1;
+            je_ind = block_size*j;
+            spect(is_ind:ie_ind,js_ind:je_ind,:) = fftshift(fft2(input_img(is_ind:ie_ind,js_ind:je_ind,:)));
+%             Y = fftshift(X)
+        end
+    end
+else    %  if block size is 0 at this line, it means block size was give [] or 0 by the user, so there is only one window to comput fft.
+    spect = fftshift(fft2(input_img));
+end
+
+% siz = 2.^nextpow2([m n]);
+
+end
+
+function Ap = padd_siz_cvip(A,block_size)       % a helper function to return the desired size of the image for the given block_size.
+    Ap = A;
+    for i=1:length(A)
+       x = A(i);
+       if mod(x,block_size) ~= 0
+           Ap(i) = ceil(x/block_size)*block_size;
+       end
+      
+    end
+end
+##### SOURCE END #####
+--></body></html>

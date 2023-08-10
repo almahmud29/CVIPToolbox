@@ -1,0 +1,410 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>feature_images_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="feature_images_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [ out_table ] = feature_images_cvip( folder , out_file_name, bin_feat,his_feat, rst_feat, tex_feat, spec_feat,varargin)
+<span class="comment">% FEATURE_IMAGES_CVIP - extracts features from a group of images, where each image contains one object of interest,</span>
+<span class="comment">%                       and uses corresponding mask images, output is a csv file</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% ------</span>
+<span class="comment">% [out_table] = feature_images_cvip( folder,out_file_name,bin_feat,his_feat,rst_feat,tex_feat,spec_feat,varargin)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%  'folder'        Address relative to the current directory, or absolute</span>
+<span class="comment">%                  address to a folder containing the images and their mask folder.</span>
+<span class="comment">%                  So the folder should contain a number of images and</span>
+<span class="comment">%                  another subfolder. The subfolder is assumed to contain</span>
+<span class="comment">%                  the mask images. The names of the images and their</span>
+<span class="comment">%                  masks should match. Also the number of images should be</span>
+<span class="comment">%                  the same in both folders.</span>
+<span class="comment">%</span>
+<span class="comment">% 'out_file_name'  Name of the output file.it can be empty.</span>
+<span class="comment">%                  The output is a CSV file</span>
+<span class="comment">%</span>
+<span class="comment">% 'bin_feat'       A row vector of 8 elemets at most, that selects the desired</span>
+<span class="comment">%                  binary features to be extracted.For more details look</span>
+<span class="comment">%                  at binary_feature_cvip.</span>
+<span class="comment">%</span>
+<span class="comment">%  'his_feat'      A row vector of 5 elemets at most, that selects the desired</span>
+<span class="comment">%                  histogram features to be extracted.For more details</span>
+<span class="comment">%                  look at hist_feature_cvip.</span>
+<span class="comment">%</span>
+<span class="comment">% 'rst_feat'       A row vector of 7 elemets at most, that selects the desired</span>
+<span class="comment">%                  rst invariant features to be extracted.For more</span>
+<span class="comment">%                  details look at rst_invariant_cvip.</span>
+<span class="comment">%</span>
+<span class="comment">%  'tex_feat'      A row vector of 20 elemets at most, that selects the desired</span>
+<span class="comment">%                  texture features to be extracted. For more details look</span>
+<span class="comment">%                  at texture_features_cvip.</span>
+<span class="comment">%</span>
+<span class="comment">% 'spec_feat'      A row vector of 2 elemets at most, that determines the</span>
+<span class="comment">%                  number of rings and sectors to be used.</span>
+<span class="comment">%</span>
+<span class="comment">%'[optional]'      The default values for texDist, quantLvl,</span>
+<span class="comment">%                  statsType, normWidth, normHeight can be overwritten by</span>
+<span class="comment">%                  specifying the new values as optional input arguments.</span>
+<span class="comment">%                  For each of these, first, the name should be given as a</span>
+<span class="comment">%                  string, and then the value, i.e. (..., 'par_name', value)</span>
+<span class="comment">%                  For example: feature_objects_cvip( ... , 'quantLvl', 2)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example 1 :</span>
+<span class="comment">% ---------</span>
+<span class="comment">%</span>
+<span class="comment">%             folder = 'C:\Users\lgorant\Desktop\Anjana\Anjana\CVIP_Toolbox\images\ACL\ACL\Lateral\Abnormal';</span>
+<span class="comment">%             bin_feat = [1 0 1 1 1];</span>
+<span class="comment">%             his_feat = [0 1 1];</span>
+<span class="comment">%             rst_feat = [1  1 1];</span>
+<span class="comment">%             tex_feat = [1 0 0 0];</span>
+<span class="comment">%             spec_feat = [0 0];</span>
+<span class="comment">%             texDist  = 4;</span>
+<span class="comment">%             quantLvl = 2;</span>
+<span class="comment">%             statsType = [0 0 1];</span>
+<span class="comment">%             out_file_name=  'the_output_of_feat_imgs';</span>
+<span class="comment">%             [ out_table ] = feature_images_cvip( folder, out_file_name , bin_feat,his_feat, rst_feat, tex_feat, spec_feat,'statstype', [1 0 1])</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    3/13/2017</span>
+<span class="comment">%           Latest update date:     3/19/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">%   folder:     'address relative to the current directory, or absolute address'</span>
+
+
+list = dir(folder);
+
+<span class="comment">%   list is the folder of images.</span>
+<span class="comment">%   mask_list is the folder for masks.</span>
+<span class="comment">%   They should contain the same number of images with the same names.</span>
+<span class="comment">% list contains:        . , .. , A_folder, images</span>
+<span class="comment">% mask_list contains:   . , .. , images</span>
+<span class="comment">%   Thus the the third elements of list is the name of the mask folder that</span>
+<span class="comment">%   we need to look into.</span>
+
+mask_folder = [folder <span class="string">'\MASKS'</span>];<span class="comment">% list(3).name];</span>
+mask_list = dir(mask_folder);
+
+<span class="keyword">if</span> length(list)-3 ~= length(mask_list) -2
+    error(<span class="string">'The mask folder should contain the same number of images as the main folder'</span>);
+<span class="keyword">else</span>
+    num_of_images = length(list)-3;
+<span class="keyword">end</span>
+
+n=2;    <span class="comment">%figure image index in directory</span>
+m=2;    <span class="comment">%figure image index in masks directory</span>
+<span class="keyword">for</span> i=1:num_of_images
+    <span class="keyword">if</span> list(i+n).isdir
+        n=n+1;      <span class="comment">%increase index if detect an intermediate directory</span>
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> mask_list(i+m).isdir
+        m=m+1;      <span class="comment">%increase index if detect an intermediate directory</span>
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> strcmp(list(i+n).name, mask_list(i+m).name)~=1
+        warning(<span class="string">'The names do not match'</span>)
+    <span class="keyword">end</span>
+
+    img_add = [folder <span class="string">'\'</span> list(i+n).name];
+    mask_add = [mask_folder <span class="string">'\'</span> mask_list(i+m).name];
+    I = imread(img_add);
+    mask = imread(mask_add);
+
+    mask = mask&gt;0;          <span class="comment">% Threshold to make sure there is only one object for each image.</span>
+    objLabel = 1;           <span class="comment">% There's only one object in each image, and it is labeled 1.</span>
+    <span class="keyword">if</span> size(mask,3)~=1
+        mask=mask(:,:,1);   <span class="comment">%if we have a 3 band mask... strangr but happens</span>
+    <span class="keyword">end</span>
+    out_file_name_0 = [];   <span class="comment">% we don't want feature_objects_cvip to save anything</span>
+    final_table = feature_objects_cvip( I, mask,objLabel, out_file_name_0 ,bin_feat,his_feat, rst_feat, tex_feat, spec_feat,varargin);
+    final_table(2,1)={list(i+n).name};  <span class="comment">%change obj_id to image name</span>
+    <span class="keyword">if</span> i~=1
+        out_table(i+1,:) = final_table(2,:);
+    <span class="keyword">else</span>
+        out_table = cell(num_of_images,size(final_table,2));
+        out_table(1:2,:) = final_table;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="comment">%out_table(2:end,1) = num2cell(1:num_of_images); % id correction --&gt; first column of final table</span>
+
+
+
+
+
+
+    <span class="comment">% We just return the cell array final_table, unless the user specifies an</span>
+    <span class="comment">% output file name in out_file_name. out_file_name is a string.</span>
+    <span class="keyword">if</span> ~isempty(out_file_name)
+        <span class="keyword">if</span> ~strcmp(out_file_name(end-3:end), <span class="string">'.csv'</span>)    <span class="comment">% the extension should be .csv</span>
+            out_file_name = [pwd <span class="string">'\Features\'</span> out_file_name <span class="string">'.csv'</span>];     <span class="comment">% so we append it to out_file_name if it does not end with '.csv'.</span>
+        <span class="keyword">end</span>
+        fid = fopen(out_file_name, <span class="string">'w'</span>) ;
+        fprintf(fid, <span class="string">'%s,'</span>, out_table{1,1:end-1}) ;
+        fprintf(fid, <span class="string">'%s\n'</span>, out_table{1,end}) ;
+        [rows, cols] = size(out_table);
+        <span class="keyword">for</span> i = 1:rows
+            <span class="keyword">for</span> j = 1:cols
+                <span class="keyword">if</span> j==1
+                    fprintf(fid, <span class="string">'%s,'</span>, out_table{i,j});
+                <span class="keyword">elseif</span> j==cols
+                    fprintf(fid, <span class="string">'%6.6f\n'</span>, out_table{i,j});
+                <span class="keyword">else</span>
+                    fprintf(fid, <span class="string">'%6.6f,'</span>, out_table{i,j});
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        fclose(fid) ;
+        <span class="comment">%dlmwrite(out_file_name, out_table(2:end,:), '-append') ;</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in feature_images_cvip (line 83)
+list = dir(folder);
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [ out_table ] = feature_images_cvip( folder , out_file_name, bin_feat,his_feat, rst_feat, tex_feat, spec_feat,varargin)
+% FEATURE_IMAGES_CVIP - extracts features from a group of images, where each image contains one object of interest, 
+%                       and uses corresponding mask images, output is a csv file
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% [out_table] = feature_images_cvip( folder,out_file_name,bin_feat,his_feat,rst_feat,tex_feat,spec_feat,varargin)
+%   
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%  'folder'        Address relative to the current directory, or absolute
+%                  address to a folder containing the images and their mask folder.
+%                  So the folder should contain a number of images and
+%                  another subfolder. The subfolder is assumed to contain
+%                  the mask images. The names of the images and their
+%                  masks should match. Also the number of images should be
+%                  the same in both folders.
+%                    
+% 'out_file_name'  Name of the output file.it can be empty.
+%                  The output is a CSV file 
+%
+% 'bin_feat'       A row vector of 8 elemets at most, that selects the desired
+%                  binary features to be extracted.For more details look
+%                  at binary_feature_cvip.
+%
+%  'his_feat'      A row vector of 5 elemets at most, that selects the desired
+%                  histogram features to be extracted.For more details
+%                  look at hist_feature_cvip.
+%
+% 'rst_feat'       A row vector of 7 elemets at most, that selects the desired
+%                  rst invariant features to be extracted.For more
+%                  details look at rst_invariant_cvip.
+%
+%  'tex_feat'      A row vector of 20 elemets at most, that selects the desired
+%                  texture features to be extracted. For more details look
+%                  at texture_features_cvip.
+%
+% 'spec_feat'      A row vector of 2 elemets at most, that determines the
+%                  number of rings and sectors to be used.
+%
+%'[optional]'      The default values for texDist, quantLvl,
+%                  statsType, normWidth, normHeight can be overwritten by
+%                  specifying the new values as optional input arguments.
+%                  For each of these, first, the name should be given as a
+%                  string, and then the value, i.e. (..., 'par_name', value)
+%                  For example: feature_objects_cvip( ... , 'quantLvl', 2)
+%
+%   
+% Example 1 :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+%             folder = 'C:\Users\lgorant\Desktop\Anjana\Anjana\CVIP_Toolbox\images\ACL\ACL\Lateral\Abnormal';
+%             bin_feat = [1 0 1 1 1];
+%             his_feat = [0 1 1];
+%             rst_feat = [1  1 1];
+%             tex_feat = [1 0 0 0];
+%             spec_feat = [0 0]; 
+%             texDist  = 4;
+%             quantLvl = 2;
+%             statsType = [0 0 1]; 
+%             out_file_name=  'the_output_of_feat_imgs';
+%             [ out_table ] = feature_images_cvip( folder, out_file_name , bin_feat,his_feat, rst_feat, tex_feat, spec_feat,'statstype', [1 0 1])
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Mehrdad Alvandipour
+%           Initial coding date:    3/13/2017
+%           Latest update date:     3/19/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+%   folder:     'address relative to the current directory, or absolute address'
+
+
+list = dir(folder);
+
+%   list is the folder of images.
+%   mask_list is the folder for masks.
+%   They should contain the same number of images with the same names.
+% list contains:        . , .. , A_folder, images
+% mask_list contains:   . , .. , images
+%   Thus the the third elements of list is the name of the mask folder that
+%   we need to look into.
+
+mask_folder = [folder '\MASKS'];% list(3).name];
+mask_list = dir(mask_folder);
+
+if length(list)-3 ~= length(mask_list) -2
+    error('The mask folder should contain the same number of images as the main folder');
+else
+    num_of_images = length(list)-3;
+end
+
+n=2;    %figure image index in directory
+m=2;    %figure image index in masks directory
+for i=1:num_of_images
+    if list(i+n).isdir
+        n=n+1;      %increase index if detect an intermediate directory
+    end
+    if mask_list(i+m).isdir
+        m=m+1;      %increase index if detect an intermediate directory
+    end
+    if strcmp(list(i+n).name, mask_list(i+m).name)~=1
+        warning('The names do not match')
+    end
+    
+    img_add = [folder '\' list(i+n).name];
+    mask_add = [mask_folder '\' mask_list(i+m).name];
+    I = imread(img_add);
+    mask = imread(mask_add);
+    
+    mask = mask>0;          % Threshold to make sure there is only one object for each image.
+    objLabel = 1;           % There's only one object in each image, and it is labeled 1.
+    if size(mask,3)~=1
+        mask=mask(:,:,1);   %if we have a 3 band mask... strangr but happens
+    end
+    out_file_name_0 = [];   % we don't want feature_objects_cvip to save anything
+    final_table = feature_objects_cvip( I, mask,objLabel, out_file_name_0 ,bin_feat,his_feat, rst_feat, tex_feat, spec_feat,varargin);
+    final_table(2,1)={list(i+n).name};  %change obj_id to image name
+    if i~=1
+        out_table(i+1,:) = final_table(2,:);
+    else
+        out_table = cell(num_of_images,size(final_table,2));
+        out_table(1:2,:) = final_table;
+    end
+end
+%out_table(2:end,1) = num2cell(1:num_of_images); % id correction REPLACE_WITH_DASH_DASH> first column of final table
+
+    
+
+
+
+
+    % We just return the cell array final_table, unless the user specifies an
+    % output file name in out_file_name. out_file_name is a string.
+    if ~isempty(out_file_name)
+        if ~strcmp(out_file_name(end-3:end), '.csv')    % the extension should be .csv
+            out_file_name = [pwd '\Features\' out_file_name '.csv'];     % so we append it to out_file_name if it does not end with '.csv'.
+        end
+        fid = fopen(out_file_name, 'w') ;
+        fprintf(fid, '%s,', out_table{1,1:end-1}) ;
+        fprintf(fid, '%s\n', out_table{1,end}) ;
+        [rows, cols] = size(out_table);
+        for i = 1:rows
+            for j = 1:cols
+                if j==1
+                    fprintf(fid, '%s,', out_table{i,j});
+                elseif j==cols
+                    fprintf(fid, '%6.6f\n', out_table{i,j});
+                else
+                    fprintf(fid, '%6.6f,', out_table{i,j});
+                end
+            end
+        end
+        fclose(fid) ;
+        %dlmwrite(out_file_name, out_table(2:end,:), '-append') ;
+    end
+end
+
+
+##### SOURCE END #####
+--></body></html>

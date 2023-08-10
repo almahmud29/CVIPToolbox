@@ -1,0 +1,605 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>feature_objects_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="feature_objects_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#4">input_img, mask_img bin_feat,his_feat, rst_feat, tex_feat, spec_feat</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span>  final_table = feature_objects_cvip( input_img, mask_img,objLabel, out_file_name,bin_feat,his_feat, rst_feat, tex_feat, spec_feat,varargin)
+</pre><pre class="codeinput"><span class="comment">% FEATURE_OBJECTS_CVIP - extracts features from a group of objects in a single image and a single image mask for the objects,</span>
+<span class="comment">%                        output is a csv file</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% ------</span>
+<span class="comment">% final_table = feature_objects_cvip( input_img, mask_img,objLabel, out_file_name,bin_feat,his_feat, rst_feat, tex_feat, spec_feat,varargin)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include:</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%  'input_img'       The input image for feature extraction.</span>
+<span class="comment">%                    A gray scale or color image.</span>
+<span class="comment">%</span>
+<span class="comment">%  'mask_img'        A 2d mask that has integers assigned to objects and 0 to other areas in the image.</span>
+<span class="comment">%                    It hould have the same number of row and columns as the</span>
+<span class="comment">%                    input_img.</span>
+<span class="comment">%</span>
+<span class="comment">% 'out_file_name'    Name of the output file. it can be empty.</span>
+<span class="comment">%                    The output is a CSV file</span>
+<span class="comment">%</span>
+<span class="comment">% 'bin_feat'         A row vector of 8 elemets at most, that selects the desired</span>
+<span class="comment">%                    binary features to be extracted.For more details look</span>
+<span class="comment">%                    at binary_feature_cvip.</span>
+<span class="comment">%</span>
+<span class="comment">%  'his_feat'        A row vector of 5 elemets at most, that selects the desired</span>
+<span class="comment">%                    histogram features to be extracted.For more details</span>
+<span class="comment">%                    look at hist_feature_cvip.</span>
+<span class="comment">%</span>
+<span class="comment">%  'rst_feat'        A row vector of 7 elemets at most, that selects the desired</span>
+<span class="comment">%                    rst invariant features to be extracted.For more</span>
+<span class="comment">%                    details look at rst_invariant_cvip.</span>
+<span class="comment">%</span>
+<span class="comment">% 'tex_feat'         A row vector of 20 elemets at most, that selects the desired</span>
+<span class="comment">%                    texture features to be extracted.For more details look</span>
+<span class="comment">%                    at texture_features_cvip.</span>
+<span class="comment">%</span>
+<span class="comment">%  'spec_feat'       A row vector of 2 elemets at most, that determines the</span>
+<span class="comment">%                    number of rings and sectors to be used.</span>
+<span class="comment">%</span>
+<span class="comment">%  '[optional]'      The default values for texDist, quantLvl,</span>
+<span class="comment">%                    statsType, normWidth, normHeight can be overwritten by</span>
+<span class="comment">%                    specifying the new values as optional input arguments.</span>
+<span class="comment">%                    For each of these, first, the name should be given as a</span>
+<span class="comment">%                    string, and then the value, i.e. (..., 'par_name', value)</span>
+<span class="comment">%                    For example: feature_objects_cvip( ... , 'quantLvl', 2)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%  Example :</span>
+<span class="comment">%  --------</span>
+<span class="comment">%</span>
+<span class="comment">%             input_img = imread('Stripey.jpg');</span>
+<span class="comment">%             mask_img = zeros(size(input_img));</span>
+<span class="comment">%             mask_img = mask_img(:,:,1);</span>
+<span class="comment">%             mask_img(50:200,25:95) = 1;</span>
+<span class="comment">%             mask_img(100:300,255:400) = 2;</span>
+<span class="comment">%             objLabel = [1 ;2];</span>
+<span class="comment">%             out_file_name =( 'sdfsdf');</span>
+<span class="comment">%             bin_feat = [1 0 1];</span>
+<span class="comment">%             his_feat = [0 1 1];</span>
+<span class="comment">%             rst_feat = [1 0 0 1];</span>
+<span class="comment">%             tex_feat = [1 0 0 0];</span>
+<span class="comment">%             spec_feat = [0 0];</span>
+<span class="comment">%             texDist  = 4;</span>
+<span class="comment">%             quantLvl = 2;</span>
+<span class="comment">%             statsType = [0 0 1];</span>
+<span class="comment">%             normWidth = 12;</span>
+<span class="comment">%             normHeight = 15;</span>
+<span class="comment">%             b = feature_objects_cvip( input_img, mask_img,objLabel, out_file_name,bin_feat,his_feat, rst_feat, tex_feat, spec_feat, 'statstype', [1 0 1])</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications</span>
+<span class="comment">% with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    3/13/2017</span>
+<span class="comment">%           Latest update date:     3/19/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+<span class="comment">%%revision 1.1 : Hridoy</span>
+<span class="comment">% line 183,197,208 : To get the number 'n' to use it on the feature viewr</span>
+<span class="keyword">global</span> suppress_info
+suppress_info = 0;
+
+nVarargs = length(varargin);            <span class="comment">%</span>
+<span class="keyword">if</span> iscell(varargin) &amp;&amp; nVarargs==1      <span class="comment">% This is to allow varargin to be</span>
+    varargin = varargin{1};             <span class="comment">% passed in the format of a cell array.</span>
+    nVarargs = length(varargin);        <span class="comment">% This is specially useful when this function is called within feature_images_cvip()</span>
+    suppress_info = 1;
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> mod(nVarargs,2) <span class="comment">% odd number of varargins means something wrong</span>
+    error(<span class="string">'the variable input areguments should be in pairs'</span>)
+<span class="keyword">end</span>
+
+
+<span class="keyword">global</span> texDist quantLvl statsType; <span class="comment">% texture feature parameters</span>
+<span class="keyword">global</span> normWidth normHeight; <span class="comment">% for projection feature</span>
+
+<span class="comment">% The default values</span>
+texDist = 2;
+quantLvl = -1;
+statsType = [1 0 0];
+normWidth = 10;
+normHeight = 10;
+<span class="comment">% override the defaults if given other values by user</span>
+<span class="comment">% optional arguments at the end of input arguments of the function can</span>
+<span class="comment">% contain any combination of the above 5 parameters. The parameters and</span>
+<span class="comment">% their desired values are given in pair by their names, and values in</span>
+<span class="comment">% varargin. For example a call to our fucntion could be like:</span>
+<span class="comment">%</span>
+<span class="comment">%                                    ( neccessary input args  ,        optional args           )</span>
+<span class="comment">%                                    (              |         ,               |                )</span>
+<span class="comment">%                                    (              |         ,               |                )</span>
+<span class="comment">%                                    (              |         ,               |                )</span>
+<span class="comment">%                                    (______________|________ , ______________|_______________ )</span>
+<span class="comment">%  final_table = feature_objects_cvip(             ...        ,  'texDist', 3 , 'normWidth', 15)</span>
+<span class="comment">%</span>
+<span class="keyword">for</span> k = 1:(nVarargs/2)
+      opt = varargin{2*k -1};
+      val = varargin{2*k};
+      process_input(opt, val)
+<span class="keyword">end</span>
+</pre><pre class="codeinput">[num_obj, objdim] = size(objLabel);
+objList=zeros(num_obj,1);
+<span class="keyword">if</span> objdim== 2
+    <span class="keyword">for</span> i=1:size(objLabel,1)
+        objList(i) = mask_img(objLabel(i,1),objLabel(i,2));
+    <span class="keyword">end</span>
+    obj_id = { <span class="string">'row_obj'</span> <span class="string">'col_obj'</span>};
+    first_cols = 3;
+<span class="keyword">else</span>
+    objList = objLabel;
+    obj_id = {<span class="string">'obj_id'</span>};
+    first_cols = 2;
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in feature_objects_cvip (line 139)
+[num_obj, objdim] = size(objLabel);
+</pre><h2 id="4">input_img, mask_img bin_feat,his_feat, rst_feat, tex_feat, spec_feat</h2><pre class="codeinput"><span class="comment">% Tell the user about the values used for optional arguments</span>
+<span class="comment">%	info on projection feature--normWidth,normHeight -- are handled</span>
+<span class="comment">%   inside binary_feature_cvip() which is called later in this code if</span>
+<span class="comment">%   necessary.</span>
+final_table = {};
+<span class="keyword">if</span> sum(bin_feat)        <span class="comment">%% Binary features</span>
+    <span class="keyword">if</span> ~suppress_info &amp;&amp;  length(bin_feat) &gt; 6
+        <span class="keyword">if</span> bin_feat(7)    <span class="comment">% Tell the user what settings is being used</span>
+            display(<span class="string">'The settings for projection feature is as follows:'</span>);
+            display([<span class="string">'Normalizing width = '</span> num2str(normWidth) ]);
+            display([<span class="string">'Normalizing height = '</span> num2str(normHeight) ]);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+   bin_cell = binary_feature_cvip(mask_img, objLabel,bin_feat,out_file_name, <span class="string">'normWidth'</span>, normWidth, <span class="string">'normHeight'</span>, normHeight );
+    <span class="keyword">if</span> isempty(final_table)
+        final_table = bin_cell;
+    <span class="keyword">else</span>
+        final_table = [final_table bin_cell(:,first_cols:end)];
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> sum(rst_feat)        <span class="comment">%% RST Invariant features</span>
+    <span class="keyword">if</span> sum(bin_feat)&gt;=1
+        n=1;
+    <span class="keyword">else</span>
+        n=0;
+    <span class="keyword">end</span>
+    rst_cell = rst_invariant_cvip(mask_img, objLabel,out_file_name, rst_feat,n);<span class="comment">%n= to know whether 'col' will be used or not</span>
+    <span class="keyword">if</span> isempty(final_table)
+        final_table = rst_cell;
+    <span class="keyword">else</span>
+        final_table = [final_table rst_cell(:,first_cols:end)];
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> sum(his_feat)
+    <span class="keyword">if</span> sum(bin_feat)&gt;=1 ||sum(rst_feat)&gt;=1
+        n=1;
+    <span class="keyword">else</span>
+        n=0;
+    <span class="keyword">end</span><span class="comment">%% Histogram features</span>
+    hist_cell = hist_feature_cvip(input_img, mask_img, objLabel,out_file_name,his_feat,n);<span class="comment">%n= to know whether 'col' will be used or not</span>
+    <span class="keyword">if</span> isempty(final_table)
+        final_table = hist_cell;
+    <span class="keyword">else</span>
+        final_table = [final_table hist_cell(:,first_cols:end)];
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> sum(tex_feat)
+    <span class="keyword">if</span> sum(bin_feat)&gt;=1 ||sum(rst_feat)&gt;=1 ||sum(his_feat)
+        n=1;
+    <span class="keyword">else</span>
+        n=0;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> ~suppress_info
+        display(<span class="string">'The settings for texture features are as follows: '</span>);
+        display([<span class="string">'Texture distance = '</span> num2str(texDist) ]);
+        display([<span class="string">'Quantization level = '</span> num2str(quantLvl) ]);
+        display([<span class="string">'Statistics type = '</span> num2str(statsType) ]);
+    <span class="keyword">end</span>
+    <span class="comment">% texture_features_cvip(inImage, labelImage, texDist, featSelect, objLabel, quantLvl, statsType, className)</span>
+    tex_cell = texture_features_cvip(input_img, mask_img,out_file_name, texDist, tex_feat, objLabel, quantLvl,  statsType,n);<span class="comment">%n= to know whether 'col' will be used or not</span>
+    <span class="keyword">if</span> isempty(final_table)
+        final_table = tex_cell;
+    <span class="keyword">else</span>
+        final_table = [final_table tex_cell(:,first_cols:end)];
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> sum(spec_feat)       <span class="comment">%% Spectral features</span>
+    spec_cell = spectral_features_cvip(input_img,mask_img, objLabel, spec_feat);
+    <span class="keyword">if</span> isempty(final_table)
+        final_table = spec_cell;
+    <span class="keyword">else</span>
+        final_table = [final_table spec_cell(:,first_cols:end)];
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% We just return the cell array final_table, unless the user specifies an</span>
+<span class="comment">% output file name in out_file_name. out_file_name is a string.</span>
+<span class="keyword">if</span> ~isempty(out_file_name)
+<span class="comment">%     if ~strcmp(out_file_name(end-3:end), '.csv')    % the extension should be .csv</span>
+        out_file_name = [out_file_name <span class="string">'.csv'</span>];     <span class="comment">% so we append it to out_file_name if it does not end with '.csv'.</span>
+<span class="comment">%     end</span>
+<span class="comment">%      fid = fopen(out_file_name, 'a') ;</span>
+<span class="comment">%      fprintf(fid, '%s,', final_table{1,1:end-1}) ;</span>
+<span class="comment">%      fprintf(fid, '%s\n', final_table{1,end}) ;</span>
+<span class="comment">%      fclose(fid) ;</span>
+<span class="comment">%      dlmwrite(out_file_name, final_table(2:end,:), '-append') ;</span>
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+<span class="keyword">function</span> process_input(option, value) <span class="comment">% Reads optional inputs</span>
+ <span class="keyword">global</span> texDist quantLvl statsType <span class="comment">% texture featur parameters</span>
+ <span class="keyword">global</span> normWidth normHeight <span class="comment">%  projection parameters</span>
+ <span class="keyword">global</span> suppress_info
+
+ option = lower(option);
+ <span class="keyword">switch</span> option
+     <span class="keyword">case</span> <span class="string">'texdist'</span>
+         texDist = value;
+     <span class="keyword">case</span> <span class="string">'quantlvl'</span>
+         quantLvl = value;
+     <span class="keyword">case</span> <span class="string">'statstype'</span>
+         statsType = value;
+     <span class="keyword">case</span> <span class="string">'normwidth'</span>
+         normWidth = value;
+     <span class="keyword">case</span> <span class="string">'normheight'</span>
+         normHeight = value;
+ <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function  final_table = feature_objects_cvip( input_img, mask_img,objLabel, out_file_name,bin_feat,his_feat, rst_feat, tex_feat, spec_feat,varargin)
+% FEATURE_OBJECTS_CVIP - extracts features from a group of objects in a single image and a single image mask for the objects, 
+%                        output is a csv file
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% final_table = feature_objects_cvip( input_img, mask_img,objLabel, out_file_name,bin_feat,his_feat, rst_feat, tex_feat, spec_feat,varargin)
+%   
+% Input Parameters include:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%  'input_img'       The input image for feature extraction.  
+%                    A gray scale or color image.
+%
+%  'mask_img'        A 2d mask that has integers assigned to objects and 0 to other areas in the image.
+%                    It hould have the same number of row and columns as the
+%                    input_img.
+%
+% 'out_file_name'    Name of the output file. it can be empty.
+%                    The output is a CSV file 
+%
+% 'bin_feat'         A row vector of 8 elemets at most, that selects the desired
+%                    binary features to be extracted.For more details look
+%                    at binary_feature_cvip.
+%
+%  'his_feat'        A row vector of 5 elemets at most, that selects the desired
+%                    histogram features to be extracted.For more details
+%                    look at hist_feature_cvip.
+%
+%  'rst_feat'        A row vector of 7 elemets at most, that selects the desired
+%                    rst invariant features to be extracted.For more
+%                    details look at rst_invariant_cvip.
+%
+% 'tex_feat'         A row vector of 20 elemets at most, that selects the desired
+%                    texture features to be extracted.For more details look
+%                    at texture_features_cvip.
+%
+%  'spec_feat'       A row vector of 2 elemets at most, that determines the
+%                    number of rings and sectors to be used.
+%
+%  '[optional]'      The default values for texDist, quantLvl,
+%                    statsType, normWidth, normHeight can be overwritten by
+%                    specifying the new values as optional input arguments.
+%                    For each of these, first, the name should be given as a
+%                    string, and then the value, i.e. (..., 'par_name', value)
+%                    For example: feature_objects_cvip( ... , 'quantLvl', 2)
+%
+%   
+%                                
+%
+%  Example :
+%  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%             input_img = imread('Stripey.jpg');
+%             mask_img = zeros(size(input_img));
+%             mask_img = mask_img(:,:,1);
+%             mask_img(50:200,25:95) = 1;
+%             mask_img(100:300,255:400) = 2;
+%             objLabel = [1 ;2];
+%             out_file_name =( 'sdfsdf');
+%             bin_feat = [1 0 1];
+%             his_feat = [0 1 1];
+%             rst_feat = [1 0 0 1];
+%             tex_feat = [1 0 0 0];
+%             spec_feat = [0 0];
+%             texDist  = 4;
+%             quantLvl = 2;
+%             statsType = [0 0 1];
+%             normWidth = 12;
+%             normHeight = 15;
+%             b = feature_objects_cvip( input_img, mask_img,objLabel, out_file_name,bin_feat,his_feat, rst_feat, tex_feat, spec_feat, 'statstype', [1 0 1])
+%
+%
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications
+% with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Mehrdad Alvandipour
+%           Initial coding date:    3/13/2017
+%           Latest update date:     3/19/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+%%revision 1.1 : Hridoy
+% line 183,197,208 : To get the number 'n' to use it on the feature viewr 
+global suppress_info
+suppress_info = 0;
+
+nVarargs = length(varargin);            %
+if iscell(varargin) && nVarargs==1      % This is to allow varargin to be
+    varargin = varargin{1};             % passed in the format of a cell array.
+    nVarargs = length(varargin);        % This is specially useful when this function is called within feature_images_cvip()
+    suppress_info = 1;
+end
+
+if mod(nVarargs,2) % odd number of varargins means something wrong
+    error('the variable input areguments should be in pairs')
+end
+
+
+global texDist quantLvl statsType; % texture feature parameters
+global normWidth normHeight; % for projection feature
+
+% The default values
+texDist = 2;
+quantLvl = -1;
+statsType = [1 0 0];
+normWidth = 10;
+normHeight = 10;
+% override the defaults if given other values by user
+% optional arguments at the end of input arguments of the function can
+% contain any combination of the above 5 parameters. The parameters and
+% their desired values are given in pair by their names, and values in
+% varargin. For example a call to our fucntion could be like:
+%
+%                                    ( neccessary input args  ,        optional args           )
+%                                    (              |         ,               |                )
+%                                    (              |         ,               |                )
+%                                    (              |         ,               |                )
+%                                    (______________|________ , ______________|_______________ )
+%  final_table = feature_objects_cvip(             ...        ,  'texDist', 3 , 'normWidth', 15)
+%
+for k = 1:(nVarargs/2)  
+      opt = varargin{2*k -1};
+      val = varargin{2*k};
+      process_input(opt, val)
+end
+
+
+
+
+%%
+[num_obj, objdim] = size(objLabel);
+objList=zeros(num_obj,1);
+if objdim== 2
+    for i=1:size(objLabel,1)
+        objList(i) = mask_img(objLabel(i,1),objLabel(i,2)); 
+    end 
+    obj_id = { 'row_obj' 'col_obj'};
+    first_cols = 3;
+else
+    objList = objLabel;
+    obj_id = {'obj_id'};
+    first_cols = 2;
+end
+
+
+%% input_img, mask_img bin_feat,his_feat, rst_feat, tex_feat, spec_feat
+
+% Tell the user about the values used for optional arguments
+%	info on projection featureREPLACE_WITH_DASH_DASHnormWidth,normHeight REPLACE_WITH_DASH_DASH are handled
+%   inside binary_feature_cvip() which is called later in this code if
+%   necessary.
+final_table = {};
+if sum(bin_feat)        %% Binary features
+    if ~suppress_info &&  length(bin_feat) > 6
+        if bin_feat(7)    % Tell the user what settings is being used
+            display('The settings for projection feature is as follows:');
+            display(['Normalizing width = ' num2str(normWidth) ]);
+            display(['Normalizing height = ' num2str(normHeight) ]);
+        end
+    end
+   bin_cell = binary_feature_cvip(mask_img, objLabel,bin_feat,out_file_name, 'normWidth', normWidth, 'normHeight', normHeight );
+    if isempty(final_table)
+        final_table = bin_cell;
+    else
+        final_table = [final_table bin_cell(:,first_cols:end)];
+    end
+end
+
+if sum(rst_feat)        %% RST Invariant features
+    if sum(bin_feat)>=1
+        n=1;
+    else
+        n=0;
+    end
+    rst_cell = rst_invariant_cvip(mask_img, objLabel,out_file_name, rst_feat,n);%n= to know whether 'col' will be used or not
+    if isempty(final_table)
+        final_table = rst_cell;
+    else
+        final_table = [final_table rst_cell(:,first_cols:end)];
+    end
+end
+
+if sum(his_feat) 
+    if sum(bin_feat)>=1 ||sum(rst_feat)>=1
+        n=1;
+    else
+        n=0;
+    end%% Histogram features
+    hist_cell = hist_feature_cvip(input_img, mask_img, objLabel,out_file_name,his_feat,n);%n= to know whether 'col' will be used or not
+    if isempty(final_table)
+        final_table = hist_cell;
+    else
+        final_table = [final_table hist_cell(:,first_cols:end)];
+    end
+end
+
+if sum(tex_feat)
+    if sum(bin_feat)>=1 ||sum(rst_feat)>=1 ||sum(his_feat) 
+        n=1;
+    else
+        n=0;
+    end
+    if ~suppress_info
+        display('The settings for texture features are as follows: ');
+        display(['Texture distance = ' num2str(texDist) ]);
+        display(['Quantization level = ' num2str(quantLvl) ]);
+        display(['Statistics type = ' num2str(statsType) ]);
+    end
+    % texture_features_cvip(inImage, labelImage, texDist, featSelect, objLabel, quantLvl, statsType, className)
+    tex_cell = texture_features_cvip(input_img, mask_img,out_file_name, texDist, tex_feat, objLabel, quantLvl,  statsType,n);%n= to know whether 'col' will be used or not
+    if isempty(final_table)
+        final_table = tex_cell;
+    else
+        final_table = [final_table tex_cell(:,first_cols:end)];
+    end
+end
+
+if sum(spec_feat)       %% Spectral features
+    spec_cell = spectral_features_cvip(input_img,mask_img, objLabel, spec_feat);
+    if isempty(final_table)
+        final_table = spec_cell;
+    else
+        final_table = [final_table spec_cell(:,first_cols:end)];
+    end
+end
+
+% We just return the cell array final_table, unless the user specifies an
+% output file name in out_file_name. out_file_name is a string.
+if ~isempty(out_file_name)      
+%     if ~strcmp(out_file_name(end-3:end), '.csv')    % the extension should be .csv
+        out_file_name = [out_file_name '.csv'];     % so we append it to out_file_name if it does not end with '.csv'.
+%     end
+%      fid = fopen(out_file_name, 'a') ;
+%      fprintf(fid, '%s,', final_table{1,1:end-1}) ;
+%      fprintf(fid, '%s\n', final_table{1,end}) ;
+%      fclose(fid) ;
+%      dlmwrite(out_file_name, final_table(2:end,:), '-append') ;
+end
+
+end
+
+function process_input(option, value) % Reads optional inputs
+ global texDist quantLvl statsType % texture featur parameters
+ global normWidth normHeight %  projection parameters
+ global suppress_info
+
+ option = lower(option);
+ switch option
+     case 'texdist'
+         texDist = value;
+     case 'quantlvl'
+         quantLvl = value;
+     case 'statstype'
+         statsType = value;
+     case 'normwidth'
+         normWidth = value;
+     case 'normheight'
+         normHeight = value;
+ end
+
+end
+
+##### SOURCE END #####
+--></body></html>

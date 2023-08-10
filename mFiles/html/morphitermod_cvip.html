@@ -1,0 +1,268 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>MORPHITERMOD_CVIP</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-19"><meta name="DC.source" content="morphitermode_cvip_test.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1><b>MORPHITERMOD_CVIP</b></h1><!--introduction--><p><b>morphitermod_cvip()</b> - Iterative morphological modification of a binary image.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">SYNTAX</a></li><li><a href="#2">DESCRIPTION</a></li><li><a href="#3">REFERENCE</a></li><li><a href="#4">EXAMPLE</a></li><li><a href="#5">CREDITS</a></li></ul></div><h2>SYNTAX<a name="1"></a></h2><pre>outImage = morphitermod_cvip(binImage, setsSurr, n, boolFunc, rotate)</pre><p>Input Parameters include :</p><div><ul><li>binImage   -    Binary image of MxN size.</li></ul></div><div><ul><li>setsSurr   -    A row vector containing the ids of the surrounds. The                   maximum length is 14. For examples, [2 5 7] or [1:14].</li></ul></div><pre>                 surrounds id = 1  ----&gt;  0 0 x
+                                          0 b 0
+                                          x 0 0</pre><pre>                 surrounds id = 2  ----&gt;  0 1 x
+                                          0 b 0
+                                          x 0 0</pre><pre>                 surrounds id = 3  ----&gt;  1 1 x
+                                          0 b 0
+                                          x 0 0
+                        .
+                        .
+                        .</pre><pre>                 surrounds id = 14 ----&gt;  1 1 x
+                                          0 b 0
+                                          x 1 1</pre><pre>                 If multiple surrounds are selected, a_ij = 1 if any of
+                 the surrounds are present. See reference 1 for other
+                 surrounds, which are not shown above.</pre><pre>                                                            (default: 7)</pre><div><ul><li>n       -      Number of iterations.                                                              (default: 1)</li></ul></div><div><ul><li>boolFunc  -    Boolean function L(a,b)</li></ul></div><pre>                 boolFunc = 1  ----&gt;  !a     (i.e. NOT a)</pre><pre>                 boolFunc = 2  ----&gt;  ab     (i.e a AND b)</pre><pre>                 boolFunc = 3  ----&gt;  a+b    (i.e a OR b)</pre><pre>                 boolFunc = 4  ----&gt;  a^b    (i.e a XOR b)</pre><pre>                 boolFunc = 5  ----&gt;  (!a)b  (i.e (NOT a) AND b)</pre><pre>                 boolFunc = 6  ----&gt;  (a!b)  (i.e a AND (NOT b))</pre><pre>                                                            (default: 1)</pre><div><ul><li>rotate   -     Rotate each surrounds set. Checks each surrounds set in                   all six directions if rotate option is set ON.</li></ul></div><pre>                 rotate = 0  ----&gt;  OFF
+                 rotate = 1  ----&gt;  ON</pre><pre>                                                            (default: 0)</pre><p>Output Parameter include :</p><div><ul><li>outImage  -    Output image of iterative morphological modification.                   It is of Boolean class.</li></ul></div><h2>DESCRIPTION<a name="2"></a></h2><p>The function performs an iterative morphological modification of a binary image. To perform morphological modification,first,a_ij is found for each pixel;a_ij is 1 if (i,j)th pixel has the user specified surrounds or 0 otherwise. Then,morphological operation is performed between a_ij and b_ij,where b_ij is current pixel value(either 1 or 0). The user can specify the morphological operation by choosing one of the boolean function from the pre-defined list. A total of 14 surrounds sets are available. Each surrounds set has six surrounding pixels as we have considered NW/SE six connectivity. If rotate option is set ON, the surrounds are checked in all six directions. The morophological modification is repeated n times.</p><h2>REFERENCE<a name="3"></a></h2><p>1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</p><h2>EXAMPLE<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Read image</span>
+
+ I = imread(<span class="string">'Shapes.bmp'</span>);
+
+<span class="comment">% Call function using default parameters</span>
+
+ O1 = morphitermod_cvip(I);
+
+<span class="comment">% Number of iterations</span>
+
+ n = 3;
+
+<span class="comment">% boolean function L(a,b) = ab</span>
+
+ f = 2;
+
+<span class="comment">% sets of surrounds</span>
+
+ S = [1 2 3 5];
+
+<span class="comment">% rotate OFF</span>
+
+ r = 1;
+
+<span class="comment">% Call function using user specified parameters</span>
+
+ O2 = morphitermod_cvip(I,S,n,f,r);
+
+<span class="comment">% Display input image</span>
+
+ figure;imshow(I);title(<span class="string">'Input image'</span>);
+
+<span class="comment">% Display output image</span>
+
+ figure;imshow(O1,[]);title(<span class="string">'Output image using default parameters'</span>);
+
+ figure;imshow(O2,[]);title(<span class="string">'Output image user specified parameters'</span>);
+</pre><img vspace="5" hspace="5" src="morphitermode_cvip_test_01.png" alt=""> <img vspace="5" hspace="5" src="morphitermode_cvip_test_02.png" alt=""> <img vspace="5" hspace="5" src="morphitermode_cvip_test_03.png" alt=""> <h2>CREDITS<a name="5"></a></h2><p>
+Author:  Norsang Lama, June 2017<br>
+Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+E Umbaugh</a><br>
+For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% *MORPHITERMOD_CVIP*
+% *morphitermod_cvip()* - Iterative morphological modification of a binary image.
+% 
+%% SYNTAX
+% 
+%  outImage = morphitermod_cvip(binImage, setsSurr, n, boolFunc, rotate)
+%
+% Input Parameters include :
+%
+% * binImage   -    Binary image of MxN size. 
+%
+% * setsSurr   -    A row vector containing the ids of the surrounds. The
+%                   maximum length is 14. For examples, [2 5 7] or [1:14].
+%                    
+%                   surrounds id = 1  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH>  0 0 x
+%                                            0 b 0
+%                                            x 0 0
+%
+%                   surrounds id = 2  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH>  0 1 x
+%                                            0 b 0
+%                                            x 0 0
+%                                       
+%                   surrounds id = 3  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH>  1 1 x
+%                                            0 b 0
+%                                            x 0 0
+%                          .
+%                          .
+%                          .
+% 
+%                   surrounds id = 14 REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH>  1 1 x
+%                                            0 b 0
+%                                            x 1 1
+%
+%                   If multiple surrounds are selected, a_ij = 1 if any of 
+%                   the surrounds are present. See reference 1 for other
+%                   surrounds, which are not shown above.
+%
+%                                                              (default: 7)
+%
+% * n       -      Number of iterations.                    
+%                                                              (default: 1)
+%
+% * boolFunc  -    Boolean function L(a,b)
+%                   
+%                   boolFunc = 1  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH>  !a     (i.e. NOT a)
+%
+%                   boolFunc = 2  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH>  ab     (i.e a AND b)
+%
+%                   boolFunc = 3  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH>  a+b    (i.e a OR b)
+%
+%                   boolFunc = 4  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH>  a^b    (i.e a XOR b)
+%
+%                   boolFunc = 5  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH>  (!a)b  (i.e (NOT a) AND b)
+%
+%                   boolFunc = 6  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH>  (a!b)  (i.e a AND (NOT b))
+%      
+%                                                              (default: 1)
+%
+% * rotate   -     Rotate each surrounds set. Checks each surrounds set in 
+%                   all six directions if rotate option is set ON.
+%                   
+%                   rotate = 0  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH>  OFF
+%                   rotate = 1  REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH>  ON 
+%      
+%                                                              (default: 0)
+%
+%
+% Output Parameter include :  
+%
+% * outImage  -    Output image of iterative morphological modification. 
+%                   It is of Boolean class.
+%
+% 
+%% DESCRIPTION
+% 
+% The function performs an iterative morphological modification of a 
+% binary image. To perform morphological modification,first,a_ij is found
+% for each pixel;a_ij is 1 if (i,j)th pixel has the user specified 
+% surrounds or 0 otherwise. Then,morphological operation is performed 
+% between a_ij and b_ij,where b_ij is current pixel value(either 1 or 0).
+% The user can specify the morphological operation by choosing one of the 
+% boolean function from the pre-defined list. A total of 14 surrounds sets 
+% are available. Each surrounds set has six surrounding pixels as we have
+% considered NW/SE six connectivity. If rotate option is set ON, the
+% surrounds are checked in all six directions. The morophological
+% modification is repeated n times. 
+%
+%% REFERENCE
+%  
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+%
+%% EXAMPLE
+
+% Read image
+  
+ I = imread('Shapes.bmp');        
+
+% Call function using default parameters
+        
+ O1 = morphitermod_cvip(I);  
+ 
+% Number of iterations
+
+ n = 3; 
+ 
+% boolean function L(a,b) = ab 
+ 
+ f = 2;   
+     
+% sets of surrounds
+
+ S = [1 2 3 5];
+ 
+% rotate OFF 
+
+ r = 1;                            
+
+% Call function using user specified parameters 
+
+ O2 = morphitermod_cvip(I,S,n,f,r);   
+  
+% Display input image
+
+ figure;imshow(I);title('Input image');
+ 
+% Display output image 
+
+ figure;imshow(O1,[]);title('Output image using default parameters');
+ 
+ figure;imshow(O2,[]);title('Output image user specified parameters');
+   
+%% CREDITS
+%
+% <html>
+% Author:  Norsang Lama, June 2017<br>
+% Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+% E Umbaugh</a><br>
+% For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+% </html>
+%
+##### SOURCE END #####
+--></body></html>

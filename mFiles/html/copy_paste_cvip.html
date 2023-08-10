@@ -1,0 +1,424 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>copy_paste_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="copy_paste_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> outImage = copy_paste_cvip( srcImage, destImage, startLocs, sizeSubimg, destLocs, transparent)
+<span class="comment">% COPY_PASTE_CVIP- Copy a subimage from one image and paste to the same or another image.</span>
+<span class="comment">% The function copies a subimage from the srcImage and paste it to the</span>
+<span class="comment">% destImage.It is designed for the cross-image copy-paste, but it also</span>
+<span class="comment">% works for copy-paste within the samge image, which is indicated by</span>
+<span class="comment">% making srcImage == destImage).</span>
+<span class="comment">% If the subimage is too large, the size will be adjusted automatically</span>
+<span class="comment">% so the subimage can be successfully copied from the srcImage and pasted</span>
+<span class="comment">% to the destImage.</span>
+<span class="comment">% If srcImage is 1-band image and destImage is 3-band image, then</span>
+<span class="comment">% srcImage is made as 3-band image by copying same band information to</span>
+<span class="comment">% other bands before pasting to destImage. In other case, if srcImage is</span>
+<span class="comment">% 3-band image and destImage is 1-band image, only first band of scrImage</span>
+<span class="comment">% is pasted to destImage.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% -------</span>
+<span class="comment">% outImage = copy_paste_cvip( srcImage, destImage, startLocs, sizeSubimg, destLocs, transparent)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%     'srcImage'      Source image to copy the subimage. 1-band input image</span>
+<span class="comment">%                     of MxN size or 3-band input image of MxNx3 size.</span>
+<span class="comment">%    'destImage'      Destination image for pasting</span>
+<span class="comment">%    'startLocs'      Starting point of upper-left corner of the subimage on</span>
+<span class="comment">%                     srcImage. A vector of length 2 (Eg. [1 1]).</span>
+<span class="comment">%                     startLocs(1): Row value</span>
+<span class="comment">%                     startLocs(2): Column value</span>
+<span class="comment">%   ' sizeSubImg'     Size of desired subimage. A vector of length 2.</span>
+<span class="comment">%                     (Eg. [1 1]).</span>
+<span class="comment">%                     sizeSubImg(1): height</span>
+<span class="comment">%                     sizeSubImg(2): width</span>
+<span class="comment">%    'destLocs'       Starting point of upper-left corner of the destImage</span>
+<span class="comment">%                     area to paste the subimage. A vector of length 2 (Eg.</span>
+<span class="comment">%                     [1 1]).</span>
+<span class="comment">%                     destLocs(1): Row value</span>
+<span class="comment">%                     destLocs(2): Column value</span>
+<span class="comment">%    'transparent'    Whether the paste is transparent or not (1 or 0).</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter include :</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%    'outImage'        Output image after copy-paste operation.</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example :</span>
+<span class="comment">% -------</span>
+<span class="comment">%                   I1 = imread('cam.bmp');          %source image</span>
+<span class="comment">%                   I2 = imread('butterfly.tif');   %destination image</span>
+<span class="comment">%                   O = copy_paste_cvip( I1, I2, [10 5], [150 200], [64 64], 1);</span>
+<span class="comment">%                   figure; subplot(1,2,1); imshow(I1) ;</span>
+<span class="comment">%                   subplot(1,2,2); imshow(I2);</span>
+<span class="comment">%                   figure; imshow(O);</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications</span>
+<span class="comment">%    with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Norsang Lama</span>
+<span class="comment">%           Initial coding date:    4/14/2017</span>
+<span class="comment">%           Modified by:            Julian Rene Cuellar Buritica</span>
+<span class="comment">%           Latest update date:     08/29/2018</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2017 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">% Revision History</span>
+ <span class="comment">% Revision 1.3  08/29/2018  11:00:35  jucuell</span>
+ <span class="comment">% start adding revision history and deleting old commented code</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.2  04/03/2018  23:01:47  jucuell</span>
+ <span class="comment">% adding new elseif case to crop big source images before paste (&gt; R2, &gt; C2)</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.1  03/27/2018  20:04:06  jucuell</span>
+ <span class="comment">% Initial revision:</span>
+ <span class="comment">% initiate variable datatypeFlag =0; does not copy a bigger image inside a</span>
+ <span class="comment">% small one</span>
+<span class="comment">%</span>
+
+<span class="comment">%check number of input arguments</span>
+<span class="keyword">if</span> nargin ~=1 &amp;&amp; nargin ~= 2 &amp;&amp; nargin ~= 3 &amp;&amp; nargin ~= 4 &amp;&amp; <span class="keyword">...</span>
+        nargin ~= 5 &amp;&amp; nargin ~= 6
+    error(<span class="string">'Too many or too few input arguments!'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">%check number of output arguments</span>
+<span class="keyword">if</span> nargout ~= 1 &amp;&amp; nargout ~= 0
+    error(<span class="string">'Too many output arguments!'</span>);
+<span class="keyword">end</span>
+
+datatypeFlag =0;
+<span class="comment">%check if srcImage and destImage is uint8 image</span>
+<span class="keyword">if</span> isa(srcImage, <span class="string">'uint8'</span>) &amp;&amp; isa(destImage, <span class="string">'uint8'</span>)
+    datatypeFlag =1;
+<span class="keyword">end</span>
+
+<span class="comment">%size of the input image</span>
+[R1, C1, B1] = size(srcImage);
+[R2, C2, B2] = size(destImage);
+
+<span class="comment">%find the subimage that needs to be pasted</span>
+start_r = startLocs(1);
+start_c = startLocs(2);
+height = sizeSubimg(1);
+width = sizeSubimg(2);
+
+<span class="keyword">if</span> (start_r + height-1) &lt;= R1 &amp;&amp; (start_c + width-1) &lt;= C1
+    subImage = srcImage(start_r : start_r + height-1, start_c : start_c <span class="keyword">...</span>
+        + width-1,:);
+<span class="keyword">else</span>
+    error(<span class="string">'The sub-image exceeds the dimension of source image!'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">%check the number of bands in destination image and copied image (sub-image)</span>
+<span class="comment">%if destination image is single band, and source image is multi-band image</span>
+<span class="comment">%then, only first band is copied</span>
+<span class="keyword">if</span> B1 &gt; B2 &amp;&amp; B2 == 1
+    subImage = subImage(:,:,1);
+<span class="comment">%if source image is 1-band &amp; destination image is 3-band</span>
+<span class="keyword">elseif</span> B1 &lt; B2 &amp;&amp; B2 == 3
+    subImage(:,:,B1:B2) = repmat(subImage,[1 1 3]);
+<span class="keyword">end</span>
+
+<span class="comment">%check if transparent argument is either 1 or 0</span>
+<span class="keyword">if</span> transparent ~=1 &amp;&amp; transparent ~= 0
+    transparent = 0;
+    warning(<span class="string">'Transparent arg must be 1 or 0! Transparent pasting is set OFF!\n'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">%paste the copied image to destination image</span>
+dest_r = destLocs(1);
+dest_c = destLocs(2);
+destImage = double(destImage);
+subImage = double(subImage);
+
+<span class="keyword">if</span> (dest_r + height -1) &lt;= R2 &amp;&amp; (dest_c + width-1) &lt;= C2
+    destImage(dest_r: dest_r+height-1, dest_c: dest_c +width-1, :) = <span class="keyword">...</span>
+       destImage(dest_r: dest_r+height-1, dest_c: dest_c +width-1, :)*<span class="keyword">...</span>
+       transparent + subImage;
+<span class="keyword">elseif</span> (dest_r + height -1) &lt;= R2 &amp;&amp; (dest_c + width-1) &gt; C2
+    destImage(dest_r: dest_r+height-1, dest_c:end, :) = <span class="keyword">...</span>
+       destImage(dest_r: dest_r+height-1, dest_c: end, :)*transparent + <span class="keyword">...</span>
+       subImage(:,1:C2-dest_c+1,:);
+<span class="keyword">elseif</span> (dest_r + height -1) &gt; R2 &amp;&amp; (dest_c + width-1) &lt;= C2
+    destImage(dest_r: end, dest_c : dest_c +width-1, :) = <span class="keyword">...</span>
+       destImage(dest_r: end, dest_c: dest_c +width-1, :)*transparent +<span class="keyword">...</span>
+       subImage(1:R2-dest_r+1,:,:);
+<span class="keyword">elseif</span> (dest_r + height -1) &gt; R2 &amp;&amp; (dest_c + width-1) &gt; C2
+    destImage(dest_r: R2, dest_c : C2, :) = <span class="keyword">...</span>
+       destImage(dest_r: end, dest_c: end, :)*transparent +<span class="keyword">...</span>
+       subImage(1:R2-dest_r+1,1:C2-dest_c+1,:);
+<span class="keyword">else</span>
+    destImage(dest_r: end, dest_c : end, :) = destImage(dest_r: end, end,:)<span class="keyword">...</span>
+        *transparent + subImage(1:R2-dest_r+1,1:C2-dest_c+1,:);
+<span class="keyword">end</span>
+
+<span class="comment">%remap the image if transparent options was enabled</span>
+<span class="keyword">if</span> transparent
+    outImage = remap_cvip(destImage,[0 255]);
+<span class="keyword">else</span>
+    outImage = destImage;
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> datatypeFlag
+    outImage = uint8(outImage);
+<span class="keyword">end</span>
+
+<span class="keyword">end</span> <span class="comment">% end of function</span>
+</pre><pre class="codeoutput error">Error using copy_paste_cvip (line 90)
+Too many or too few input arguments!
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function outImage = copy_paste_cvip( srcImage, destImage, startLocs, sizeSubimg, destLocs, transparent)
+% COPY_PASTE_CVIP- Copy a subimage from one image and paste to the same or another image.
+% The function copies a subimage from the srcImage and paste it to the
+% destImage.It is designed for the cross-image copy-paste, but it also
+% works for copy-paste within the samge image, which is indicated by
+% making srcImage == destImage). 
+% If the subimage is too large, the size will be adjusted automatically
+% so the subimage can be successfully copied from the srcImage and pasted
+% to the destImage.
+% If srcImage is 1-band image and destImage is 3-band image, then
+% srcImage is made as 3-band image by copying same band information to
+% other bands before pasting to destImage. In other case, if srcImage is
+% 3-band image and destImage is 1-band image, only first band of scrImage
+% is pasted to destImage.
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% outImage = copy_paste_cvip( srcImage, destImage, startLocs, sizeSubimg, destLocs, transparent)
+%   
+% 
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%     'srcImage'      Source image to copy the subimage. 1-band input image
+%                     of MxN size or 3-band input image of MxNx3 size. 
+%    'destImage'      Destination image for pasting
+%    'startLocs'      Starting point of upper-left corner of the subimage on
+%                     srcImage. A vector of length 2 (Eg. [1 1]).
+%                     startLocs(1): Row value                   
+%                     startLocs(2): Column value  
+%   ' sizeSubImg'     Size of desired subimage. A vector of length 2. 
+%                     (Eg. [1 1]). 
+%                     sizeSubImg(1): height                   
+%                     sizeSubImg(2): width 
+%    'destLocs'       Starting point of upper-left corner of the destImage
+%                     area to paste the subimage. A vector of length 2 (Eg.
+%                     [1 1]). 
+%                     destLocs(1): Row value                   
+%                     destLocs(2): Column value  
+%    'transparent'    Whether the paste is transparent or not (1 or 0).
+%
+%
+% Output Parameter include :  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%    'outImage'        Output image after copy-paste operation.
+%                                         
+%
+% Example :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                   I1 = imread('cam.bmp');          %source image
+%                   I2 = imread('butterfly.tif');   %destination image         
+%                   O = copy_paste_cvip( I1, I2, [10 5], [150 200], [64 64], 1);
+%                   figure; subplot(1,2,1); imshow(I1) ;
+%                   subplot(1,2,2); imshow(I2);
+%                   figure; imshow(O);                                        
+%
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications 
+%    with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Norsang Lama
+%           Initial coding date:    4/14/2017
+%           Modified by:            Julian Rene Cuellar Buritica
+%           Latest update date:     08/29/2018
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2017 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+% Revision History
+ % Revision 1.3  08/29/2018  11:00:35  jucuell
+ % start adding revision history and deleting old commented code
+%
+ % Revision 1.2  04/03/2018  23:01:47  jucuell
+ % adding new elseif case to crop big source images before paste (> R2, > C2)
+%
+ % Revision 1.1  03/27/2018  20:04:06  jucuell
+ % Initial revision:
+ % initiate variable datatypeFlag =0; does not copy a bigger image inside a
+ % small one
+%
+
+%check number of input arguments
+if nargin ~=1 && nargin ~= 2 && nargin ~= 3 && nargin ~= 4 && ...
+        nargin ~= 5 && nargin ~= 6    
+    error('Too many or too few input arguments!');
+end
+
+%check number of output arguments
+if nargout ~= 1 && nargout ~= 0
+    error('Too many output arguments!');
+end
+
+datatypeFlag =0;
+%check if srcImage and destImage is uint8 image
+if isa(srcImage, 'uint8') && isa(destImage, 'uint8')
+    datatypeFlag =1;
+end
+
+%size of the input image
+[R1, C1, B1] = size(srcImage);
+[R2, C2, B2] = size(destImage);
+
+%find the subimage that needs to be pasted
+start_r = startLocs(1);
+start_c = startLocs(2);
+height = sizeSubimg(1);
+width = sizeSubimg(2);
+
+if (start_r + height-1) <= R1 && (start_c + width-1) <= C1
+    subImage = srcImage(start_r : start_r + height-1, start_c : start_c ...
+        + width-1,:);
+else
+    error('The sub-image exceeds the dimension of source image!');
+end
+
+%check the number of bands in destination image and copied image (sub-image)
+%if destination image is single band, and source image is multi-band image
+%then, only first band is copied
+if B1 > B2 && B2 == 1  
+    subImage = subImage(:,:,1); 
+%if source image is 1-band & destination image is 3-band
+elseif B1 < B2 && B2 == 3  
+    subImage(:,:,B1:B2) = repmat(subImage,[1 1 3]);
+end
+
+%check if transparent argument is either 1 or 0
+if transparent ~=1 && transparent ~= 0
+    transparent = 0;
+    warning('Transparent arg must be 1 or 0! Transparent pasting is set OFF!\n');
+end
+
+%paste the copied image to destination image
+dest_r = destLocs(1);
+dest_c = destLocs(2);
+destImage = double(destImage);
+subImage = double(subImage);
+
+if (dest_r + height -1) <= R2 && (dest_c + width-1) <= C2
+    destImage(dest_r: dest_r+height-1, dest_c: dest_c +width-1, :) = ...
+       destImage(dest_r: dest_r+height-1, dest_c: dest_c +width-1, :)*...
+       transparent + subImage;
+elseif (dest_r + height -1) <= R2 && (dest_c + width-1) > C2
+    destImage(dest_r: dest_r+height-1, dest_c:end, :) = ...
+       destImage(dest_r: dest_r+height-1, dest_c: end, :)*transparent + ...
+       subImage(:,1:C2-dest_c+1,:);
+elseif (dest_r + height -1) > R2 && (dest_c + width-1) <= C2
+    destImage(dest_r: end, dest_c : dest_c +width-1, :) = ...
+       destImage(dest_r: end, dest_c: dest_c +width-1, :)*transparent +...
+       subImage(1:R2-dest_r+1,:,:);
+elseif (dest_r + height -1) > R2 && (dest_c + width-1) > C2
+    destImage(dest_r: R2, dest_c : C2, :) = ...
+       destImage(dest_r: end, dest_c: end, :)*transparent +...
+       subImage(1:R2-dest_r+1,1:C2-dest_c+1,:);   
+else
+    destImage(dest_r: end, dest_c : end, :) = destImage(dest_r: end, end,:)...
+        *transparent + subImage(1:R2-dest_r+1,1:C2-dest_c+1,:);
+end
+
+%remap the image if transparent options was enabled
+if transparent
+    outImage = remap_cvip(destImage,[0 255]);
+else
+    outImage = destImage;
+end
+
+if datatypeFlag
+    outImage = uint8(outImage);
+end
+
+end % end of function
+##### SOURCE END #####
+--></body></html>

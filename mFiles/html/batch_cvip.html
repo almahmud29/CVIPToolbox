@@ -1,0 +1,160 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>batch_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="batch_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% batch_cvip: Script that can be used to perform image processing operations</span>
+<span class="comment">% in batch mode. It reads multiple images as specified by the user and</span>
+<span class="comment">% perform multiple image processing operation on the input images and stores</span>
+<span class="comment">% the output images in the folder specified by the user.</span>
+<span class="comment">%</span>
+<span class="comment">% Batch  file illustrates its use with a few sample functions.To run your</span>
+<span class="comment">% own algorithm on a set of images,simply replace the sample functions</span>
+<span class="comment">% with the sequence of functons you needed to implement your algorithm.</span>
+<span class="comment">%</span>
+
+clc;
+clear;
+[filename, pathname] = uigetfile({<span class="string">'*.*'</span>, <span class="string">'All Files (*.*)'</span>;<span class="keyword">...</span>
+        <span class="string">'*.tif'</span>,<span class="string">'TIFF (*.tif)'</span>; <span class="string">'*.bmp'</span>,<span class="string">'BMP (*.bmp)'</span>;<span class="keyword">...</span>
+        <span class="string">'*.jpg'</span>, <span class="string">'JPEG/JPEG2000 (*.jpg)'</span>; <span class="string">'*.png'</span>,<span class="string">'PNG (*.png)'</span>;<span class="keyword">...</span>
+        <span class="string">'*.pbm ; *.ppm;*.pgm; *.pnm'</span>,<span class="keyword">...</span>
+        <span class="string">'PBM/PPM/PGM/PNM (*.pbm,*.ppm,*.pgm, *.pnm)'</span>;<span class="keyword">...</span>
+        <span class="string">'*.gif'</span>,<span class="string">'GIF (*.gif)'</span>}, <span class="keyword">...</span>
+        <span class="string">'Select an input image file'</span>, <span class="string">'MultiSelect'</span>,<span class="string">'on'</span>); <span class="comment">% prompts user to select input files</span>
+
+<span class="keyword">if</span> ~isa(filename,<span class="string">'cell'</span>)
+    filename = cellstr(filename); <span class="comment">% convert filename to cell structure</span>
+<span class="keyword">end</span>
+folder_name = uigetdir; <span class="comment">% prompts user to select folder to save output images</span>
+<span class="keyword">for</span> i = 1:size(filename,7) <span class="comment">% iterate through all input image files</span>
+    imageName = char(filename(i)); <span class="comment">% read the name of input image</span>
+    im = imread([pathname imageName]); <span class="comment">% load the particular image for operation</span>
+
+
+     a=rgb2lab_cvip(im); <span class="comment">% convert rgb image to L*a*b* color value  image</span>
+     b=luminance_cvip(a); <span class="comment">% perform luminance operation</span>
+     c=not_cvip(b); <span class="comment">% perform NOT operation</span>
+
+
+
+
+    [~,name,ext] = fileparts(filename{i}); <span class="comment">% separates the filename and extension</span>
+    FinalImageName = strcat(name,<span class="string">'_'</span>,int2str(i),ext); <span class="comment">% Create new output filename for each new image</span>
+    imwrite(a,[folder_name <span class="string">'\'</span> FinalImageName]); <span class="comment">% write image to disk</span>
+    disp(i); <span class="comment">% display the image number being operated</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Error using cellstr (line 49)
+Conversion to cellstr from double is not possible.
+
+Error in batch_cvip (line 23)
+    filename = cellstr(filename); % convert filename to cell structure
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+
+% batch_cvip: Script that can be used to perform image processing operations
+% in batch mode. It reads multiple images as specified by the user and 
+% perform multiple image processing operation on the input images and stores
+% the output images in the folder specified by the user.
+%
+% Batch  file illustrates its use with a few sample functions.To run your
+% own algorithm on a set of images,simply replace the sample functions
+% with the sequence of functons you needed to implement your algorithm.
+%
+
+clc;
+clear;
+[filename, pathname] = uigetfile({'*.*', 'All Files (*.*)';...
+        '*.tif','TIFF (*.tif)'; '*.bmp','BMP (*.bmp)';...
+        '*.jpg', 'JPEG/JPEG2000 (*.jpg)'; '*.png','PNG (*.png)';...
+        '*.pbm ; *.ppm;*.pgm; *.pnm',...
+        'PBM/PPM/PGM/PNM (*.pbm,*.ppm,*.pgm, *.pnm)';...
+        '*.gif','GIF (*.gif)'}, ...
+        'Select an input image file', 'MultiSelect','on'); % prompts user to select input files
+
+if ~isa(filename,'cell')
+    filename = cellstr(filename); % convert filename to cell structure
+end
+folder_name = uigetdir; % prompts user to select folder to save output images   
+for i = 1:size(filename,7) % iterate through all input image files
+    imageName = char(filename(i)); % read the name of input image
+    im = imread([pathname imageName]); % load the particular image for operation
+    
+    
+     a=rgb2lab_cvip(im); % convert rgb image to L*a*b* color value  image
+     b=luminance_cvip(a); % perform luminance operation
+     c=not_cvip(b); % perform NOT operation
+   
+     
+
+   
+    [~,name,ext] = fileparts(filename{i}); % separates the filename and extension
+    FinalImageName = strcat(name,'_',int2str(i),ext); % Create new output filename for each new image
+    imwrite(a,[folder_name '\' FinalImageName]); % write image to disk
+    disp(i); % display the image number being operated
+end
+##### SOURCE END #####
+--></body></html>

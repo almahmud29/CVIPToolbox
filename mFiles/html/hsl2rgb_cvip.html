@@ -1,0 +1,368 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>hsl2rgb_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="hsl2rgb_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> rgb=hsl2rgb_cvip(varargin)
+<span class="comment">% HSL2RGB_CVIP- converts an HSL image to the equivalent RGB image.</span>
+<span class="comment">%</span>
+<span class="comment">% This function converts HSL (Hue-Saturation-Lightness) Color value to RGB</span>
+<span class="comment">% Color value.The RGB color model is an additive color model in which red,</span>
+<span class="comment">% green and blue light are addd together in various ways to reproduce a</span>
+<span class="comment">% broad array of colors.RGB color values are found from HSL color values</span>
+<span class="comment">% as follows:</span>
+<span class="comment">%</span>
+<span class="comment">%                   C = (1-|2L-1|) * S</span>
+<span class="comment">%                   H' = H/60</span>
+<span class="comment">%                   X = C * (1-|H' mod 2 - 1|)</span>
+<span class="comment">%</span>
+<span class="comment">%                               (0,0,0)</span>
+<span class="comment">%                               (C,X,0)</span>
+<span class="comment">%                               (X,C,0)</span>
+<span class="comment">%                   R1,G1,B1 = (0,C,X)</span>
+<span class="comment">%                               (0,X,C)</span>
+<span class="comment">%                               (X,0,C)</span>
+<span class="comment">%                               (C,0,X)</span>
+<span class="comment">%</span>
+<span class="comment">%                   m = L - 0.5*C</span>
+<span class="comment">%</span>
+<span class="comment">%                   (R,G,B) = (R1+m, G1+m, B1+m)</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% --------</span>
+<span class="comment">% OutputImage = hsl2rgb_cvip(InputImage, type)</span>
+<span class="comment">%</span>
+<span class="comment">% Input parameters include :</span>
+<span class="comment">% --------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%   'InputImage'      HSL Color value image</span>
+<span class="comment">%   'type'            output image preference (0,1)</span>
+<span class="comment">%                    (0 = Forward non normalized output)</span>
+<span class="comment">%                    (1 = gives normalized output)</span>
+<span class="comment">%</span>
+<span class="comment">%   To view the 8-bit image of type double, divide by 255.</span>
+<span class="comment">%   To view the 16-bit image of type double, divide by 65535.</span>
+<span class="comment">%</span>
+<span class="comment">% Example 1 :</span>
+<span class="comment">% ----------</span>
+<span class="comment">%   Converts the HSL color value to RGB color value:</span>
+<span class="comment">%</span>
+<span class="comment">%                   X = imread('Car.bmp');</span>
+<span class="comment">%                   S1 = rgb2hsl_cvip(X);</span>
+<span class="comment">%                   S2 = hsl2rgb_cvip(S1);</span>
+<span class="comment">%                   figure;imshow(S1,[]);</span>
+<span class="comment">%                   figure;imshow(remap_cvip(S2,[]));</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% See also, rgb2sct_cvip, rgb2cct_cvip, rgb2hsl_cvip, rgb2hsv_cvip,</span>
+<span class="comment">% rgb2lab_cvip, rgb2luv_cvip, rgb2xyz_cvip, pct_cvip, ipct_cvip,</span>
+<span class="comment">% cct2rgb_cvip, sct2rgb_cvip, hsv2rgb_cvip, lab2rgb_cvip, luv2rgb_cvip</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% https://en.wikipedia.org/wiki/HSL_and_HSV</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Deependra Mishra</span>
+<span class="comment">%           Initial coding date:    03/17/2017</span>
+<span class="comment">%           Updated by:             Julian Rene Cuellar Buritica</span>
+<span class="comment">%           Latest update date:     01/21/2019</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2018 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">% Revision History</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.5  10/23/2018  17:59:41  jucuell</span>
+ <span class="comment">% Function documentation updating, removing of unnecessary punctuation</span>
+ <span class="comment">% symbols and removing l, s, C values such as l(123,159)</span>
+<span class="comment">%</span>
+ <span class="comment">% Revision 1.1  03/17/2017  16:28:15  demish</span>
+ <span class="comment">% Initial coding and testing.</span>
+<span class="comment">%</span>
+
+    <span class="keyword">if</span> nargin&lt;1
+        error(<span class="string">'Too few arguements for hsl2rgb_cvip'</span>);
+
+    <span class="keyword">elseif</span> nargin&gt;2
+        error(<span class="string">'Too many arguements for hsl2rgb_cvip'</span>);
+
+    <span class="keyword">end</span>
+<span class="comment">%--------- RGB Image Input Check -----------------------------------</span>
+    <span class="keyword">if</span> size(varargin{1},3)~=3
+        error(<span class="string">'Invalid Image Input: Requires 3 band HSL color value Image'</span>);
+    <span class="keyword">end</span>
+
+<span class="comment">%--------- Data Type Check and Conversion ---------------------------</span>
+     <span class="keyword">if</span> nargin==2
+        <span class="keyword">if</span> (varargin{2})  <span class="comment">% for normalized output</span>
+            <span class="keyword">if</span> ~isa(varargin{1},<span class="string">'double'</span>)
+            varargin{1}=im2double(varargin{1});
+            <span class="keyword">end</span>
+        <span class="keyword">else</span>                <span class="comment">% for Forward non normalized output</span>
+            <span class="keyword">if</span> ~isa(varargin{1},<span class="string">'double'</span>)
+            varargin{1}=double(varargin{1});
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">else</span>
+        <span class="keyword">if</span> ~isa(varargin{1},<span class="string">'double'</span>)
+            varargin{1}=double(varargin{1});
+        <span class="keyword">end</span>
+     <span class="keyword">end</span>
+<span class="comment">%--------- HSL to RGB conversion ------------------------------------</span>
+    h=varargin{1}(:,:,1);
+    s=varargin{1}(:,:,2);
+    l=varargin{1}(:,:,3);
+
+    h=h*360;
+    hd=h/60;
+
+    C = (1-abs((2*l)-1)).*s;
+    X = C .* (1-abs((mod(hd,2)-1)));
+
+    A0 = zeros(size(varargin{1}));
+    A1 = zeros(size(varargin{1}));
+    A1(:,:,1)=C;A1(:,:,2)=X;A1(:,:,3)=0;
+    A2 = zeros(size(varargin{1}));
+    A2(:,:,1)=X;A2(:,:,2)=C;A2(:,:,3)=0;
+    A3 = zeros(size(varargin{1}));
+    A3(:,:,1)=0;A3(:,:,2)=C;A3(:,:,3)=X;
+    A4 = zeros(size(varargin{1}));
+    A4(:,:,1)=0;A4(:,:,2)=X;A4(:,:,3)=C;
+    A5 = zeros(size(varargin{1}));
+    A5(:,:,1)=X;A5(:,:,2)=0;A5(:,:,3)=C;
+    A6 = zeros(size(varargin{1}));
+    A6(:,:,1)=C;A6(:,:,2)=0;A6(:,:,3)=X;
+
+    iH = cat(3,hd,hd,hd);
+    rgb0 = A0.*(and(iH&lt;0, iH&gt;6));
+    rgb1 = rgb0 + A1.*(and(iH&gt;=0, iH&lt;=1));
+    rgb2 = rgb1 + A2.*(and(iH&gt;=1, iH&lt;=2));
+    rgb3 = rgb2 + A3.*(and(iH&gt;=2, iH&lt;=3));
+    rgb4 = rgb3 + A4.*(and(iH&gt;=3, iH&lt;=4));
+    rgb5 = rgb4 + A5.*(and(iH&gt;=4, iH&lt;=5));
+    rgb6 = rgb5 + A6.*(and(iH&gt;=5, iH&lt;=6));
+
+    m = l - C/2.0;
+    m3 = cat(3,m,m,m);
+    rgb= rgb6+m3;
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Error using hsl2rgb_cvip (line 83)
+Too few arguements for hsl2rgb_cvip
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function rgb=hsl2rgb_cvip(varargin)
+% HSL2RGB_CVIP- converts an HSL image to the equivalent RGB image. 
+%
+% This function converts HSL (Hue-Saturation-Lightness) Color value to RGB
+% Color value.The RGB color model is an additive color model in which red,
+% green and blue light are addd together in various ways to reproduce a 
+% broad array of colors.RGB color values are found from HSL color values 
+% as follows:
+%
+%                   C = (1-|2L-1|) * S
+%                   H' = H/60
+%                   X = C * (1-|H' mod 2 - 1|)
+% 
+%                               (0,0,0)
+%                               (C,X,0)
+%                               (X,C,0)
+%                   R1,G1,B1 = (0,C,X)
+%                               (0,X,C)
+%                               (X,0,C)
+%                               (C,0,X)
+%                    
+%                   m = L - 0.5*C
+%                     
+%                   (R,G,B) = (R1+m, G1+m, B1+m)
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% OutputImage = hsl2rgb_cvip(InputImage, type)
+%
+% Input parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%       
+%   'InputImage'      HSL Color value image
+%   'type'            output image preference (0,1)
+%                    (0 = Forward non normalized output)
+%                    (1 = gives normalized output)   
+%
+%   To view the 8-bit image of type double, divide by 255.
+%   To view the 16-bit image of type double, divide by 65535.
+% 
+% Example 1 :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%   Converts the HSL color value to RGB color value:
+%
+%                   X = imread('Car.bmp');
+%                   S1 = rgb2hsl_cvip(X);
+%                   S2 = hsl2rgb_cvip(S1);
+%                   figure;imshow(S1,[]);
+%                   figure;imshow(remap_cvip(S2,[]));
+%
+%  
+%
+% See also, rgb2sct_cvip, rgb2cct_cvip, rgb2hsl_cvip, rgb2hsv_cvip, 
+% rgb2lab_cvip, rgb2luv_cvip, rgb2xyz_cvip, pct_cvip, ipct_cvip, 
+% cct2rgb_cvip, sct2rgb_cvip, hsv2rgb_cvip, lab2rgb_cvip, luv2rgb_cvip
+%
+% Reference 
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% https://en.wikipedia.org/wiki/HSL_and_HSV
+
+%==========================================================================
+%
+%           Author:                 Deependra Mishra
+%           Initial coding date:    03/17/2017
+%           Updated by:             Julian Rene Cuellar Buritica
+%           Latest update date:     01/21/2019
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2018 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+% Revision History
+%
+ % Revision 1.5  10/23/2018  17:59:41  jucuell
+ % Function documentation updating, removing of unnecessary punctuation
+ % symbols and removing l, s, C values such as l(123,159)
+%
+ % Revision 1.1  03/17/2017  16:28:15  demish
+ % Initial coding and testing.
+%
+
+    if nargin<1
+        error('Too few arguements for hsl2rgb_cvip');
+        
+    elseif nargin>2
+        error('Too many arguements for hsl2rgb_cvip');
+        
+    end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- RGB Image Input Check REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    if size(varargin{1},3)~=3
+        error('Invalid Image Input: Requires 3 band HSL color value Image');
+    end
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- Data Type Check and Conversion REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-    
+     if nargin==2
+        if (varargin{2})  % for normalized output
+            if ~isa(varargin{1},'double')
+            varargin{1}=im2double(varargin{1});
+            end
+        else                % for Forward non normalized output
+            if ~isa(varargin{1},'double')
+            varargin{1}=double(varargin{1});
+            end
+        end
+    else
+        if ~isa(varargin{1},'double')
+            varargin{1}=double(varargin{1});
+        end
+     end
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- HSL to RGB conversion REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+    h=varargin{1}(:,:,1);
+    s=varargin{1}(:,:,2);
+    l=varargin{1}(:,:,3);
+    
+    h=h*360;
+    hd=h/60;
+    
+    C = (1-abs((2*l)-1)).*s;
+    X = C .* (1-abs((mod(hd,2)-1)));
+    
+    A0 = zeros(size(varargin{1}));
+    A1 = zeros(size(varargin{1}));
+    A1(:,:,1)=C;A1(:,:,2)=X;A1(:,:,3)=0;
+    A2 = zeros(size(varargin{1}));
+    A2(:,:,1)=X;A2(:,:,2)=C;A2(:,:,3)=0;
+    A3 = zeros(size(varargin{1}));
+    A3(:,:,1)=0;A3(:,:,2)=C;A3(:,:,3)=X;
+    A4 = zeros(size(varargin{1}));
+    A4(:,:,1)=0;A4(:,:,2)=X;A4(:,:,3)=C;
+    A5 = zeros(size(varargin{1}));
+    A5(:,:,1)=X;A5(:,:,2)=0;A5(:,:,3)=C;
+    A6 = zeros(size(varargin{1}));
+    A6(:,:,1)=C;A6(:,:,2)=0;A6(:,:,3)=X;
+    
+    iH = cat(3,hd,hd,hd);
+    rgb0 = A0.*(and(iH<0, iH>6));
+    rgb1 = rgb0 + A1.*(and(iH>=0, iH<=1));
+    rgb2 = rgb1 + A2.*(and(iH>=1, iH<=2));
+    rgb3 = rgb2 + A3.*(and(iH>=2, iH<=3));
+    rgb4 = rgb3 + A4.*(and(iH>=3, iH<=4));
+    rgb5 = rgb4 + A5.*(and(iH>=4, iH<=5));
+    rgb6 = rgb5 + A6.*(and(iH>=5, iH<=6));
+    
+    m = l - C/2.0;
+    m3 = cat(3,m,m,m);
+    rgb= rgb6+m3;   
+end
+##### SOURCE END #####
+--></body></html>

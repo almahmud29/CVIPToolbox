@@ -1,0 +1,160 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>EdgeLineDetection</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-04-18"><meta name="DC.source" content="EdgeLineDetection.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><p>
+<center>
+<h1 style="color: ##000000;"><i><b>MATLAB CVIP Toolbox Functions</b></i></h1>
+<img width=180 height=72 id="_x0000_i1029" src="Images/CVIP-toolbox-logo.png" alt="CVIPtools Home">
+</center>
+<h2 style="color: #2e6c80;">Edge/Line Detection</h2>
+The edge/line detection group of functions includes the standard first
+order gradient based edge detectors, such as the Roberts, Sobel and
+Prewitt and the second order Laplacian. The Sobel and Prewitt return
+separate images for the magnitude and direction, while the Laplacian
+offers different approximate convolution masks. Additionally, the compass
+mask operators, Kirsch and Robinson are available. Advanced edge
+detection algorithms such as the Marr-Hildreth, Canny, Boie-Cox,
+Shen-Casten and the Frei-Chen are also included. The corner detectors,
+Moravec and Harris, and the Hough line finding transform with it
+associated edge linking functions are here. The Cervenka and Charvat
+method for multi-band images is available, as well as a function to
+measure Pratt’s Figure-of-Merit (FOM) which can be used to evaluate and
+compare edge detection methods.
+<br><br>
+<ul>
+    <li><strong><a href="boiecox_ed_cvip.html">boiecox_ed_cvip</a></strong> - perform a Boie-Cox edge detection on the image</li>
+    <li><strong><a href="canny_ed_cvip.html">canny_ed_cvip</a></strong> - perform a Canny edge detection on the image</li>
+    <li><strong><a href="cerchar_ed_cvip.html">cerchar_ed_cvip</a></strong> - a spatial-multi spectral image edge detection filter</li>
+     <li><strong><a href="frei_chen_ed_cvip.html">frei_chen_ed_cvip</a></strong> - frei-chen filter, 9 basis image masks, edge/line subspace</li>
+    <li><strong><a href="harris_corner_cvip.html">harris_corner_cvip</a></strong> - a spatial (corner detection) filter</li>
+    <li><strong><a href="hough_transform_cvip.html">hough_transform_cvip</a></strong> - performs hough transformation in line detection</li>
+    <li><strong><a href="hough_inverse_cvip.html">hough_inverse_cvip</a></strong> - performs  inverse  hough transformation based on input parameters</li>
+    <li><strong><a href="kirsch_ed_cvip.html">kirsch_ed_cvip</a></strong> - perform kirsch edge detection</li>
+    <li><strong><a href="laplacian_ed_cvip.html">laplacian_ed_cvip</a></strong> - performs a Laplacian edge detection</li>
+    <li><strong><a href="laplacian_gauss_ed_cvip.html">laplacian_gauss_ed_cvip</a></strong> - computes the Laplacian of a Gaussian edge detector</li>
+    <li><strong><a href="marr_hildreth_ed_cvip.html">marr_hildreth_ed_cvip</a></strong> -  performs a Marr Hildreth edge detection on the image</li>
+    <li><strong><a href="moravec_corner_cvip.html">moravec_corner_cvip</a></strong> - a spatial corner detecting filter</li>
+    <li><strong><a href="pratt_merit_cvip.html">pratt_merit_cvip</a></strong> - calculates the Pratt Figure-of-Merit (FOM) for two binary images</li>
+    <li><strong><a href="prewitt_ed_cvip.html">prewitt_ed_cvip</a></strong> - perform prewitt edge detection</li>
+    <li><strong><a href="pyramid_ed_cvip.html">pyramid_ed_cvip</a></strong> - perform a pyramid edge detection</li>
+    <li><strong><a href="roberts_ed_cvip.html">roberts_ed_cvip</a></strong> - performs a Roberts edge detection</li>
+    <li><strong><a href="robinson_ed_cvip.html">robinson_ed_cvip</a></strong> - perform a Robinson edge detection</li>
+    <li><strong><a href="shen_castan_ed_cvip.html">shen_castan_ed_cvip</a></strong> - perform a Shen-Castan edge detection on the image</li>
+    <li><strong><a href="sobel_ed_cvip.html">sobel_ed_cvip</a></strong> - perform sobel edge detection</li>
+</ul>
+<div class="footer">&#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/"> Scott E Umbaugh</a>, CVIP Toolbox Development Team, CVIP Lab, <a href="http://www.siue.edu/index.shtml">Southern Illinois University Edwardsville</a>, Edwardsville, IL 62026
+</div>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%
+% <html>
+% <center>
+% <h1 style="color: ##000000;"><i><b>MATLAB CVIP Toolbox Functions</b></i></h1>
+% <img width=180 height=72 id="_x0000_i1029" src="Images/CVIP-toolbox-logo.png" alt="CVIPtools Home">
+% </center>
+% <h2 style="color: #2e6c80;">Edge/Line Detection</h2>
+% The edge/line detection group of functions includes the standard first 
+% order gradient based edge detectors, such as the Roberts, Sobel and 
+% Prewitt and the second order Laplacian. The Sobel and Prewitt return 
+% separate images for the magnitude and direction, while the Laplacian 
+% offers different approximate convolution masks. Additionally, the compass
+% mask operators, Kirsch and Robinson are available. Advanced edge 
+% detection algorithms such as the Marr-Hildreth, Canny, Boie-Cox, 
+% Shen-Casten and the Frei-Chen are also included. The corner detectors, 
+% Moravec and Harris, and the Hough line finding transform with it 
+% associated edge linking functions are here. The Cervenka and Charvat 
+% method for multi-band images is available, as well as a function to 
+% measure Pratt’s Figure-of-Merit (FOM) which can be used to evaluate and 
+% compare edge detection methods.
+% <br><br>
+% <ul>
+%     <li><strong><a href="boiecox_ed_cvip.html">boiecox_ed_cvip</a></strong> - perform a Boie-Cox edge detection on the image</li>
+%     <li><strong><a href="canny_ed_cvip.html">canny_ed_cvip</a></strong> - perform a Canny edge detection on the image</li>
+%     <li><strong><a href="cerchar_ed_cvip.html">cerchar_ed_cvip</a></strong> - a spatial-multi spectral image edge detection filter</li>
+%     <li><strong><a href="frei_chen_ed_cvip.html">frei_chen_ed_cvip</a></strong> - frei-chen filter, 9 basis image masks, edge/line subspace</li>
+%     <li><strong><a href="harris_corner_cvip.html">harris_corner_cvip</a></strong> - a spatial (corner detection) filter</li>
+%     <li><strong><a href="kirsch_ed_cvip.html">kirsch_ed_cvip</a></strong> - perform kirsch edge detection</li>
+%     <li><strong><a href="laplacian_ed_cvip.html">laplacian_ed_cvip</a></strong> - performs a Laplacian edge detection</li>
+%     <li><strong><a href="laplacian_gauss_ed_cvip.html">laplacian_gauss_ed_cvip</a></strong> - computes the Laplacian of a Gaussian edge detector</li>
+%     <li><strong><a href="marr_hildreth_ed_cvip.html">marr_hildreth_ed_cvip</a></strong> -  performs a Marr Hildreth edge detection on the image</li>
+%     <li><strong><a href="moravec_corner_cvip.html">moravec_corner_cvip</a></strong> - a spatial corner detecting filter</li>
+%     <li><strong><a href="pratt_merit_cvip.html">pratt_merit_cvip</a></strong> - calculates the Pratt Figure-of-Merit (FOM) for two binary images</li>
+%     <li><strong><a href="prewitt_ed_cvip.html">prewitt_ed_cvip</a></strong> - perform prewitt edge detection</li>
+%     <li><strong><a href="pyramid_ed_cvip.html">pyramid_ed_cvip</a></strong> - perform a pyramid edge detection</li>
+%     <li><strong><a href="roberts_ed_cvip.html">roberts_ed_cvip</a></strong> - performs a Roberts edge detection</li>
+%     <li><strong><a href="robinson_ed_cvip.html">robinson_ed_cvip</a></strong> - perform a Robinson edge detection</li>
+%     <li><strong><a href="shen_casten_ed_cvip.html">shen_casten_ed_cvip</a></strong> - perform a Shen-Castan edge detection on the image</li>
+%     <li><strong><a href="sobel_ed_cvip.html">sobel_ed_cvip</a></strong> - perform sobel edge detection</li>
+% </ul>
+% <div class="footer">&#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/"> Scott E Umbaugh</a>, CVIP Toolbox Development Team, CVIP Lab, <a href="http://www.siue.edu/index.shtml">Southern Illinois University Edwardsville</a>, Edwardsville, IL 62026 
+% </div>
+% </html>
+%
+
+##### SOURCE END #####
+--></body></html>

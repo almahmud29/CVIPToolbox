@@ -1,0 +1,499 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>binary_feature_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="binary_feature_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Create the column Obj_id in the output</a></li><li><a href="#4">Create the list of selected features (feats_title) which sits in the first row of the output cell array</a></li><li><a href="#7">put the feature values calculated in the correct position in feature_val</a></li><li><a href="#9">Create the output cell array</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> binfeats = binary_feature_cvip(labeledImage, objLabel,featSelect,out_file_name, varargin)
+</pre><pre class="codeinput"><span class="comment">% BINARY_FEATURE_CVIP  - calculates the 5 first order binary features for an object.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% --------</span>
+<span class="comment">% binfeats = binary_feature_cvip(labeledImage, objLabel,featSelect, varargin)</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include:</span>
+<span class="comment">% ------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%  'originalImage' The orignial image which can be grayscale or RGB.</span>
+<span class="comment">%</span>
+<span class="comment">%  'labelImage'    Label image of MxN size with single object or multiple objects.</span>
+<span class="comment">%                   Each object has unique gray value.</span>
+<span class="comment">%  'objLabel'      Labels of the objects. Column vector (Yx1) or Yx2 matrix.</span>
+<span class="comment">%                   If row vector, objLabel must be unique gray value</span>
+<span class="comment">%                   corresponding to each object. If Yx2 matrix, objLabel</span>
+<span class="comment">%                   must have row index in first column and col index in</span>
+<span class="comment">%                   second column for each object.</span>
+<span class="comment">%  'featSelect'    Empty matrix '[]' or Row vector of size 1x5 with</span>
+<span class="comment">%                   values 1 or 0 (1-&gt;Select or 0-&gt;No Select). If [], then</span>
+<span class="comment">%                   all 5 features are selected. The elements of featSelect</span>
+<span class="comment">%                   correspond respectively to Area' 'Aspect' 'Centroid' 'Euler' 'Orientation'</span>
+<span class="comment">%                  'Perimeter' 'Projections' 'Thinness</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Output Parameter include :</span>
+<span class="comment">% -------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%   'binfeats'     Cell array containing object name, object label, and feature</span>
+<span class="comment">%                   data for selected features.</span>
+<span class="comment">%</span>
+<span class="comment">% Example 1 :</span>
+<span class="comment">% ---------</span>
+<span class="comment">%                   I = imread('Shapes.bmp');</span>
+<span class="comment">%                   lab_image = label_cvip(I);</span>
+<span class="comment">%                   objLabel = [1 ;2];</span>
+<span class="comment">%                   featSelect = [1 0 0 0 1];</span>
+<span class="comment">%                   binfeats = binary_feature_cvip(lab_image, objLabel,featSelect)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Example 2 :</span>
+<span class="comment">% ---------</span>
+<span class="comment">%                   I = imread('Shapes.bmp');</span>
+<span class="comment">%                   lab_image = label_cvip(I);</span>
+<span class="comment">%                   objLabel = [1 ;2];</span>
+<span class="comment">%                   featSelect = [1 0 0 0 0 0 1 0];</span>
+<span class="comment">%                   binfeats = binary_feature_cvip(lab_image, objLabel,featSelect, 'normWidth',8 , 'normHeight',8)</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Mehrdad Alvandipour</span>
+<span class="comment">%           Initial coding date:    3/13/2017</span>
+<span class="comment">%           Latest update date:     3/19/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2016 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+nVarargs = length(varargin);
+<span class="keyword">if</span> mod(nVarargs,2) <span class="comment">% odd number of varargins means something wrong</span>
+    error(<span class="string">'the variable input areguments should be in pairs'</span>)
+<span class="keyword">end</span>
+
+feats_name = {<span class="string">'Area'</span> <span class="string">'Centroid'</span> <span class="string">'Orientation'</span> <span class="keyword">...</span>
+    <span class="string">'Perimeter'</span> <span class="string">'Euler'</span> <span class="string">'Projections'</span> <span class="string">'Thinness'</span> <span class="string">'Aspect'</span>};
+total_feats = 8;
+<span class="keyword">global</span> normWidth normHeight; normWidth=10; normHeight=10;
+
+<span class="keyword">for</span> k = 1:(nVarargs/2)  <span class="comment">% override default if given other values by user</span>
+      opt = varargin{2*k -1};
+      val = varargin{2*k};
+      process_input(opt, val)
+<span class="keyword">end</span>
+
+
+<span class="comment">% If feat_list is empty matrix, all 8 features are selected</span>
+<span class="comment">% Also check if none feature is selected</span>
+<span class="keyword">if</span> isempty(featSelect)|| ~isnumeric(featSelect)
+    featSelect = ones(1,total_feats);
+<span class="keyword">elseif</span> ~sum(featSelect),         warning(<span class="string">'No feature is selected!!!'</span>);
+    binfeats = {};          <span class="keyword">return</span> ;
+<span class="keyword">elseif</span> size(featSelect,2) &lt; total_feats
+    featSelect = [featSelect zeros(1, total_feats - size(featSelect,2))];
+<span class="keyword">end</span>
+
+
+
+feat_length = nnz(featSelect);
+<span class="keyword">if</span> featSelect(2)
+    feat_length = feat_length + 1;
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in binary_feature_cvip (line 86)
+if isempty(featSelect)|| ~isnumeric(featSelect)          
+</pre><h2 id="3">Create the column Obj_id in the output</h2><pre class="codeinput">[num_obj, objdim] = size(objLabel);
+objList=zeros(num_obj,1);
+<span class="keyword">if</span> objdim== 2
+    <span class="keyword">for</span> i=1:size(objLabel,1)
+        objList(i) = labeledImage(objLabel(i,1),objLabel(i,2));
+    <span class="keyword">end</span>
+    obj_id = { <span class="string">'obj_id'</span> <span class="string">'row_obj'</span> <span class="string">'col_obj'</span>};
+<span class="comment">%     final_table(2,1)={list(i+n).name};</span>
+<span class="keyword">else</span>
+    objList = objLabel;
+    obj_id = {<span class="string">'obj_id'</span>};
+<span class="keyword">end</span>
+</pre><h2 id="4">Create the list of selected features (feats_title) which sits in the first row of the output cell array</h2><pre class="codeinput">k=1;
+feats_title = cell(1,feat_length);
+<span class="keyword">for</span> i=1:total_feats
+    <span class="keyword">if</span> featSelect(i)
+        <span class="keyword">if</span> i~=2 &amp;&amp; i~= 6
+            feats_title(1,k) =  cellstr(char(feats_name(i)));
+            k=k+1;
+        <span class="keyword">elseif</span> i == 2       <span class="comment">%centroid Row and column</span>
+            feats_title(1,k) =  cellstr([char(feats_name(i)) <span class="string">'_r'</span>]);
+            feats_title(1,k+1) =  cellstr([char(feats_name(i)) <span class="string">'_c'</span>]);
+            k=k+2;
+        <span class="keyword">elseif</span> i==6         <span class="comment">%projections</span>
+            <span class="keyword">for</span> j=1:normHeight
+                feats_title(1,k) =  cellstr([<span class="string">'Proj_H_'</span> num2str(j)]);
+                k = k+1;
+            <span class="keyword">end</span>
+            <span class="keyword">for</span> j=1:normWidth
+                feats_title(1,k) =  cellstr([<span class="string">'Proj_W_'</span> num2str(j)]);
+                k = k+1;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><p>The number of feature values calculated are determined by #of features selected</p><pre class="codeinput">feature_val = zeros(num_obj,feat_length);
+obj_name=cell(num_obj,1);
+
+labeledImage = labeledImage(:,:,1); <span class="comment">% We ignore other bands on the labeled image.</span>
+<span class="keyword">for</span> count=1:num_obj
+</pre><pre class="codeinput"><span class="comment">%     obj_label = labeledImage;</span>
+
+
+    gray_level = objList(count);
+<span class="comment">%     obj_label(obj_label ~= gray_level) = 0;</span>
+<span class="comment">%     mask = (obj_label == gray_level);</span>
+</pre><h2 id="7">put the feature values calculated in the correct position in feature_val</h2><pre class="codeinput">    k=1;
+    <span class="keyword">for</span> i=1:total_feats
+        <span class="keyword">if</span> featSelect(i)
+            <span class="keyword">switch</span> i
+                <span class="keyword">case</span> 1	<span class="comment">% Area</span>
+                    feature_val(count,k) =  area_cvip(labeledImage,gray_level );
+                    k = k+1;
+                <span class="keyword">case</span> 8  <span class="comment">% Aspect</span>
+                    feature_val(count,k) =  aspect_cvip(labeledImage, gray_level);
+                    k = k+1;
+                <span class="keyword">case</span> 2	<span class="comment">% Centroid</span>
+                    [feature_val(count,k) ,feature_val(count,k+1)] =  centroid_cvip(labeledImage, gray_level);
+                    k = k+2;
+                <span class="keyword">case</span> 5  <span class="comment">% Euler</span>
+                    feature_val(count,k) =  euler_cvip(labeledImage, gray_level);
+                    k = k+1;
+                <span class="keyword">case</span> 3	<span class="comment">% Orientation</span>
+                    feature_val(count,k) =  orientation_cvip(labeledImage, gray_level);
+                    k = k+1;
+                <span class="keyword">case</span> 4  <span class="comment">% Perimeter</span>
+                    feature_val(count,k) =  perimeter_cvip(labeledImage, gray_level);
+                    k = k+1;
+                <span class="keyword">case</span> 6	<span class="comment">% Projections</span>
+                     [ B_h, B_w ] = projection_cvip(labeledImage, gray_level, normWidth, normHeight);
+                     lh = normHeight;   <span class="comment">% length(B_h);</span>
+                     lw = normWidth ;  <span class="comment">% length(B_w);</span>
+                    feature_val(count,k:k+lh-1) = B_h;
+                    k = k+lh;
+                    feature_val(count,k:k+lw-1) = B_w;
+                    k = k+lw;
+                <span class="keyword">case</span> 7  <span class="comment">% Thinness</span>
+                    feature_val(count,k) =  thinness_cvip(labeledImage, gray_level);
+                    k = k+1;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    obj_name(count) = cellstr([<span class="string">'Object'</span> num2str(count)]);   <span class="comment">% The first column of the output cell array.</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2 id="9">Create the output cell array</h2><pre class="codeinput"><span class="keyword">if</span> objdim==1
+     binfeats = [  obj_id feats_title ;  num2cell(objLabel) num2cell(feature_val) ];
+<span class="keyword">else</span>
+ binfeats = [  obj_id feats_title ; out_file_name  num2cell(objLabel) num2cell(feature_val) ];
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+
+<span class="keyword">function</span> process_input(option, value) <span class="comment">% Reads optional inputs</span>
+ <span class="keyword">global</span> normWidth normHeight <span class="comment">% for projection</span>
+
+ option = lower(option);
+ <span class="keyword">switch</span> option
+     <span class="keyword">case</span> <span class="string">'normwidth'</span>
+         normWidth = value;
+     <span class="keyword">case</span> <span class="string">'normheight'</span>
+         normHeight = value;
+ <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function binfeats = binary_feature_cvip(labeledImage, objLabel,featSelect,out_file_name, varargin)
+% BINARY_FEATURE_CVIP  - calculates the 5 first order binary features for an object.
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% binfeats = binary_feature_cvip(labeledImage, objLabel,featSelect, varargin)
+%   
+% Input Parameters include:
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%  'originalImage' The orignial image which can be grayscale or RGB.
+%
+%  'labelImage'    Label image of MxN size with single object or multiple objects.  
+%                   Each object has unique gray value.
+%  'objLabel'      Labels of the objects. Column vector (Yx1) or Yx2 matrix.
+%                   If row vector, objLabel must be unique gray value
+%                   corresponding to each object. If Yx2 matrix, objLabel
+%                   must have row index in first column and col index in
+%                   second column for each object.
+%  'featSelect'    Empty matrix '[]' or Row vector of size 1x5 with 
+%                   values 1 or 0 (1->Select or 0->No Select). If [], then
+%                   all 5 features are selected. The elements of featSelect
+%                   correspond respectively to Area' 'Aspect' 'Centroid' 'Euler' 'Orientation'
+%                  'Perimeter' 'Projections' 'Thinness
+%
+%
+% Output Parameter include :  
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%
+%   'binfeats'     Cell array containing object name, object label, and feature 
+%                   data for selected features.
+%                   
+% Example 1 :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                   I = imread('Shapes.bmp');
+%                   lab_image = label_cvip(I);
+%                   objLabel = [1 ;2];
+%                   featSelect = [1 0 0 0 1];
+%                   binfeats = binary_feature_cvip(lab_image, objLabel,featSelect)
+% 
+%
+% Example 2 :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%                   I = imread('Shapes.bmp');
+%                   lab_image = label_cvip(I);
+%                   objLabel = [1 ;2];
+%                   featSelect = [1 0 0 0 0 0 1 0];
+%                   binfeats = binary_feature_cvip(lab_image, objLabel,featSelect, 'normWidth',8 , 'normHeight',8)
+%                    
+%                  
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Mehrdad Alvandipour
+%           Initial coding date:    3/13/2017
+%           Latest update date:     3/19/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2016 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+nVarargs = length(varargin);
+if mod(nVarargs,2) % odd number of varargins means something wrong
+    error('the variable input areguments should be in pairs')
+end
+
+feats_name = {'Area' 'Centroid' 'Orientation' ...
+    'Perimeter' 'Euler' 'Projections' 'Thinness' 'Aspect'};
+total_feats = 8;
+global normWidth normHeight; normWidth=10; normHeight=10;
+
+for k = 1:(nVarargs/2)  % override default if given other values by user
+      opt = varargin{2*k -1};
+      val = varargin{2*k};
+      process_input(opt, val)
+end
+
+
+% If feat_list is empty matrix, all 8 features are selected
+% Also check if none feature is selected
+if isempty(featSelect)|| ~isnumeric(featSelect)          
+    featSelect = ones(1,total_feats);  
+elseif ~sum(featSelect),         warning('No feature is selected!!!'); 
+    binfeats = {};          return ;    
+elseif size(featSelect,2) < total_feats
+    featSelect = [featSelect zeros(1, total_feats - size(featSelect,2))];
+end
+
+
+
+feat_length = nnz(featSelect);
+if featSelect(2)
+    feat_length = feat_length + 1;
+end
+
+%% Create the column Obj_id in the output
+[num_obj, objdim] = size(objLabel);
+objList=zeros(num_obj,1);
+if objdim== 2
+    for i=1:size(objLabel,1)
+        objList(i) = labeledImage(objLabel(i,1),objLabel(i,2)); 
+    end 
+    obj_id = { 'obj_id' 'row_obj' 'col_obj'};
+%     final_table(2,1)={list(i+n).name}; 
+else
+    objList = objLabel;
+    obj_id = {'obj_id'};
+end
+
+
+%% Create the list of selected features (feats_title) which sits in the first row of the output cell array 
+k=1;
+feats_title = cell(1,feat_length);
+for i=1:total_feats
+    if featSelect(i)
+        if i~=2 && i~= 6
+            feats_title(1,k) =  cellstr(char(feats_name(i)));
+            k=k+1;
+        elseif i == 2       %centroid Row and column
+            feats_title(1,k) =  cellstr([char(feats_name(i)) '_r']);
+            feats_title(1,k+1) =  cellstr([char(feats_name(i)) '_c']);
+            k=k+2;
+        elseif i==6         %projections
+            for j=1:normHeight
+                feats_title(1,k) =  cellstr(['Proj_H_' num2str(j)]);
+                k = k+1;
+            end
+            for j=1:normWidth
+                feats_title(1,k) =  cellstr(['Proj_W_' num2str(j)]);
+                k = k+1;
+            end   
+        end
+    end
+end
+
+%%  
+% The number of feature values calculated are determined by #of features
+% selected
+feature_val = zeros(num_obj,feat_length); 
+obj_name=cell(num_obj,1);
+
+labeledImage = labeledImage(:,:,1); % We ignore other bands on the labeled image.
+for count=1:num_obj
+%     obj_label = labeledImage;
+
+
+    gray_level = objList(count);
+%     obj_label(obj_label ~= gray_level) = 0;
+%     mask = (obj_label == gray_level);
+
+    %% put the feature values calculated in the correct position in feature_val
+    k=1;
+    for i=1:total_feats
+        if featSelect(i)
+            switch i
+                case 1	% Area
+                    feature_val(count,k) =  area_cvip(labeledImage,gray_level );
+                    k = k+1;
+                case 8  % Aspect
+                    feature_val(count,k) =  aspect_cvip(labeledImage, gray_level);
+                    k = k+1;
+                case 2	% Centroid
+                    [feature_val(count,k) ,feature_val(count,k+1)] =  centroid_cvip(labeledImage, gray_level);
+                    k = k+2;
+                case 5  % Euler
+                    feature_val(count,k) =  euler_cvip(labeledImage, gray_level);
+                    k = k+1;
+                case 3	% Orientation
+                    feature_val(count,k) =  orientation_cvip(labeledImage, gray_level);
+                    k = k+1;
+                case 4  % Perimeter
+                    feature_val(count,k) =  perimeter_cvip(labeledImage, gray_level);
+                    k = k+1;
+                case 6	% Projections
+                     [ B_h, B_w ] = projection_cvip(labeledImage, gray_level, normWidth, normHeight);
+                     lh = normHeight;   % length(B_h);
+                     lw = normWidth ;  % length(B_w);
+                    feature_val(count,k:k+lh-1) = B_h;
+                    k = k+lh;
+                    feature_val(count,k:k+lw-1) = B_w;
+                    k = k+lw;
+                case 7  % Thinness
+                    feature_val(count,k) =  thinness_cvip(labeledImage, gray_level);
+                    k = k+1;
+            end   
+        end
+    end
+
+    obj_name(count) = cellstr(['Object' num2str(count)]);   % The first column of the output cell array.
+end
+
+%% Create the output cell array
+if objdim==1
+     binfeats = [  obj_id feats_title ;  num2cell(objLabel) num2cell(feature_val) ];
+else
+ binfeats = [  obj_id feats_title ; out_file_name  num2cell(objLabel) num2cell(feature_val) ];
+end
+
+end
+
+
+function process_input(option, value) % Reads optional inputs
+ global normWidth normHeight % for projection
+ 
+ option = lower(option);
+ switch option
+     case 'normwidth'
+         normWidth = value;
+     case 'normheight'
+         normHeight = value;
+ end
+
+end
+
+##### SOURCE END #####
+--></body></html>

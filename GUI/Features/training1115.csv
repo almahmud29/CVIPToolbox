@@ -1,0 +1,16 @@
+obj_id,row_obj,col_obj,Energy_1,Entropy_1,Entr_Avg,Class
+1.tif,114,229,0.038485682092477,4.90686214918842,-0.000144262291094538,cancer
+2.tif,141,92,0.0336431606656733,5.26281172197496,-0.000144262291094538,cancer
+Binary:,0,0,0,0,0,0
+Projections W:,10,0,0,0,0,0
+Projections H:,10,0,0,0,0,0
+RST-Invariant:,0,0,0,0,0,0
+Histogram:,2,0,0,0,0,0
+Texture:,1,0,0,0,0,0
+Tex. Distance:,6,0,0,0,0,0
+Quant. Level:,1,0,0,0,0,0
+Stats(Avg Rang Var):,100,0,0,0,0,0
+Spectral:,0,0,0,0,0,0
+Rings:,0,0,0,0,0,0
+Sectors:,0,0,0,0,0,0
+Images:,2,0,0,0,0,0

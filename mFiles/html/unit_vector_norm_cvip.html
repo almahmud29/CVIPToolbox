@@ -1,0 +1,146 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>UNIT_VECTOR_NORM_CVIP</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-03"><meta name="DC.source" content="unit_vector_norm_cvip_test.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1><b>UNIT_VECTOR_NORM_CVIP</b></h1><!--introduction--><p><b>unit_vector_norm_cvip()</b> - applies unit vector normalization to set of feature vectors in a matrix.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">SYNTAX</a></li><li><a href="#2">DESCRIPTION</a></li><li><a href="#3">REFERENCE</a></li><li><a href="#4">EXAMPLE</a></li><li><a href="#5">CREDITS</a></li></ul></div><h2>SYNTAX<a name="1"></a></h2><pre class="language-matlab">a = unit_vector_norm_cvip(vector)
+</pre><p>Input Parameter include :</p><div><ul><li>vector -       An m by n numerical matrix where m is the number of vectors and n                  is the length of each row vector. Output Parameter include :</li></ul></div><div><ul><li>a      -       A matrix with the same size as the input 'vector',                  where each column(feature vector) is normalized by unit vector normalization method.</li></ul></div><h2>DESCRIPTION<a name="2"></a></h2><p>This function normalizes the feature vector input based on the unit vector normalization method. Each column of the input matrix is scaled by the square root of the sum of squares of the features in each vector.</p><h2>REFERENCE<a name="3"></a></h2><p>1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</p><h2>EXAMPLE<a name="4"></a></h2><pre class="codeinput"><span class="comment">% input vector</span>
+
+  vectors = randn(13,6);
+
+ <span class="comment">% Call function</span>
+
+  a = unit_vector_norm_cvip(vectors)
+</pre><pre class="codeoutput">
+a =
+
+    0.0814   -0.0174    0.1689   -0.6231   -0.3479    0.0215
+    0.2776    0.1969   -0.0705   -0.0372   -0.3190   -0.3727
+   -0.3419   -0.0565    0.0683   -0.0879   -0.0020   -0.1855
+    0.1305   -0.0342   -0.1829    0.1162    0.4391   -0.2653
+    0.0482    0.4104    0.2064    0.1139   -0.2205    0.5874
+   -0.1979    0.3882   -0.2665   -0.3149    0.1064   -0.1538
+   -0.0656    0.3904   -0.2484   -0.0109   -0.0646    0.1869
+    0.0519    0.1850   -0.1881   -0.0600    0.3201   -0.0481
+    0.5416   -0.3327   -0.6842    0.2285   -0.3120    0.2221
+    0.4192    0.1976    0.3342    0.3980    0.0093   -0.1911
+   -0.2043    0.4491    0.0756    0.4038    0.1583   -0.3504
+    0.4594    0.1347   -0.1754   -0.3144    0.3153   -0.3555
+    0.1098    0.2851    0.3184    0.0282    0.4425    0.1220
+
+</pre><h2>CREDITS<a name="5"></a></h2><p>
+Author: Norsang Lama, March 2017<br>
+Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+E Umbaugh</a><br>
+For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% *UNIT_VECTOR_NORM_CVIP*
+% *unit_vector_norm_cvip()* - applies unit vector normalization to set of feature vectors in a matrix.
+%
+%% SYNTAX
+% 
+%   a = unit_vector_norm_cvip(vector)
+%       
+% Input Parameter include : 
+%
+% * vector -       An m by n numerical matrix where m is the number of vectors and n 
+%                  is the length of each row vector. 
+% Output Parameter include :  
+% 
+% * a      -       A matrix with the same size as the input 'vector', 
+%                  where each column(feature vector) is normalized by unit vector normalization method.
+%        
+%% DESCRIPTION
+% This function normalizes the feature vector input based on the unit
+% vector normalization method. Each column of the input matrix is scaled by
+% the square root of the sum of squares of the features in each vector.
+%% REFERENCE
+%  
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+%
+%% EXAMPLE
+  
+% input vector
+                   
+  vectors = randn(13,6);
+  
+ % Call function 
+  
+  a = unit_vector_norm_cvip(vectors)
+
+ 
+%% CREDITS
+%
+% <html>
+% Author: Norsang Lama, March 2017<br>
+% Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+% E Umbaugh</a><br>
+% For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+% </html>
+%
+##### SOURCE END #####
+--></body></html>

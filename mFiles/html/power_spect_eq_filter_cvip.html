@@ -1,0 +1,222 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>POWER_SPECT_EQ_FILTER_CVIP</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-01-29"><meta name="DC.source" content="power_spect_eq_filter_cvip_test.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1><b>POWER_SPECT_EQ_FILTER_CVIP</b></h1><!--introduction--><p><b>power_spect_eq_filter_cvip()</b> - power spectrum equalization frequency domain restoration filter.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">SYNTAX</a></li><li><a href="#2">DESCRIPTION</a></li><li><a href="#3">REFERENCE</a></li><li><a href="#4">EXAMPLE</a></li><li><a href="#5">CREDITS</a></li></ul></div><h2>SYNTAX<a name="1"></a></h2><pre>Y = power_spect_eq_filter_cvip(d,h,cutoff,limitGain,noiseImage,originalImage)</pre><p>Input parameters include :</p><div><ul><li>d       -       The degraded image. A single or multiband image.</li></ul></div><div><ul><li>h        -      The degradation function. It can be single band.</li></ul></div><div><ul><li>cutoff    -     Cutoff frequency for filtering.</li></ul></div><div><ul><li>limitGain    -  Sets the maximum gain using the DC value as a baseline.                   limitGain=1 --&gt; DC value is the maximum gain.                   limitGain=1 --&gt; DC_value*limitGain is the maximum gain.</li></ul></div><div><ul><li>noiseImage   -   The noise image. It can be single band.</li></ul></div><div><ul><li>originalImage -  The original image. A single or multiband image. The                   number of bands should match with the input 'd'.</li></ul></div><p>Output parameter include :</p><div><ul><li>Y       -       The output image after restoration filtering.</li></ul></div><h2>DESCRIPTION<a name="2"></a></h2><p>This function performs the power spectrum equalization filtering operation on a degarded image to restore it to its original state. This filter is a variation of the Geometric mean filter with difference in the Alpha and Gamma values in the restoration equation. The values of Alpha and Gamma for Power spectrum equalization filter are <b>1/2</b> and <b>1</b> respectively. The filter is applied by multiplying it to the Fourier tansform of the degraded image and the restored image is obtained by taking the inverse Fourier transform of the resultant image from the filtering operation.</p><h2>REFERENCE<a name="3"></a></h2><p>1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</p><h2>EXAMPLE<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Read image</span>
+
+ origImage = imread(<span class="string">'butterfly.tif'</span>);
+
+<span class="comment">% degraded image</span>
+
+ degradIm = imread(<span class="string">'Butterfly.gaussian.tif'</span>);
+
+<span class="comment">% noise image</span>
+
+ noiseIm = imread(<span class="string">'Butterfly.gaussian.tif'</span>);
+
+<span class="comment">% Cutoff frequency</span>
+
+ cutoff =32;
+
+<span class="comment">% limit gain</span>
+
+ limitGain = 10;
+
+<span class="comment">% degradation function</span>
+
+ h = [ 2.50 4.500 2.250 :4.500 9.001 4.500 : 2.250 4.500 2.250];
+
+<span class="comment">% Calling function</span>
+
+ y= power_spect_eq_filter_cvip(degradIm,h,cutoff,limitGain,noiseIm,origImage);
+
+<span class="comment">% Display input image</span>
+
+ figure;imshow(origImage);title(<span class="string">'Input Image'</span>);
+
+ figure;imshow(degradIm);title(<span class="string">'degraded image'</span>);
+
+ figure;imshow(noiseIm);title(<span class="string">'noise image'</span>);
+
+<span class="comment">% Output image</span>
+
+ figure;imshow(remap_cvip(y));title(<span class="string">'Output Image'</span>);
+</pre><pre class="codeoutput">
+ans =
+
+    0.0066
+
+
+ans =
+
+    0.0062
+
+
+ans =
+
+    0.0105
+
+</pre><img vspace="5" hspace="5" src="power_spect_eq_filter_cvip_test_01.png" alt=""> <img vspace="5" hspace="5" src="power_spect_eq_filter_cvip_test_02.png" alt=""> <img vspace="5" hspace="5" src="power_spect_eq_filter_cvip_test_03.png" alt=""> <img vspace="5" hspace="5" src="power_spect_eq_filter_cvip_test_04.png" alt=""> <h2>CREDITS<a name="5"></a></h2><p>
+Author: Mehrdad Alvandipour, october 2016<br>
+Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+E Umbaugh</a><br>
+For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% *POWER_SPECT_EQ_FILTER_CVIP*
+% *power_spect_eq_filter_cvip()* - power spectrum equalization frequency domain restoration filter.
+%% SYNTAX
+% 
+%  Y = power_spect_eq_filter_cvip(d,h,cutoff,limitGain,noiseImage,originalImage)
+% 
+%
+% Input parameters include :
+%  
+% * d       -       The degraded image. A single or multiband image.
+%                                  
+% * h        -      The degradation function. It can be single band.
+%
+% * cutoff    -     Cutoff frequency for filtering.
+% 
+% * limitGain    -  Sets the maximum gain using the DC value as a baseline.
+%                   limitGain=1 REPLACE_WITH_DASH_DASH> DC value is the maximum gain.
+%                   limitGain=1 REPLACE_WITH_DASH_DASH> DC_value*limitGain is the maximum gain.
+% 
+% * noiseImage   -   The noise image. It can be single band.
+% 
+% * originalImage -  The original image. A single or multiband image. The
+%                   number of bands should match with the input 'd'.
+% 
+% Output parameter include :
+%  
+% * Y       -       The output image after restoration filtering.
+%
+%% DESCRIPTION
+% This function performs the power spectrum equalization filtering
+% operation on a degarded image to restore it to its original state. This
+% filter is a variation of the Geometric mean filter with difference in the
+% Alpha and Gamma values in the restoration equation. The values of Alpha and Gamma for Power spectrum equalization filter are *1/2* and *1* respectively. The filter is applied
+% by multiplying it to the Fourier tansform of the degraded image and
+% the restored image is obtained by taking the inverse Fourier transform of
+% the resultant image from the filtering operation. 
+%% REFERENCE
+%  
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+%
+%% EXAMPLE
+
+% Read image
+
+ origImage = imread('butterfly.tif'); 
+           
+% degraded image
+            
+ degradIm = imread('Butterfly.gaussian.tif');
+            
+% noise image
+            
+ noiseIm = imread('Butterfly.gaussian.tif');  
+
+% Cutoff frequency
+            
+ cutoff =32;  
+
+% limit gain
+            
+ limitGain = 10;
+           
+% degradation function           
+ 
+ h = [ 2.50 4.500 2.250 :4.500 9.001 4.500 : 2.250 4.500 2.250];   
+
+% Calling function
+
+ y= power_spect_eq_filter_cvip(degradIm,h,cutoff,limitGain,noiseIm,origImage);  
+       
+% Display input image
+
+ figure;imshow(origImage);title('Input Image');
+           
+ figure;imshow(degradIm);title('degraded image');
+           
+ figure;imshow(noiseIm);title('noise image');
+
+% Output image
+           
+ figure;imshow(remap_cvip(y));title('Output Image');
+  
+%% CREDITS
+%
+% <html>
+% Author: Mehrdad Alvandipour, october 2016<br>
+% Copyright &#169; 2017-2018 <a href="http://www.siue.edu/~sumbaug/">Scott
+% E Umbaugh</a><br>
+% For updates visit <a href="http://cviptools.ece.siue.edu/">CVIP Toolbox Website</a>
+% </html>
+%
+##### SOURCE END #####
+--></body></html>

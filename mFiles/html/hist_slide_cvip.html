@@ -1,0 +1,258 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>hist_slide_cvip</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-26"><meta name="DC.source" content="hist_slide_cvip.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> output = hist_slide_cvip(im,offset)
+<span class="comment">% HIST_SLIDE_CVIP - This function performs histogram slide operation.</span>
+<span class="comment">%  Z = HIST_SLIDE_CVIP(X, offset) This function slides a histogram of</span>
+<span class="comment">%  an input image. This histogram slide technique can be used to make an</span>
+<span class="comment">%  image either darker or brighter, however it retains the relationship</span>
+<span class="comment">%  between gray-level values. This operation is accomplished by simply</span>
+<span class="comment">%  adding or subtracting a fixed number from all the gray-level values as follows:</span>
+<span class="comment">%</span>
+<span class="comment">%  Slide[I(r,c)] = I(r,c) + offset</span>
+<span class="comment">%</span>
+<span class="comment">%  where the $$offset$ value is the amount to slide the histogram.</span>
+<span class="comment">%</span>
+<span class="comment">%  A positive offset value will increase the overall brightness, while a</span>
+<span class="comment">%  negative offset will create a darker image.</span>
+<span class="comment">%</span>
+<span class="comment">% Syntax :</span>
+<span class="comment">% --------</span>
+<span class="comment">% outputImage = hist_slide_cvip(inputImage, offset);</span>
+<span class="comment">%</span>
+<span class="comment">% Input Parameters include :</span>
+<span class="comment">% --------------------------</span>
+<span class="comment">%</span>
+<span class="comment">%   'inputImage'  input image</span>
+<span class="comment">%   'offset'      amount of slide</span>
+<span class="comment">%</span>
+<span class="comment">%   Note:</span>
+<span class="comment">%   Negative Offset value reduces the overall brightness</span>
+<span class="comment">%   Positive offset value increases the overall brightness</span>
+<span class="comment">%</span>
+<span class="comment">% Example 1 :</span>
+<span class="comment">% ---------</span>
+<span class="comment">%   Slides the histogram of the input grayscale image:</span>
+<span class="comment">%</span>
+<span class="comment">%                   X = imread('Cam.bmp');</span>
+<span class="comment">%                   offset = 50;</span>
+<span class="comment">%                   S = hist_slide_cvip(X,offset);</span>
+<span class="comment">%                   figure;imshow(S,[]);</span>
+<span class="comment">%</span>
+<span class="comment">% Example 2 :</span>
+<span class="comment">% ---------</span>
+<span class="comment">%   Slides the histogram of the input color image:</span>
+<span class="comment">%</span>
+<span class="comment">%                   X = imread('Car.bmp');</span>
+<span class="comment">%                   offset = -50;</span>
+<span class="comment">%                   S = hist_slide_cvip(X,offset);</span>
+<span class="comment">%                   figure;imshow(S,[]);</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">%   See also, get_hist_image_cvip, gray_linear_cvip, hist_create_cvip,</span>
+<span class="comment">%   hist_spec_cvip, hist_shrink_cvip, histeq_cvip, hist_stretch_cvip,</span>
+<span class="comment">%   local_hist_eq_cvip, unsharp_cvip</span>
+<span class="comment">%</span>
+<span class="comment">% Reference</span>
+<span class="comment">% ---------</span>
+<span class="comment">% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</span>
+
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">%           Author:                 Deependra Mishra</span>
+<span class="comment">%           Initial coding date:    03/17/2017</span>
+<span class="comment">%           Latest update date:     03/17/2017</span>
+<span class="comment">%           Credit:                 Scott Umbaugh</span>
+<span class="comment">%                                   CVIP Lab, SIUE</span>
+<span class="comment">%           Copyright (C) 2017 Scott Umbaugh and SIUE</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">%---------- Argument Check -----------------------------------------</span>
+    <span class="keyword">if</span> nargin&lt;2,
+        error(<span class="string">'Too few arguments for histogram slide operation'</span>);
+    <span class="keyword">elseif</span> nargin&gt;2,
+        error(<span class="string">'Too many arguments for histogram slide operation'</span>);
+    <span class="keyword">end</span>;
+<span class="comment">%--------- Data Type Check and Conversion ---------------------------</span>
+<span class="comment">%     if ~isa(im,'double')</span>
+<span class="comment">%         im=double(im);</span>
+<span class="comment">%     end;</span>
+<span class="comment">%     if ~isa(offset,'uint8')</span>
+<span class="comment">%         offset=uint8(offset);</span>
+<span class="comment">%     end;</span>
+
+    <span class="keyword">if</span> isa(im,<span class="string">'double'</span>) &amp;&amp; (max(im(:))&lt;=1),
+        <span class="keyword">if</span> ~(offset&lt;=1),
+            offset = offset/255;
+        <span class="keyword">end</span>;
+        output = im +offset;
+    <span class="keyword">else</span>
+
+        output = im + offset;
+<span class="comment">%         output = uint8(output);</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput error">Error using hist_slide_cvip (line 70)
+Too few arguments for histogram slide operation
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function output = hist_slide_cvip(im,offset)
+% HIST_SLIDE_CVIP - This function performs histogram slide operation.
+%  Z = HIST_SLIDE_CVIP(X, offset) This function slides a histogram of
+%  an input image. This histogram slide technique can be used to make an 
+%  image either darker or brighter, however it retains the relationship 
+%  between gray-level values. This operation is accomplished by simply 
+%  adding or subtracting a fixed number from all the gray-level values as follows:
+%
+%  Slide[I(r,c)] = I(r,c) + offset
+% 
+%  where the $$offset$ value is the amount to slide the histogram.
+%
+%  A positive offset value will increase the overall brightness, while a
+%  negative offset will create a darker image.
+%
+% Syntax :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% outputImage = hist_slide_cvip(inputImage, offset);
+% 
+% Input Parameters include :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%
+%   'inputImage'  input image
+%   'offset'      amount of slide
+%
+%   Note:
+%   Negative Offset value reduces the overall brightness
+%   Positive offset value increases the overall brightness
+%
+% Example 1 :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%   Slides the histogram of the input grayscale image:
+%
+%                   X = imread('Cam.bmp');
+%                   offset = 50;
+%                   S = hist_slide_cvip(X,offset);
+%                   figure;imshow(S,[]);
+%
+% Example 2 :
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+%   Slides the histogram of the input color image:
+%
+%                   X = imread('Car.bmp');
+%                   offset = -50;
+%                   S = hist_slide_cvip(X,offset);
+%                   figure;imshow(S,[]);
+%
+%
+%   See also, get_hist_image_cvip, gray_linear_cvip, hist_create_cvip,
+%   hist_spec_cvip, hist_shrink_cvip, histeq_cvip, hist_stretch_cvip,
+%   local_hist_eq_cvip, unsharp_cvip
+%
+% Reference
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.
+
+%==========================================================================
+%
+%           Author:                 Deependra Mishra
+%           Initial coding date:    03/17/2017
+%           Latest update date:     03/17/2017
+%           Credit:                 Scott Umbaugh 
+%                                   CVIP Lab, SIUE
+%           Copyright (C) 2017 Scott Umbaugh and SIUE
+%
+%==========================================================================
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH Argument Check REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+    if nargin<2,
+        error('Too few arguments for histogram slide operation');
+    elseif nargin>2,
+        error('Too many arguments for histogram slide operation');
+    end;
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- Data Type Check and Conversion REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-    
+%     if ~isa(im,'double')
+%         im=double(im);
+%     end;
+%     if ~isa(offset,'uint8')
+%         offset=uint8(offset);
+%     end;
+
+    if isa(im,'double') && (max(im(:))<=1),
+        if ~(offset<=1),
+            offset = offset/255;
+        end;
+        output = im +offset;
+    else
+        
+        output = im + offset;
+%         output = uint8(output);
+    end
+end
+##### SOURCE END #####
+--></body></html>

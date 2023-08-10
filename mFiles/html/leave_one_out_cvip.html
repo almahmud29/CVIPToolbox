@@ -1,0 +1,371 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>LEAVE_ONE_OUT_CVIP</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-07-15"><meta name="DC.source" content="leave_one_out_cvip_test.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1><b>LEAVE_ONE_OUT_CVIP</b></h1><!--introduction--><p><b>leave_one_out_cvip()</b> - reads feature file of feature vectors and creates output files file_train and file_test for classification using leave one out algorithm testing method.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">SYNTAX</a></li><li><a href="#2">REFERENCE</a></li><li><a href="#3">EXAMPLES</a></li><li><a href="#4">SEE ALSO</a></li><li><a href="#5">CREDITS</a></li></ul></div><h2 id="1">SYNTAX</h2><p>leave_one_out_cvip(file_tt, file_out, option_normalize, ...       option_distance, opt_classification)</p><p>leave_one_out_cvip(file_tt, file_out, [option_normalize ...       s_min/r_softmax s_max], [option_distance r_minkowski], [opt_classification k])</p><p>Input Parameters include :</p><div><ul><li>file_ft   -   Name of the feature file.                   A CSV file with a predefined structure.</li><li>file_out  -   Name of the output file.                   A CSV file as the inputs with the feature vectors                   classified based on classification parameters.</li></ul></div><div><ul><li>option_normalize(1)</li></ul></div><pre>   0 &#8211; No Normalization
+   1 &#8211; Range-normalize
+   2 &#8211; Unit Vector normalization
+   3 &#8211; Standard Normal Density normalization
+   4 &#8211; Min-max normalization     ----&gt; s_min, s_max
+   5 &#8211; Softmax scaling           ----&gt; r_softmax</pre><div><ul><li>option_distance(1)</li></ul></div><pre>   1 &#8211; Euclidean Distance
+   2 &#8211; City block or Absolute value metric
+   3 &#8211; Maximum value metric
+   4 &#8211; Minkowski distance        ----&gt; r_minkowski
+   5 &#8211; Vector inner product
+   6 &#8211; Tanimoto metric</pre><div><ul><li>option_classification</li></ul></div><pre>   1 &#8211; Nearest Neighbor
+   2 &#8211; k-Nearest Neighbor        ----&gt; k
+   3 &#8211; Nearest Centroid</pre><p>If option_normalize(1) is either 4 or 5, or option_distance(1) is 4, then their corresponding parameters should be given as input arguments seperated by comma after option_distance(1). Look at the below examples:</p><h2 id="2">REFERENCE</h2><p>1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications with MATLAB and CVIPtools, 3rd Edition.</p><h2 id="3">EXAMPLES</h2><pre class="codeinput"><span class="comment">% Example 1 :   Classify Feature vectors using SND normalization,</span>
+<span class="comment">% ---------     Tanimoto metric, and Nearest Centroid.</span>
+
+              <span class="comment">% Setting input parameters</span>
+              file_ft = <span class="string">'myFeatureVectors.CSV'</span>;
+              file_out = <span class="string">'ClassifiedVectors'</span>;
+              option_normalize = [3 0 0];
+              option_distance = 6;
+              option_classification = 3;
+
+              <span class="comment">%Calling function</span>
+              TestVector = readtable(file_ft)
+              ClassVector = leave_one_out_cvip(file_ft, file_out, <span class="keyword">...</span>
+              option_normalize, option_distance, option_classification)
+</pre><pre class="codeoutput">
+TestVector =
+
+  83&times;8 table
+
+            obj_id            STD_1      Skew_1      ASM_Avg     ASM_Range    IDNorm_Avg    IDNorm_Range      Class   
+    ______________________    ______    _________    ________    _________    __________    ____________    __________
+
+    'barcha110907A1D.tif'     10.177      0.72487     0.00356    0.000435     0.27347       0.041078        'NOSyrinx'
+    'barhon033115a1d.tif'      8.581    -0.080133    0.007144    0.002801     0.36642       0.054772        'NOSyrinx'
+    'barnor101207A1D.tif'     10.343       0.4553     0.00683    0.001652      0.3292       0.067506        'NOSyrinx'
+    'biligo042809A1D.tif'     11.201      -1.1426     0.00341     0.00082     0.30496       0.041916        'NOSyrinx'
+    'cardai041108A1D.tif'     7.7035      0.84656    0.005715     0.00066     0.31364       0.048482        'NOSyrinx'
+    'chakin050109A1D.tif'      10.88      0.99514    0.005163     0.00234     0.28433       0.059032        'NOSyrinx'
+    'chalil052809A1D.tif'     11.899     -0.10111    0.002103    0.000829     0.28072       0.061953        'NOSyrinx'
+    'chapet052709A1D.tif'     8.7307       1.0788       0.006    0.002072     0.37453       0.076911        'NOSyrinx'
+    'colmol080610a1d.tif'     9.2497      0.62493    0.003962    0.001247     0.31326       0.067093        'NOSyrinx'
+    'copcha011413a1d.tif'     18.777      0.46282    0.001736    0.000479     0.28368        0.04384        'NOSyrinx'
+    'deejim020909A1D.tif'     10.978      0.50797    0.003639    0.001319     0.30831        0.06532        'NOSyrinx'
+    'duispa082809A1D.tif'     6.3725     -0.84416    0.006303    0.002329     0.38027       0.084491        'NOSyrinx'
+    'eckcla113006A1D.tif'     6.6192    -0.050247    0.005517    0.001085      0.3317       0.052676        'NOSyrinx'
+    'eckmil070908A1D.tif'     11.511     -0.15099    0.002769    0.000664     0.25876       0.079309        'NOSyrinx'
+    'eckwin030207A1D.tif'     17.722       0.5229    0.001248    0.000309      0.2046       0.035762        'NOSyrinx'
+    'gildex041514a1d.tif'     15.729      0.59473    0.001472    0.000194     0.25802       0.024717        'NOSyrinx'
+    'grebra051013a1d.tif'     6.7733     0.043626    0.007883    0.001863     0.36103       0.042839        'NOSyrinx'
+    'iankc012009A1D.tif'      9.5511     -0.77614    0.006634     0.00187      0.3322       0.041246        'NOSyrinx'
+    'kanmon041511a1d.tif'     10.301      0.82901     0.00443    0.002064     0.34263       0.082829        'NOSyrinx'
+    'karlay0301009A1D.tif'    10.658      0.48215    0.003811     0.00122     0.34874       0.068101        'NOSyrinx'
+    'katfre040607A1D.tif'     7.7444      0.92123    0.004821    0.000909     0.30164       0.046608        'NOSyrinx'
+    'lansav012609A1D.tif'     8.8294      0.57888    0.005656    0.001369     0.32584       0.047211        'NOSyrinx'
+    'lascla051608A1D.tif'     10.735     -0.11189    0.003132    0.001168     0.28168       0.083552        'NOSyrinx'
+    'lucoll120712a1d.tif'     11.775      0.05691    0.002334     0.00144     0.27395       0.086941        'NOSyrinx'
+    'mcgmay031315a1d.tif'     13.489     -0.16353    0.002007    0.000716     0.27787       0.067556        'NOSyrinx'
+    'ostame041307A1D.tif'     29.381        1.838    0.066035    0.007923     0.30546       0.011647        'NOSyrinx'
+    'pethor110510a1d.tif'     10.216      -3.6909     0.00396    0.001532     0.31662       0.069255        'NOSyrinx'
+    'porlad040609A1D.tif'     7.3226      0.99704    0.006408    0.002249     0.34319       0.059611        'NOSyrinx'
+    'roagin112808A1D.tif'     7.2327     -0.43138    0.005965    0.002155     0.32831       0.058686        'NOSyrinx'
+    'soomin071609A1D.tif'     9.6824     -0.57407    0.004817    0.001543     0.34381       0.056183        'NOSyrinx'
+    'termia120412a1d.tif'     8.1771       1.4258    0.008521    0.003015     0.37238       0.038472        'NOSyrinx'
+    'wicsad022409A1D.tif'     10.868    -0.079646    0.003158    0.000834     0.33006        0.04302        'NOSyrinx'
+    'wilcas072214a1d.tif'     7.0066      0.37498    0.008572    0.003171     0.33566       0.057208        'NOSyrinx'
+    'wilpri121014a1d.tif'     9.4364     -0.26328    0.003968    0.000653     0.33528       0.032222        'NOSyrinx'
+    'zortiz011110A1D.tif'     8.9449      0.77995      0.0061    0.002193     0.35846       0.074681        'NOSyrinx'
+    'balluc111213a1d.tif'     14.568      0.87633    0.002271    0.000732     0.27634        0.06744        'Syrinxs' 
+    'bargra111706A1D.tif'     5.6843     -0.33897    0.008228    0.002239       0.354       0.046216        'Syrinxs' 
+    'bekpan122309A1D.tif'     11.293      0.14483    0.002474    0.000468     0.24378       0.053078        'Syrinxs' 
+    'buamuf120709A1D.tif'     7.5736    -0.042735     0.00571    0.001507     0.34799        0.04524        'Syrinxs' 
+    'cammag011210A1D.tif'     15.184      0.86615    0.002393     0.00073     0.28478       0.053462        'Syrinxs' 
+    'candia013014a1d.tif'     9.4862      0.19586    0.004749    0.001724      0.3445       0.058396        'Syrinxs' 
+    'capenz090415a1d.tif'      12.08      0.80624    0.003272    0.001403     0.31863       0.070567        'Syrinxs' 
+    'chageo050109A1D.tif'     20.498      -1.1119    0.002333    0.000741     0.29117         0.0543        'Syrinxs' 
+    'chamor052809A1D.tif'      11.22     0.077528    0.002171    0.000668     0.28946       0.060125        'Syrinxs' 
+    'chasam050509A1D.tif'     8.3458      0.62444    0.006433    0.001763     0.37934       0.044544        'Syrinxs' 
+    'chaste062309A1D.tif'     6.9668       1.2964    0.005707    0.001751     0.30941       0.067722        'Syrinxs' 
+    'dejmia062515a1d.tif'     8.9116     -0.28822    0.004815    0.001607      0.3593       0.052951        'Syrinxs' 
+    'dursop031010A1D.tif'     11.144      -0.2566    0.004019    0.000962     0.33518       0.059359        'Syrinxs' 
+    'eckcha030207A1D.tif'     22.289      0.22628    0.000738    0.000171       0.182       0.057043        'Syrinxs' 
+    'eckfiz072809A1D.tif'     8.7835       0.2519    0.004027    0.000986     0.31725       0.048512        'Syrinxs' 
+    'eckmer112906A1D.tif'     13.039      0.63712    0.002796    0.000622     0.29604       0.050081        'Syrinxs' 
+    'elypar033010A1D.tif'     9.0405      0.62889    0.004229    0.001426     0.34143       0.047204        'Syrinxs' 
+    'erimil040809A1D.tif'     15.547      0.96814    0.002292    0.000673     0.25642       0.047339        'Syrinxs' 
+    'farell021209A1D.tif'      7.282      0.29587    0.007425    0.002117     0.37059        0.04619        'Syrinxs' 
+    'glemad040513a1d.tif'     10.179      0.73659    0.004278    0.001275     0.31111        0.05036        'Syrinxs' 
+    'grenat030513a1d.tif'     11.222     -0.37061    0.003524    0.001466     0.31057       0.059948        'Syrinxs' 
+    'marbel041715a1d.tif'     8.5369       1.2965    0.006043    0.001557     0.32541       0.059616        'Syrinxs' 
+    'marcri032613a1d.tif'      12.93      0.28381    0.002768     0.00084      0.3439       0.055653        'Syrinxs' 
+    'mccdas041717a1d.tif'      9.666       1.3126    0.010598    0.003141     0.31207       0.032165        'Syrinxs' 
+    'mirluc031815a1d.tif'     6.9131       1.1688    0.009021    0.002428     0.38672       0.038181        'Syrinxs' 
+    'mmcsca120309A1D.tif'     11.381      0.40311    0.005748    0.001878     0.36198       0.069027        'Syrinxs' 
+    'murcha052813a1d.tif'     9.5179     -0.29964    0.004138    0.001576     0.34054       0.060879        'Syrinxs' 
+    'piaaut051515a1d.tif'     10.773     -0.66021    0.003015    0.000705     0.29245       0.050907        'Syrinxs' 
+    'romche050114a1d.tif'      13.03         1.15    0.004049    0.001413     0.32216        0.06213        'Syrinxs' 
+    'rugchl100913a1d.tif'     7.2258      0.36856    0.007581      0.0019      0.3778       0.038031        'Syrinxs' 
+    'seated022315a1d.tif'      10.33      0.10713     0.00379    0.001276     0.32855       0.067897        'Syrinxs' 
+    'smidap062215a1d.tif'     7.4573      0.62142    0.005935    0.001798     0.36223       0.050772        'Syrinxs' 
+    'steabb052815a1d.tif'     11.248      0.54043     0.00274    0.000883     0.28522       0.057266        'Syrinxs' 
+    'steoti091013a1d.tif'     10.813      0.55904    0.003679    0.000986     0.30457       0.048304        'Syrinxs' 
+    'vitcha012613a1d.tif'     14.462      0.32462    0.001922     0.00052       0.287       0.045431        'Syrinxs' 
+    'Binary:'                      0            0           0           0           0              0        '0'       
+    'Projections Width:'           5            0           0           0           0              0        '0'       
+    'Projections Height:'          5            0           0           0           0              0        '0'       
+    'RST-Invariant:'               0            0           0           0           0              0        '0'       
+    'Histogram:'                   2            0           0           0           0              0        '0'       
+    'Texture:'                     2            0           0           0           0              0        '0'       
+    'Texture Distance:'            6            0           0           0           0              0        '0'       
+    'Te. Quant Level:'           256            0           0           0           0              0        '0'       
+    'Stats(Avg Rang Var):'       110            0           0           0           0              0        '0'       
+    'Spectral:'                    0            0           0           0           0              0        '0'       
+    'Rings:'                       0            0           0           0           0              0        '0'       
+    'Sectors:'                     0            0           0           0           0              0        '0'       
+    'Images:'                     70            0           0           0           0              0        '0'       
+
+
+ClassVector =
+
+  83&times;8 table
+
+            obj_id            STD_1      Skew_1      ASM_Avg     ASM_Range    IDNorm_Avg    IDNorm_Range      Class   
+    ______________________    ______    _________    ________    _________    __________    ____________    __________
+
+    'barcha110907A1D.tif'     10.177      0.72487     0.00356    0.000435     0.27347       0.041078        'NOSyrinx'
+    'barhon033115a1d.tif'      8.581    -0.080133    0.007144    0.002801     0.36642       0.054772        'NOSyrinx'
+    'barnor101207A1D.tif'     10.343       0.4553     0.00683    0.001652      0.3292       0.067506        'NOSyrinx'
+    'biligo042809A1D.tif'     11.201      -1.1426     0.00341     0.00082     0.30496       0.041916        'NOSyrinx'
+    'cardai041108A1D.tif'     7.7035      0.84656    0.005715     0.00066     0.31364       0.048482        'NOSyrinx'
+    'chakin050109A1D.tif'      10.88      0.99514    0.005163     0.00234     0.28433       0.059032        'NOSyrinx'
+    'chalil052809A1D.tif'     11.899     -0.10111    0.002103    0.000829     0.28072       0.061953        'NOSyrinx'
+    'chapet052709A1D.tif'     8.7307       1.0788       0.006    0.002072     0.37453       0.076911        'NOSyrinx'
+    'colmol080610a1d.tif'     9.2497      0.62493    0.003962    0.001247     0.31326       0.067093        'NOSyrinx'
+    'copcha011413a1d.tif'     18.777      0.46282    0.001736    0.000479     0.28368        0.04384        'NOSyrinx'
+    'deejim020909A1D.tif'     10.978      0.50797    0.003639    0.001319     0.30831        0.06532        'NOSyrinx'
+    'duispa082809A1D.tif'     6.3725     -0.84416    0.006303    0.002329     0.38027       0.084491        'NOSyrinx'
+    'eckcla113006A1D.tif'     6.6192    -0.050247    0.005517    0.001085      0.3317       0.052676        'NOSyrinx'
+    'eckmil070908A1D.tif'     11.511     -0.15099    0.002769    0.000664     0.25876       0.079309        'NOSyrinx'
+    'eckwin030207A1D.tif'     17.722       0.5229    0.001248    0.000309      0.2046       0.035762        'NOSyrinx'
+    'gildex041514a1d.tif'     15.729      0.59473    0.001472    0.000194     0.25802       0.024717        'NOSyrinx'
+    'grebra051013a1d.tif'     6.7733     0.043626    0.007883    0.001863     0.36103       0.042839        'NOSyrinx'
+    'iankc012009A1D.tif'      9.5511     -0.77614    0.006634     0.00187      0.3322       0.041246        'NOSyrinx'
+    'kanmon041511a1d.tif'     10.301      0.82901     0.00443    0.002064     0.34263       0.082829        'NOSyrinx'
+    'karlay0301009A1D.tif'    10.658      0.48215    0.003811     0.00122     0.34874       0.068101        'NOSyrinx'
+    'katfre040607A1D.tif'     7.7444      0.92123    0.004821    0.000909     0.30164       0.046608        'NOSyrinx'
+    'lansav012609A1D.tif'     8.8294      0.57888    0.005656    0.001369     0.32584       0.047211        'NOSyrinx'
+    'lascla051608A1D.tif'     10.735     -0.11189    0.003132    0.001168     0.28168       0.083552        'NOSyrinx'
+    'lucoll120712a1d.tif'     11.775      0.05691    0.002334     0.00144     0.27395       0.086941        'NOSyrinx'
+    'mcgmay031315a1d.tif'     13.489     -0.16353    0.002007    0.000716     0.27787       0.067556        'NOSyrinx'
+    'ostame041307A1D.tif'     29.381        1.838    0.066035    0.007923     0.30546       0.011647        'NOSyrinx'
+    'pethor110510a1d.tif'     10.216      -3.6909     0.00396    0.001532     0.31662       0.069255        'NOSyrinx'
+    'porlad040609A1D.tif'     7.3226      0.99704    0.006408    0.002249     0.34319       0.059611        'NOSyrinx'
+    'roagin112808A1D.tif'     7.2327     -0.43138    0.005965    0.002155     0.32831       0.058686        'NOSyrinx'
+    'soomin071609A1D.tif'     9.6824     -0.57407    0.004817    0.001543     0.34381       0.056183        'NOSyrinx'
+    'termia120412a1d.tif'     8.1771       1.4258    0.008521    0.003015     0.37238       0.038472        'NOSyrinx'
+    'wicsad022409A1D.tif'     10.868    -0.079646    0.003158    0.000834     0.33006        0.04302        'NOSyrinx'
+    'wilcas072214a1d.tif'     7.0066      0.37498    0.008572    0.003171     0.33566       0.057208        'NOSyrinx'
+    'wilpri121014a1d.tif'     9.4364     -0.26328    0.003968    0.000653     0.33528       0.032222        'NOSyrinx'
+    'zortiz011110A1D.tif'     8.9449      0.77995      0.0061    0.002193     0.35846       0.074681        'NOSyrinx'
+    'balluc111213a1d.tif'     14.568      0.87633    0.002271    0.000732     0.27634        0.06744        'Syrinxs' 
+    'bargra111706A1D.tif'     5.6843     -0.33897    0.008228    0.002239       0.354       0.046216        'Syrinxs' 
+    'bekpan122309A1D.tif'     11.293      0.14483    0.002474    0.000468     0.24378       0.053078        'Syrinxs' 
+    'buamuf120709A1D.tif'     7.5736    -0.042735     0.00571    0.001507     0.34799        0.04524        'Syrinxs' 
+    'cammag011210A1D.tif'     15.184      0.86615    0.002393     0.00073     0.28478       0.053462        'Syrinxs' 
+    'candia013014a1d.tif'     9.4862      0.19586    0.004749    0.001724      0.3445       0.058396        'Syrinxs' 
+    'capenz090415a1d.tif'      12.08      0.80624    0.003272    0.001403     0.31863       0.070567        'Syrinxs' 
+    'chageo050109A1D.tif'     20.498      -1.1119    0.002333    0.000741     0.29117         0.0543        'Syrinxs' 
+    'chamor052809A1D.tif'      11.22     0.077528    0.002171    0.000668     0.28946       0.060125        'Syrinxs' 
+    'chasam050509A1D.tif'     8.3458      0.62444    0.006433    0.001763     0.37934       0.044544        'Syrinxs' 
+    'chaste062309A1D.tif'     6.9668       1.2964    0.005707    0.001751     0.30941       0.067722        'Syrinxs' 
+    'dejmia062515a1d.tif'     8.9116     -0.28822    0.004815    0.001607      0.3593       0.052951        'Syrinxs' 
+    'dursop031010A1D.tif'     11.144      -0.2566    0.004019    0.000962     0.33518       0.059359        'Syrinxs' 
+    'eckcha030207A1D.tif'     22.289      0.22628    0.000738    0.000171       0.182       0.057043        'Syrinxs' 
+    'eckfiz072809A1D.tif'     8.7835       0.2519    0.004027    0.000986     0.31725       0.048512        'Syrinxs' 
+    'eckmer112906A1D.tif'     13.039      0.63712    0.002796    0.000622     0.29604       0.050081        'Syrinxs' 
+    'elypar033010A1D.tif'     9.0405      0.62889    0.004229    0.001426     0.34143       0.047204        'Syrinxs' 
+    'erimil040809A1D.tif'     15.547      0.96814    0.002292    0.000673     0.25642       0.047339        'Syrinxs' 
+    'farell021209A1D.tif'      7.282      0.29587    0.007425    0.002117     0.37059        0.04619        'Syrinxs' 
+    'glemad040513a1d.tif'     10.179      0.73659    0.004278    0.001275     0.31111        0.05036        'Syrinxs' 
+    'grenat030513a1d.tif'     11.222     -0.37061    0.003524    0.001466     0.31057       0.059948        'Syrinxs' 
+    'marbel041715a1d.tif'     8.5369       1.2965    0.006043    0.001557     0.32541       0.059616        'Syrinxs' 
+    'marcri032613a1d.tif'      12.93      0.28381    0.002768     0.00084      0.3439       0.055653        'Syrinxs' 
+    'mccdas041717a1d.tif'      9.666       1.3126    0.010598    0.003141     0.31207       0.032165        'Syrinxs' 
+    'mirluc031815a1d.tif'     6.9131       1.1688    0.009021    0.002428     0.38672       0.038181        'Syrinxs' 
+    'mmcsca120309A1D.tif'     11.381      0.40311    0.005748    0.001878     0.36198       0.069027        'Syrinxs' 
+    'murcha052813a1d.tif'     9.5179     -0.29964    0.004138    0.001576     0.34054       0.060879        'Syrinxs' 
+    'piaaut051515a1d.tif'     10.773     -0.66021    0.003015    0.000705     0.29245       0.050907        'Syrinxs' 
+    'romche050114a1d.tif'      13.03         1.15    0.004049    0.001413     0.32216        0.06213        'Syrinxs' 
+    'rugchl100913a1d.tif'     7.2258      0.36856    0.007581      0.0019      0.3778       0.038031        'Syrinxs' 
+    'seated022315a1d.tif'      10.33      0.10713     0.00379    0.001276     0.32855       0.067897        'Syrinxs' 
+    'smidap062215a1d.tif'     7.4573      0.62142    0.005935    0.001798     0.36223       0.050772        'Syrinxs' 
+    'steabb052815a1d.tif'     11.248      0.54043     0.00274    0.000883     0.28522       0.057266        'Syrinxs' 
+    'steoti091013a1d.tif'     10.813      0.55904    0.003679    0.000986     0.30457       0.048304        'Syrinxs' 
+    'vitcha012613a1d.tif'     14.462      0.32462    0.001922     0.00052       0.287       0.045431        'Syrinxs' 
+    'Binary:'                      0            0           0           0           0              0        '0'       
+    'Projections Width:'           5            0           0           0           0              0        '0'       
+    'Projections Height:'          5            0           0           0           0              0        '0'       
+    'RST-Invariant:'               0            0           0           0           0              0        '0'       
+    'Histogram:'                   2            0           0           0           0              0        '0'       
+    'Texture:'                     2            0           0           0           0              0        '0'       
+    'Texture Distance:'            6            0           0           0           0              0        '0'       
+    'Te. Quant Level:'           256            0           0           0           0              0        '0'       
+    'Stats(Avg Rang Var):'       110            0           0           0           0              0        '0'       
+    'Spectral:'                    0            0           0           0           0              0        '0'       
+    'Rings:'                       0            0           0           0           0              0        '0'       
+    'Sectors:'                     0            0           0           0           0              0        '0'       
+    'Images:'                     70            0           0           0           0              0        '0'       
+
+</pre><h2 id="4">SEE ALSO</h2><p><a href="matlab:doc('train_test_cvip')">train_test_cvip</a> | <a href="matlab:doc('nearest_neighbor_cvip')">nearest_neighbor_cvip</a></p><h2 id="5">CREDITS</h2><p>
+Author: Julian rene Cuellar Buritica, February 2019<br>
+Copyright &#169; 2017-2019 <a href="http://www.siue.edu/~sumbaug/">Scott
+E Umbaugh</a><br>
+For updates visit <a href="http://cviptools.siue.edu/">CVIP Toolbox Website</a>
+</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% *LEAVE_ONE_OUT_CVIP* 
+% *leave_one_out_cvip()* - reads feature file of feature vectors and creates
+% output files file_train and file_test for classification using leave one
+% out algorithm testing method.
+%
+%% SYNTAX
+%
+% leave_one_out_cvip(file_tt, file_out, option_normalize, ...
+%       option_distance, opt_classification)
+%
+% leave_one_out_cvip(file_tt, file_out, [option_normalize ...
+%       s_min/r_softmax s_max], [option_distance r_minkowski], [opt_classification k])
+%   
+% Input Parameters include :
+% 
+% * file_ft   -   Name of the feature file. 
+%                   A CSV file with a predefined structure.
+% * file_out  -   Name of the output file.  
+%                   A CSV file as the inputs with the feature vectors 
+%                   classified based on classification parameters.
+%
+% * option_normalize(1)
+% 
+%     0 – No Normalization
+%     1 – Range-normalize
+%     2 – Unit Vector normalization
+%     3 – Standard Normal Density normalization
+%     4 – Min-max normalization     REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH> s_min, s_max
+%     5 – Softmax scaling           REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH> r_softmax
+% 
+% * option_distance(1)
+% 
+%     1 – Euclidean Distance
+%     2 – City block or Absolute value metric
+%     3 – Maximum value metric
+%     4 – Minkowski distance        REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH> r_minkowski
+%     5 – Vector inner product
+%     6 – Tanimoto metric
+%
+% * option_classification
+% 
+%     1 – Nearest Neighbor
+%     2 – k-Nearest Neighbor        REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH> k
+%     3 – Nearest Centroid
+%
+% If option_normalize(1) is either 4 or 5, or option_distance(1) is 4, then their
+% corresponding parameters should be given as input arguments seperated
+% by comma after option_distance(1). Look at the below examples:
+%                                
+%% REFERENCE
+% 
+% 1. Scott E Umbaugh. DIGITAL IMAGE PROCESSING AND ANALYSIS: Applications
+% with MATLAB and CVIPtools, 3rd Edition.
+%
+%% EXAMPLES 
+
+% Example 1 :   Classify Feature vectors using SND normalization, 
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-     Tanimoto metric, and Nearest Centroid.
+
+              % Setting input parameters
+              file_ft = 'myFeatureVectors.CSV';
+              file_out = 'ClassifiedVectors';
+              option_normalize = [3 0 0];
+              option_distance = 6;
+              option_classification = 3;
+              
+              %Calling function
+              TestVector = readtable(file_ft)
+              ClassVector = leave_one_out_cvip(file_ft, file_out, ...
+              option_normalize, option_distance, option_classification)
+
+
+%% SEE ALSO 
+% <matlab:doc('train_test_cvip') train_test_cvip> | <matlab:doc('nearest_neighbor_cvip') nearest_neighbor_cvip>
+%
+%% CREDITS
+%
+% <html>
+% Author: Julian rene Cuellar Buritica, February 2019<br>
+% Copyright &#169; 2017-2019 <a href="http://www.siue.edu/~sumbaug/">Scott
+% E Umbaugh</a><br>
+% For updates visit <a href="http://cviptools.siue.edu/">CVIP Toolbox Website</a>
+% </html>
+
+##### SOURCE END #####
+--></body></html>
