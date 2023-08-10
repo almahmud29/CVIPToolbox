@@ -22,7 +22,7 @@ function varargout = Preprocessing(varargin)
 
 % Edit the above text to modify the response to help Preprocessing
 
-% Last Modified by GUIDE v2.5 14-Mar-2023 18:08:30
+% Last Modified by GUIDE v2.5 10-Aug-2023 14:23:45
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -3094,12 +3094,12 @@ function bNOT_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 % Arithmatic
 handles.curImage.Visible = 'On';
-handles.secImage.Visible = 'Off';
+handles.secImage.Visible = 'On';
 handles.selFirstimage.Visible = 'On';
-handles.selSecondimage.Visible = 'Off';
+handles.selSecondimage.Visible = 'On';
 handles.cByC.Visible = 'Off';
 handles.bIma1.Visible = 'On';
-handles.bIma2.Visible = 'Off';
+handles.bIma2.Visible = 'On';
 
 % Mean
 handles.p1.Visible = 'Off';
@@ -3787,3 +3787,12 @@ function Prepro_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to Prepro (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes on button press in cNotB.
+function checkbox18_Callback(hObject, eventdata, handles)
+% hObject    handle to cNotB (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of cNotB
