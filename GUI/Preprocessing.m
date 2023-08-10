@@ -144,13 +144,13 @@ handles.UpLeftRow.Visible = 'Off';
 handles.Width.Visible = 'Off';
 handles.Height.Visible = 'Off';
 handles.popCcol.Visible = 'Off';
-handles.popCcol.String = {'0';'8';'16';'32';'64';'128';'256';'512'};
+handles.popCcol.String = {'1';'8';'16';'32';'64';'128';'256';'512'};
 handles.popCrow.Visible = 'Off';
-handles.popCrow.String = {'0';'8';'16';'32';'64';'128';'256';'512'};
+handles.popCrow.String = {'1';'8';'16';'32';'64';'128';'256';'512'};
 handles.popCwid.Visible = 'Off';
-handles.popCwid.String = {'0';'8';'16';'32';'64';'100';'128';'256';'512'};
+handles.popCwid.String = {'1';'8';'16';'32';'64';'100';'128';'256';'512'};
 handles.popChei.Visible = 'Off';
-handles.popChei.String = {'0';'8';'16';'32';'64';'100';'128';'256';'512'};
+handles.popChei.String = {'1';'8';'16';'32';'64';'100';'128';'256';'512'};
 
 % Zoom
 handles.By.Visible = 'Off';
@@ -1821,13 +1821,13 @@ handles.UpLeftRow.Visible = 'On';
 handles.Width.Visible = 'On';
 handles.Height.Visible = 'On';
 handles.popCcol.Visible = 'On';
-handles.popCcol.String = {'0';'8';'16';'32';'64';'128';'256';'512'};
+handles.popCcol.String = {'1';'8';'16';'32';'64';'128';'256';'512'};
 handles.popCrow.Visible = 'On';
-handles.popCrow.String = {'0';'8';'16';'32';'64';'128';'256';'512'};
+handles.popCrow.String = {'1';'8';'16';'32';'64';'128';'256';'512'};
 handles.popCwid.Visible = 'On';
-handles.popCwid.String = {'0';'8';'16';'32';'64';'100';'128';'256';'512'};
+handles.popCwid.String = {'8';'16';'32';'64';'100';'128';'256';'512'};
 handles.popChei.Visible = 'On';
-handles.popChei.String = {'0';'8';'16';'32';'64';'100';'128';'256';'512'};
+handles.popChei.String = {'8';'16';'32';'64';'100';'128';'256';'512'};
 
 % Zoom
 
